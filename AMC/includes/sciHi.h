@@ -33,11 +33,13 @@
 #ifdef GATEWAY
 typedef enum 
 {
-  USART_3 = 0,
-  UART_5  = 1,  
+  USART_1 =0,
+  UART_4 =1,  
+  
   USART_2 = 2,
-  USART_1 = 3,  
-  UART_4  = 4,    
+  USART_3 = 3,
+  
+  UART_5 = 4,
   
   LPUART_1 =5,
   
@@ -68,41 +70,41 @@ typedef struct
 } QUE_STRUCT;
 
 
-#ifdef GATEWAY
 /**
- * @brief Definition for COM port1, connected to USART3
+ * @brief Definition for COM port1, connected to USART1
  */ 
-#define SERIAL_COM1                        USART3
-#define SERIAL_COM1_CLK                    RCC_APB1Periph_USART3
-#define SERIAL_COM1_TX_PIN                 GPIO_Pin_8
-#define SERIAL_COM1_TX_GPIO_PORT           GPIOD
-#define SERIAL_COM1_TX_GPIO_CLK            RCC_AHB2Periph_GPIOD
-#define SERIAL_COM1_TX_SOURCE              GPIO_PinSource8
-#define SERIAL_COM1_TX_AF                  GPIO_AF_USART3
-#define SERIAL_COM1_RX_PIN                 GPIO_Pin_9
-#define SERIAL_COM1_RX_GPIO_PORT           GPIOD
-#define SERIAL_COM1_RX_GPIO_CLK            RCC_AHB2Periph_GPIOD
-#define SERIAL_COM1_RX_SOURCE              GPIO_PinSource9
-#define SERIAL_COM1_RX_AF                  GPIO_AF_USART3
-#define SERIAL_COM1_IRQn                   USART3_IRQn
+#define SERIAL_COM1                        USART1
+#define SERIAL_COM1_CLK                    RCC_APB2Periph_USART1
+#define SERIAL_COM1_TX_PIN                 GPIO_Pin_9
+#define SERIAL_COM1_TX_GPIO_PORT           GPIOA
+#define SERIAL_COM1_TX_GPIO_CLK            RCC_AHB2Periph_GPIOA
+#define SERIAL_COM1_TX_SOURCE              GPIO_PinSource9
+#define SERIAL_COM1_TX_AF                  GPIO_AF_USART1
+#define SERIAL_COM1_RX_PIN                 GPIO_Pin_10
+#define SERIAL_COM1_RX_GPIO_PORT           GPIOA
+#define SERIAL_COM1_RX_GPIO_CLK            RCC_AHB2Periph_GPIOA
+#define SERIAL_COM1_RX_SOURCE              GPIO_PinSource10
+#define SERIAL_COM1_RX_AF                  GPIO_AF_USART1
+#define SERIAL_COM1_IRQn                   USART1_IRQn
 
 /**
- * @brief Definition for COM port2, connected to UART5
+ * @brief Definition for COM port2, connected to UART4
  */ 
-#define SERIAL_COM2                        UART5
-#define SERIAL_COM2_CLK                    RCC_APB1Periph_UART5
-#define SERIAL_COM2_TX_PIN                 GPIO_Pin_12
+#define SERIAL_COM2                        UART4
+#define SERIAL_COM2_CLK                    RCC_APB1Periph_UART4
+#define SERIAL_COM2_TX_PIN                 GPIO_Pin_10
 #define SERIAL_COM2_TX_GPIO_PORT           GPIOC
 #define SERIAL_COM2_TX_GPIO_CLK            RCC_AHB2Periph_GPIOC
-#define SERIAL_COM2_TX_SOURCE              GPIO_PinSource12
-#define SERIAL_COM2_TX_AF                  GPIO_AF_UART5
-#define SERIAL_COM2_RX_PIN                 GPIO_Pin_2
-#define SERIAL_COM2_RX_GPIO_PORT           GPIOD
-#define SERIAL_COM2_RX_GPIO_CLK            RCC_AHB2Periph_GPIOD
-#define SERIAL_COM2_RX_SOURCE              GPIO_PinSource2
-#define SERIAL_COM2_RX_AF                  GPIO_AF_UART5
-#define SERIAL_COM2_IRQn                   UART5_IRQn
+#define SERIAL_COM2_TX_SOURCE              GPIO_PinSource10
+#define SERIAL_COM2_TX_AF                  GPIO_AF_UART4
+#define SERIAL_COM2_RX_PIN                 GPIO_Pin_11
+#define SERIAL_COM2_RX_GPIO_PORT           GPIOC
+#define SERIAL_COM2_RX_GPIO_CLK            RCC_AHB2Periph_GPIOC
+#define SERIAL_COM2_RX_SOURCE              GPIO_PinSource11
+#define SERIAL_COM2_RX_AF                  GPIO_AF_UART4
+#define SERIAL_COM2_IRQn                   UART4_IRQn
 
+#if 0
 /**
  * @brief Definition for COM port3, connected to USART2
  */ 
@@ -125,15 +127,15 @@ typedef struct
  */ 
 #define SERIAL_COM4                        USART1
 #define SERIAL_COM4_CLK                    RCC_APB2Periph_USART1
-#define SERIAL_COM4_TX_PIN                 GPIO_Pin_9
-#define SERIAL_COM4_TX_GPIO_PORT           GPIOA
-#define SERIAL_COM4_TX_GPIO_CLK            RCC_AHB2Periph_GPIOA
-#define SERIAL_COM4_TX_SOURCE              GPIO_PinSource9
+#define SERIAL_COM4_TX_PIN                 GPIO_Pin_6
+#define SERIAL_COM4_TX_GPIO_PORT           GPIOB
+#define SERIAL_COM4_TX_GPIO_CLK            RCC_AHB2Periph_GPIOB
+#define SERIAL_COM4_TX_SOURCE              GPIO_PinSource6
 #define SERIAL_COM4_TX_AF                  GPIO_AF_USART1
-#define SERIAL_COM4_RX_PIN                 GPIO_Pin_10
-#define SERIAL_COM4_RX_GPIO_PORT           GPIOA
-#define SERIAL_COM4_RX_GPIO_CLK            RCC_AHB2Periph_GPIOA
-#define SERIAL_COM4_RX_SOURCE              GPIO_PinSource10
+#define SERIAL_COM4_RX_PIN                 GPIO_Pin_7
+#define SERIAL_COM4_RX_GPIO_PORT           GPIOB
+#define SERIAL_COM4_RX_GPIO_CLK            RCC_AHB2Periph_GPIOB
+#define SERIAL_COM4_RX_SOURCE              GPIO_PinSource7
 #define SERIAL_COM4_RX_AF                  GPIO_AF_USART1
 #define SERIAL_COM4_IRQn                   USART1_IRQn
 
@@ -171,7 +173,6 @@ typedef struct
 #define SERIAL_COM6_RX_AF                  GPIO_AF_LPUART1
 #define SERIAL_COM6_IRQn                   LPUART1_IRQn
 
-#else
 // Nucleo -F429ZI eval board
 /**
  * @brief Definition for COM port1, connected to USART3

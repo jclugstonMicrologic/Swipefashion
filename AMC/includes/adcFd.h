@@ -32,11 +32,12 @@ typedef struct
     float temp;
     float batteryVolts;
       
-}ADC_READINGS_STRUCT;
+}adc_readings_t;
 
-void AdcInit(void);
+void Adc_Init(void);
+
 void AdcMeasureReadings(void);
-void AdcGetData(ADC_READINGS_STRUCT *pAdcData);
+void AdcGetData(adc_readings_t *pAdcData);
 void AdcGetRawData(UINT16 *pRawData);
 float Adc4To20Conversion(float current, UINT16 range1, UINT16 range2);
 

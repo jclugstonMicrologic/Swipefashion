@@ -40,11 +40,11 @@ typedef enum
 }SciAsciiStatesTypeEnum;
 
 
-SCI_DATA_STRUCT CellularDataCom;
+sci_data_t BluetoothDataCom;
 
 
 void SciAsciiTaskComx(void * pvParameters);
-int SciAsciiRxMachine(SCI_DATA_STRUCT *pSerialData,char sciPort);
+int SciAsciiRxMachine(sci_data_t *pSerialData,char sciPort);
 
 
 /** Functions *****************************************************************/
@@ -94,24 +94,15 @@ BOOL SciAsciiReceiverInit
     void (*pAltCallBack)(int, char *)
 )
 {
-    SCI_DATA_STRUCT *pSerialData;
+    sci_data_t *pSerialData;
     UINT8 parity =0;
         
     switch(sciPort)
     {
-#if 0      
-        case SCI_IRIDIUM_COM:
-            pSerialData =&IridiumDataCom;
-            break;
-#endif            
-        case SCI_CELLULAR_COM:
-            pSerialData =&CellularDataCom;
+        case SCI_BLUETOOTH_COM:
+            pSerialData =&BluetoothDataCom;
             pSerialData->termChar =0xff;
             break;                                   
-        case SCI_GPS_COM:            
-            //pSerialData =&GpsDataCom;
-            pSerialData->termChar ='\n';
-            break;             
     }    
 
     pSerialData->pCmdFunction = pCallBack;
@@ -143,7 +134,7 @@ void SciAsciiTaskComx(void * pvParameters)
     
     for( ;; )
     {       
-        SciAsciiRxMachine(&CellularDataCom, SCI_CELLULAR_COM);
+        SciAsciiRxMachine(&BluetoothDataCom, SCI_BLUETOOTH_COM);
                
         /* place this task in the blocked state until it is time to run again */
         vTaskDelayUntil( &xNextWakeTime, 1 );  
@@ -159,7 +150,7 @@ void SciAsciiTaskComx(void * pvParameters)
 */
 int SciAsciiRxMachine
 (
-    SCI_DATA_STRUCT *pSerialData,
+    sci_data_t *pSerialData,
     char sciPort
 )
 {
@@ -235,7 +226,7 @@ int SciAsciiRxMachine
                 /* restart timeout timer */
                 pSerialData->common.timeoutTimer =xTicks;	 
             }
-	        	
+            
             if( SciCheckTimeout( &pSerialData->common, 25) )//SCI_TIMEOUT_100MSEC) )//SCI_TIMEOUT_500MSEC) )
             {
                 /* no more bytes coming in, lets parse any messages that may be present at this time
@@ -270,6 +261,7 @@ int SciAsciiRxMachine
         /* done for whatever reason, go to idle state */
         SciStateProcess( &pSerialData->common, SCI_ASCII_RX_IDLE_STATE);
     }
+
     
     return status;   
 } 

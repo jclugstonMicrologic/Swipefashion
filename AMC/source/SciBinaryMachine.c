@@ -47,11 +47,11 @@ typedef enum
 }SciBinaryStatesTypeEnum;
 
 
-SCI_DATA_STRUCT PcDataCom;
+sci_data_t PcDataCom;
 
 /** Local Function Prototypes *************************************************/
 void SciBinaryTaskComx(void * pvParameters);
-int SciBinaryRxMachine(SCI_DATA_STRUCT *pSerialData,char sciPort);
+int SciBinaryRxMachine(sci_data_t *pSerialData,char sciPort);
 
 
 /** Functions *****************************************************************/
@@ -96,11 +96,11 @@ BOOL SciBinaryReceiverInit
 (	
     UINT8 sciPort,
     UINT32 baudRate,
-    SCI_DATA_STRUCT *pDataCom,
+    sci_data_t *pDataCom,
     void (*pCallBack)(int, char *) 
 )
 {
-    SCI_DATA_STRUCT *pSerialData;
+    sci_data_t *pSerialData;
     UINT8 parity =0;
     
     switch(sciPort)
@@ -108,7 +108,7 @@ BOOL SciBinaryReceiverInit
          case SCI_PC_COM:
             pSerialData =&PcDataCom;
             pSerialData->pCheckSumFunction =CrcCalc16;
-            break;            
+            break;            ;                
     }    
 
     pSerialData->pCmdFunction = pCallBack;
@@ -137,9 +137,7 @@ void SciBinaryTaskComx(void * pvParameters)
     xNextWakeTime = xTaskGetTickCount();
     
     for( ;; )
-    {
-        //MeterTcktBinaryRxMachine(&MeterTcktDataCom, SCI_MTR_TCKT_COM);
-        
+    {        
         SciBinaryRxMachine(&PcDataCom, SCI_PC_COM);
                 
         /* place this task in the blocked state until it is time to run again */
@@ -154,7 +152,7 @@ void SciBinaryTaskComx(void * pvParameters)
 *|  Retval:
 *|----------------------------------------------------------------------------
 */
-void SciPopulateHeader(SCI_DATA_STRUCT *pSciHdr, char *pRxBuf )
+void SciPopulateHeader(sci_data_t *pSciHdr, char *pRxBuf )
 {
     pSciHdr->nbrBytes =(*pRxBuf<<8);
     *pRxBuf ++;
@@ -186,7 +184,7 @@ void SciPopulateHeader(SCI_DATA_STRUCT *pSciHdr, char *pRxBuf )
 */
 int SciBinaryRxMachine
 (
-    SCI_DATA_STRUCT *pSerialData,
+    sci_data_t *pSerialData,
     char sciPort
 )
 {

@@ -61,7 +61,7 @@ typedef struct
     UINT16 rtu;
     UINT16 crc;
 
-}GW_CONFIG_STRUCT;
+}AMC_CONFIG_STRUCT;
 
 
 typedef struct
@@ -75,24 +75,17 @@ typedef struct
     
     UINT16 remoteUpdateRate;
     UINT16 logRate;
-          
-    float  volCoeff[8]; // 6th order polynomial coefficients (1 spare)
-           
+                    
     UINT16 spare2;
     UINT16 crc;
         
-}GW_SETUP_STRUCT;
+}AMC_SETUP_STRUCT;
 
 
-BOOL GwConfigInit(void);
+BOOL AmcConfigInit(void);
 
-BOOL GwWriteConfigToFlash(GW_CONFIG_STRUCT *pGwNetworkConfig);
-BOOL GwReadConfigFromFlash(GW_CONFIG_STRUCT *pGwNetworkConfig);
-void GwGetConfig(GW_CONFIG_STRUCT *pGwConfig);
-
-BOOL GwWriteSetupToFlash(GW_SETUP_STRUCT *pGwSetup);
-BOOL GwReadSetupFromFlash(GW_SETUP_STRUCT *pGwSetup);
-void GwGetSetup(GW_SETUP_STRUCT *pGwSetup);
+void AmcGetConfig(AMC_CONFIG_STRUCT *pGwConfig);
+void AmcGetSetup(AMC_SETUP_STRUCT *pGwSetup);
 
 UINT32 GwGetReportInterval(void);
 UINT16 GwGetSensorRange(void);

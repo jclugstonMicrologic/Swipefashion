@@ -114,7 +114,7 @@ void SpiInit(SpiPortEnum port)
 *|  retval:
 *|----------------------------------------------------------------------------
 */
-void SpiDeviceInit(SpiPeripheralEnum periph)
+void SpiDeviceInit(UINT8 periph)
 {
     SPI_InitTypeDef  SPI_InitStructure;
 
@@ -172,13 +172,13 @@ void SpiDeviceInit(SpiPeripheralEnum periph)
 *|  Description:
 *|----------------------------------------------------------------------------
 */
-void spiStart(SpiPeripheralEnum periph)
+void spiStart(UINT8 periph)
 {            
     switch(periph)
     {
         case SPI_PERIPHERAL1:
             /* assert cs */
-            //ASSERT_SPI_PERIPH1_CS;
+            ASSERT_SPI_PERIPH1_CS;
             break;              
         case SPI_PERIPHERAL2:
             /* assert cs */
@@ -186,11 +186,10 @@ void spiStart(SpiPeripheralEnum periph)
             break;        
         case SPI_PERIPHERAL3:
             /* assert cs */
-            ASSERT_SPI_PERIPH3_CS;
             break;
         case SPI_PERIPHERAL4:
             /* assert cs */
-            //ASSERT_SPI_PERIPH4_CS;
+            ASSERT_SPI_PERIPH4_CS;
             break;            
     }
     
@@ -205,14 +204,14 @@ void spiStart(SpiPeripheralEnum periph)
 *|  Description:
 *|----------------------------------------------------------------------------
 */
-void spiStop(SpiPeripheralEnum periph)
+void spiStop(UINT8 periph)
 
 {       
     switch(periph)
     {
         case SPI_PERIPHERAL1:
             /* negate cs */
-            //NEGATE_SPI_PERIPH1_CS;
+            NEGATE_SPI_PERIPH1_CS;
             break;                    
         case SPI_PERIPHERAL2:
             /* negate cs */
@@ -224,7 +223,7 @@ void spiStop(SpiPeripheralEnum periph)
             break;
         case SPI_PERIPHERAL4:
             /* neagte cs */
-            //NEGATE_SPI_PERIPH4_CS;
+            NEGATE_SPI_PERIPH4_CS;
             break;            
     }
     

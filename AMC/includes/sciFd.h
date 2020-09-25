@@ -51,17 +51,17 @@ typedef struct
     
     UINT16 (*pCheckSumFunction)(UINT8 *, UINT16);
     
-}SCI_DATA_STRUCT;
+}sci_data_t;
 
 
 //#define SCI_ZIGBEE_COM          USART_3
 //#define SCI_ZIGBEE_BAUD_RATE    115200
 
-#define SCI_PLC_COM             USART_3
-#define SCI_PLC_BAUD_RATE       19200
+#define SCI_BLUETOOTH_COM        USART_1
+#define SCI_BLUETOOTH_BAUD_RATE  115200
 
-#define SCI_PC_COM              LPUART_1
-#define SCI_PC_BAUD_RATE        921600 //230400
+#define SCI_PC_COM              UART_4
+#define SCI_PC_BAUD_RATE        115200 //230400
 
 #define SCI_MLINK_COM           UART_5
 #define SCI_MLINK_BAUD_RATE     57600
@@ -71,10 +71,6 @@ typedef struct
 
 #define SCI_GPS_COM             UART_4 
 #define SCI_GPS_BAUD_RATE       9600
-
-#define SCI_CELLULAR_COM        USART_1
-#define SCI_CELLULAR_BAUD_RATE  115200
-
 //#define SCI_IRIDIUM_COM         USART_2 
 //#define SCI_IRIDIUM_BAUD_RATE   19200
 

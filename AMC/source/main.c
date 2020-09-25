@@ -6,13 +6,13 @@
 *
 * TARGET    
 *
-* TOOLS     IAR Embedded workbench for ARM v7.4
+* TOOLS     IAR Embedded workbench for ARM v8.20.2
 *
 * REVISION LOG
 *
 *******************************************************************************
-* Copyright (c) 2019, TRIG
-* Calgary, Alberta, Canada, www.webpage.ca
+* Copyright (c) 2020, MICROLOGIC
+* Calgary, Alberta, Canada, www.micrologic.ab.ca
 *******************************************************************************/
 
 
@@ -32,20 +32,18 @@
 #include "gpioHi.h"
 #include "rtcHi.h"
 #include "dataFlashHi.h"
-#include "accelHi.h"
 #include "wdtHi.h"
-#include "lcdHi.h"
 
 #include "AdcFd.h"
 #include "crc.h"
 #include "PressureTdrHi.h"
-#include "PCMachine.h"
 
-#include "GatewayConfig.h"
+#include "PCMachine.h"
+#include "BluetoothMachine.h"
+
+#include "AmcConfig.h"
 #include "MainControlTask.h"
 #include "PowerManagement.h"
-
-//#include "vector.h"
 
 #define PC_ENABLED              1
 
@@ -119,7 +117,7 @@ void vTimerCallback( TimerHandle_t xTimer )
 */
 int main(void)
 {       
-    /* initialize the gateway hardware */
+    /* initialize the amc hardware */
     if( !TargetHardwareInit() )
     {
         //!!!
@@ -135,7 +133,7 @@ int main(void)
     }
 #endif
     
-    /* initialize the gateway tasks, modules, state machines, etc */
+    /* initialize the amc tasks, modules, state machines, etc */
     if( !AmcTasksInit() )
     {
         //!!!
@@ -186,17 +184,17 @@ BOOL TargetHardwareInit(void)
     TimerSetupUs();
     
     /* initialize all GPIO */
-    GpioInit();
+    Gpio_Init();
              
     /* initialize ADC */
-    AdcInit();
+    Adc_Init();
   
     /* initialize internal RTC */
     RtcInit();
     
     RtcInit();       
 
-    PressureTdrInit();
+    PressureTdr_Init();
 
     /* initialize hardware crc */
     //CrcInit32();
@@ -234,32 +232,23 @@ BOOL AmcTasksInit(void)
         return FALSE;      
     }
 #endif
-             
-    
-#ifdef TEST_FLASH    
-UINT8 aBuf[16];
-DataFlashRead(0x0000, 16, aBuf);
-DataFlashEraseSector(0);
-memset( aBuf, 0x00, sizeof(aBuf) );
-DataFlashRead(0x0000, 16, aBuf);
-DataFlashRead(0x0010, 16, aBuf);
-DataFlashRead(0x0000, 16, aBuf);
-memset( aBuf, 0x55, sizeof(aBuf) );
-DataFlashWrite(0x0000, 16, aBuf);
-memset( aBuf, 0x00, sizeof(aBuf) );
-DataFlashRead(0x0000, 16, aBuf);
-#endif
-   
-    /* start serial receiver task for proprietary serial comms (Zigbee, PC GUI, MLINK) */
-    SciBinaryStartReceiver();
+                  
+    /* initialize bluetooth serial comm port */    
+    BluetoothMachine_Init();
             
     /* initialize the main control task */
     MainControlTaskInit();  
 
+    /* start serial receiver task for proprietary serial comms (PC GUI) */
+    SciBinaryStartReceiver();
+    
+    /* start serial receiver task for ASCII serial comms (Bluetooth) */
+    SciAsciiStartReceiver();
+    
     /* Otherwise enters DFU mode to allow user programming his application */
     /* Init Device Library */
     //USBD_Init(&USBD_Device, &DFU_Desc, 0);
-      
+     
     return TRUE;
 }
 

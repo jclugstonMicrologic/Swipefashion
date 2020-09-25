@@ -6,13 +6,13 @@
 *
 * TARGET    
 *
-* TOOLS     IAR Embedded workbench for ARM v7.4
+* TOOLS     IAR Embedded workbench for ARM v8.20.2
 *
 * REVISION LOG
 *
 ********************************************************************************
-* Copyright (c) 2019, TRIG
-* Calgary, Alberta, Canada, www.webpage.ca
+* Copyright (c) 2020, MICROLOGIC
+* Calgary, Alberta, Canada, www.micrologic.ab.ca
 *******************************************************************************/
 
 /** Include Files *************************************************************/
@@ -23,7 +23,7 @@
 #include "adcFd.h"
 #include "adcHi.h"
 
-#include "GatewayConfig.h"
+#include "AmcConfig.h"
 #include "math.h"
 
 #include "dataFlashFd.h"
@@ -67,7 +67,7 @@ typedef struct
 
     UINT16 spare;
     UINT16 crc;
-}ADC_CALIBRATION;
+}adc_calibration_t;
 
 typedef struct
 {
@@ -77,16 +77,16 @@ typedef struct
    UINT8 smplCnt;
    UINT32 smplRate;
    UINT8 nbrValues; // number of values to average
-}RUN_AVG;
+}run_avg_t;
 
 /*
 *****************************************************************************
  P R I V A T E   G L O B A L   D A T A
 *****************************************************************************
 */
-ADC_CALIBRATION AdcCalibration;
+adc_calibration_t AdcCalibration;
 
-ADC_READINGS_STRUCT AdcReadings;
+adc_readings_t AdcReadings;
 
 UINT16 RawData[NBR_ADC_CHANNELS];
     
@@ -95,7 +95,7 @@ float I1, I2;
 
 void AdcCalcSlope();
 
-RUN_AVG AvgSloadLevel;
+run_avg_t AvgSloadLevel;
 
 /*
 *****************************************************************************
@@ -106,11 +106,12 @@ void AdcConvertToEngUnits(UINT16 rawValue, UINT8 channel, float *pEngData);
 float AdcRawToVoltage( UINT16 rawValue );
 float AdcRawToCurrent( UINT16 rawValue );
 
-BOOL AdcGetAdcCalibration(ADC_CALIBRATION *pAdcCalibration);
-BOOL AdcSetAdcCalibration(ADC_CALIBRATION *pAdcCalibration);
+BOOL AdcGetAdcCalibration(adc_calibration_t *pAdcCalibration);
+BOOL AdcSetAdcCalibration(adc_calibration_t *pAdcCalibration);
 
-void CalcRunningAverage(RUN_AVG *pAvg,float arg);
+void CalcRunningAverage(run_avg_t *pAvg,float arg);
 
+#if 0
 /*
 *|----------------------------------------------------------------------------
 *|  Module: 
@@ -118,10 +119,10 @@ void CalcRunningAverage(RUN_AVG *pAvg,float arg);
 *|  Description:
 *|----------------------------------------------------------------------------
 */
-void AdcUseCalibrationDefaults(ADC_CALIBRATION *pAdcCalibration)
+void AdcUseCalibrationDefaults(adc_calibration_t *pAdcCalibration)
 {
     /* init structure */
-    memset(pAdcCalibration, 0x00, sizeof(ADC_CALIBRATION));
+    memset(pAdcCalibration, 0x00, sizeof(adc_calibration_t));
       
     /* populate struct with default values */        
     pAdcCalibration->mIsense1 =0.007368;
@@ -129,6 +130,7 @@ void AdcUseCalibrationDefaults(ADC_CALIBRATION *pAdcCalibration)
     
     pAdcCalibration->crc =CrcCalc16( (unsigned char *)pAdcCalibration, sizeof(ADC_CALIBRATION)-sizeof(UINT16) );    
 }
+#endif
 
 /*
 *|----------------------------------------------------------------------------
@@ -137,11 +139,11 @@ void AdcUseCalibrationDefaults(ADC_CALIBRATION *pAdcCalibration)
 *|  Description:
 *|----------------------------------------------------------------------------
 */
-void AdcInit(void)
+void Adc_Init(void)
 {
     memset( &AdcCalibration, 0x00, sizeof(AdcCalibration) );
 
-#define MANUAL_CALIBRATION
+//#define MANUAL_CALIBRATION
 #ifdef MANUAL_CALIBRATION    
 AdcV1 =620;
 I1 =4.002;
@@ -150,6 +152,7 @@ I2 =12.21;
 AdcCalcSlope();
 #endif
 
+#if 0
     if( !AdcGetAdcCalibration( &AdcCalibration ) )
     {
         AdcUseCalibrationDefaults(&AdcCalibration);
@@ -158,6 +161,7 @@ AdcCalcSlope();
     }
     
 //    AdcCalcSlope();
+#endif
     
     memset( &AvgSloadLevel, 0x00, sizeof(AvgSloadLevel) );      
     AvgSloadLevel.smplRate =100; 
@@ -250,9 +254,9 @@ void AdcConvertToEngUnits(UINT16 rawValue, UINT8 channel, float *pEngData)
 *|  Description:
 *|----------------------------------------------------------------------------
 */
-void AdcGetData(ADC_READINGS_STRUCT *pAdcData)
+void AdcGetData(adc_readings_t *pAdcData)
 {
-    memcpy(pAdcData, &AdcReadings, sizeof(ADC_READINGS_STRUCT));
+    memcpy(pAdcData, &AdcReadings, sizeof(adc_readings_t));
 }
 
 /*
@@ -287,9 +291,7 @@ float AdcRawToVoltage( UINT16 rawValue )
 *|----------------------------------------------------------------------------
 */
 float AdcRawToCurrent(UINT16 rawValue )
-{
-    //return AdcCalibration.mIsense1*((float)rawValue);
-      
+{     
     return ( ((float)rawValue *ADC_VREF)/ADC_12BIT)/SHUNT_RESISTOR; //mA  
 }
 
@@ -322,6 +324,7 @@ float Adc4To20Conversion(float current, UINT16 range1, UINT16 range2)
 }
 
 
+#if 0
 /*
 *|----------------------------------------------------------------------------
 *|  Module: AdcFd 
@@ -338,7 +341,7 @@ void AdcCalcSlope()
 
 /*
 *|----------------------------------------------------------------------------
-*|  Routine: GwSetConfigFlash
+*|  Routine: AdcSetAdcCalibration
 *|  Description:
 *|  Retval:
 *|----------------------------------------------------------------------------
@@ -349,16 +352,7 @@ BOOL AdcSetAdcCalibration(ADC_CALIBRATION *pAdcCalibration)
     
     AdcCalibration.crc =CrcCalc16( (unsigned char *)&AdcCalibration, sizeof(AdcCalibration)-sizeof(UINT16) );  
     
-    /* erase this sector */
-    DataFlashEraseSector(MEMORY_ADC_CAL_ADDRESS/DATAFLASH_SIZE_SECTOR_BYTES);
-    
-    if( !DataFlashWrite( MEMORY_ADC_CAL_ADDRESS, sizeof(ADC_CALIBRATION), (UINT8 *)&AdcCalibration) ) 
-    {
-        return FALSE;
-    }
-    
-    else    
-        return TRUE;
+    return TRUE;
 }
 
 /*
@@ -370,23 +364,15 @@ BOOL AdcSetAdcCalibration(ADC_CALIBRATION *pAdcCalibration)
 */
 BOOL AdcGetAdcCalibration(ADC_CALIBRATION *pAdcCalibration)
 {   
-    UINT16 rxCrc =0;
-    
-    if( !DataFlashRead(MEMORY_ADC_CAL_ADDRESS, sizeof(ADC_CALIBRATION), (UINT8 *)pAdcCalibration) )
-    {
-        return FALSE;
-    }
-    
+    //UINT16 rxCrc =0;
+       
     memcpy( &AdcCalibration, pAdcCalibration, sizeof(ADC_CALIBRATION));  
     
-    rxCrc =CrcCalc16( (unsigned char *)pAdcCalibration, sizeof(ADC_CALIBRATION)-sizeof(UINT16) );  
+    //rxCrc =CrcCalc16( (unsigned char *)pAdcCalibration, sizeof(ADC_CALIBRATION)-sizeof(UINT16) );  
         
-    if( rxCrc !=pAdcCalibration->crc )
-        return FALSE;
-    else    
-        return TRUE;
+    return TRUE;
 }
-
+#endif
 
 /*
 *|----------------------------------------------------------------------------
@@ -397,7 +383,7 @@ BOOL AdcGetAdcCalibration(ADC_CALIBRATION *pAdcCalibration)
 */
 void CalcRunningAverage
 (
-   RUN_AVG *pAvg,       
+   run_avg_t *pAvg,       
    float arg            /* value to put into the average */
 )
 {
@@ -442,30 +428,5 @@ float GetSloadLevelAverage(void)
     return AvgSloadLevel.avgValue;
 }
 
-/*
-*|----------------------------------------------------------------------------
-*|  Routine: CalcFluidVolume
-*|  Description:
-*|  Retval:
-*|----------------------------------------------------------------------------
-*/
-float CalcFluidVolume(float range)
-{
-    GW_SETUP_STRUCT gwSetup;
-    
-    float fluidVolume;
-    
-    GwGetSetup(&gwSetup); 
-    
-    fluidVolume =0.0;
-      
-    for(int coeff=0; coeff<7; coeff++)
-    {
-        /* use metric for outage, and returned volume (liters) */
-        fluidVolume +=(float)(gwSetup.volCoeff[coeff] * pow(range, coeff));
-    }
-    
-    return fluidVolume;
-}
 
 

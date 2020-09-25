@@ -6,13 +6,13 @@
 *
 * TARGET    
 *
-* TOOLS     IAR Embedded workbench for ARM v7.4
+* TOOLS     IAR Embedded workbench for ARM v8.20.2
 *
 * REVISION LOG
 *
 *******************************************************************************
-* Copyright (c) 2018, TRIG
-* Calgary, Alberta, Canada, www.webpage.ca
+* Copyright (c) 2020, MICROLOGIC
+* Calgary, Alberta, Canada, www.micrologic.ab.ca
 *******************************************************************************/
 
 
@@ -32,7 +32,7 @@
 *|  Retval:
 *|----------------------------------------------------------------------------
 */
-void GpioInit
+void Gpio_Init
 (
     void
 )
@@ -49,9 +49,7 @@ void GpioInit
     RCC_AHB2PeriphClockCmd(RCC_AHB2Periph_GPIOD, ENABLE); 
     RCC_AHB2PeriphClockCmd(RCC_AHB2Periph_GPIOE, ENABLE); 
 
-    /* set output states before setting pin as an output */
-    POWER_5V_OFF;
-      
+     
     /* configure the following GPIO pins as outputs */
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
     GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
@@ -64,26 +62,45 @@ void GpioInit
     GPIO_InitStructure.GPIO_Pin = RED_LED_PIN;
     GPIO_Init(RED_LED_PORT, &GPIO_InitStructure);              
                      
-    GPIO_InitStructure.GPIO_Pin = POWER_5V_ENABLE_PIN;
-    GPIO_Init(POWER_5V_ENABLE_PORT, &GPIO_InitStructure);    
-        
-    GPIO_InitStructure.GPIO_Pin = FLASH_M1_CS_PIN;
-    GPIO_Init(FLASH_M1_CS_PORT, &GPIO_InitStructure);              
+    /* pressure sensor chipselects */
+    GPIO_InitStructure.GPIO_Pin = PRESS_SENSOR1_CS_PIN;
+    GPIO_Init(PRESS_SENSOR1_CS_PORT, &GPIO_InitStructure);        
+    GPIO_InitStructure.GPIO_Pin = PRESS_SENSOR2_CS_PIN;
+    GPIO_Init(PRESS_SENSOR2_CS_PORT, &GPIO_InitStructure);    
+    GPIO_InitStructure.GPIO_Pin = PRESS_SENSOR3_CS_PIN;
+    GPIO_Init(PRESS_SENSOR3_CS_PORT, &GPIO_InitStructure);    
+    GPIO_InitStructure.GPIO_Pin = PRESS_SENSOR4_CS_PIN;
+    GPIO_Init(PRESS_SENSOR4_CS_PORT, &GPIO_InitStructure);    
+    GPIO_InitStructure.GPIO_Pin = PRESS_SENSOR5_CS_PIN;
+    GPIO_Init(PRESS_SENSOR5_CS_PORT, &GPIO_InitStructure);    
+    GPIO_InitStructure.GPIO_Pin = PRESS_SENSOR6_CS_PIN;
+    GPIO_Init(PRESS_SENSOR6_CS_PORT, &GPIO_InitStructure);    
+    GPIO_InitStructure.GPIO_Pin = PRESS_SENSOR7_CS_PIN;
+    GPIO_Init(PRESS_SENSOR7_CS_PORT, &GPIO_InitStructure);        
+    GPIO_InitStructure.GPIO_Pin = PRESS_SENSOR8_CS_PIN;
+    GPIO_Init(PRESS_SENSOR8_CS_PORT, &GPIO_InitStructure);        
+
+    GPIO_InitStructure.GPIO_Pin = S_VALVE1_PIN;
+    GPIO_Init(S_VALVE1_PORT, &GPIO_InitStructure);   
+    GPIO_InitStructure.GPIO_Pin = S_VALVE2_PIN;
+    GPIO_Init(S_VALVE2_PORT, &GPIO_InitStructure);   
+    GPIO_InitStructure.GPIO_Pin = S_VALVE4_PIN;
+    GPIO_Init(S_VALVE3_PORT, &GPIO_InitStructure);   
+    GPIO_InitStructure.GPIO_Pin = S_VALVE4_PIN;
+    GPIO_Init(S_VALVE4_PORT, &GPIO_InitStructure);   
+    GPIO_InitStructure.GPIO_Pin = S_VALVE5_PIN;
+    GPIO_Init(S_VALVE5_PORT, &GPIO_InitStructure);   
+    GPIO_InitStructure.GPIO_Pin = S_VALVE6_PIN;
+    GPIO_Init(S_VALVE6_PORT, &GPIO_InitStructure);       
+    GPIO_InitStructure.GPIO_Pin = S_VALVE7_PIN;
+    GPIO_Init(S_VALVE7_PORT, &GPIO_InitStructure);       
     
-    GPIO_InitStructure.GPIO_Pin = FLASH_M2_CS_PIN;
-    GPIO_Init(FLASH_M2_CS_PORT, &GPIO_InitStructure);                  
-       
-          
     /* configure the following GPIO pins as inputs */
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
     GPIO_InitStructure.GPIO_OType = GPIO_OType_OD;
     GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_25MHz;  
-    
-      
-    GPIO_InitStructure.GPIO_Pin = WAKEUP_BTN_PIN;
-    GPIO_Init(WAKEUP_BTN_PORT, &GPIO_InitStructure);  
-        
+                
     
     GPIO_InitStructure.GPIO_Pin =GPIO_Pin_12;
     GPIO_Init(GPIOC, &GPIO_InitStructure);    
@@ -135,10 +152,7 @@ void GpioSleep
 )
 {
     GPIO_InitTypeDef  GPIO_InitStructure;
-    
-    FLASH_NEGATE_M1_CS;
-    FLASH_NEGATE_M2_CS;
-    
+       
     /* configure the following GPIO pins as inputs */
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
     GPIO_InitStructure.GPIO_OType = GPIO_OType_OD;
@@ -234,6 +248,41 @@ void GpioSleep
     ADC_Cmd( ADC1, DISABLE );
 }
 
+
+/*
+*|----------------------------------------------------------------------------
+*|  Routine: OpenValve
+*|  Description:
+*|  Retval:
+*|----------------------------------------------------------------------------
+*/
+void OpenValve(uint8_t valveNbr)
+{
+    switch(valveNbr)
+    {
+        case 1:
+          S_VALVE1_OPEN;
+          break;
+    }    
+}
+
+
+/*
+*|----------------------------------------------------------------------------
+*|  Routine: CloseValve
+*|  Description:
+*|  Retval:
+*|----------------------------------------------------------------------------
+*/
+void CloseValve(uint8_t valveNbr)
+{
+    switch(valveNbr)
+    {
+        case 1:
+          S_VALVE1_CLOSE;
+          break;
+    }    
+}
 
 /*
 *|----------------------------------------------------------------------------

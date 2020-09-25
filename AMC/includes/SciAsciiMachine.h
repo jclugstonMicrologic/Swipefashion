@@ -37,6 +37,8 @@ typedef enum
 BOOL SciAsciiReceiverInit(UINT8 sciPort,UINT32 baudRate,void (*pCallBack)(int, char *), void (*pAltCallBack)(int, char *));
 BOOL SciAsciiStartReceiver(void);
 
+void TestBluetoothComms(char *pBuf);
+
 #endif
 
 

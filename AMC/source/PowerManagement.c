@@ -6,20 +6,20 @@
 *
 * TARGET    
 *
-* TOOLS     IAR Embedded worbench for ARM v7.4
+* TOOLS     IAR Embedded worbench for ARM v8.20.2
 *
 * REVISION LOG
 *
 *******************************************************************************
-* Copyright (c) 2017, TRIG
-* Calgary, Alberta, Canada, www.webpage.ca
+* Copyright (c) 2020, MICROLOGIC
+* Calgary, Alberta, Canada, www.micrologic.ab.ca
 *******************************************************************************/
 
 
 /** Include Files *************************************************************/
 
 #include "PowerManagement.h"
-#include "GatewayConfig.h"
+#include "AmcConfig.h"
 
 #include "gpioHi.h"
 #include "rtcHi.h"
@@ -36,22 +36,22 @@ typedef struct
     
     UINT32 timer;
           
-}PWR_MANAGEMENT_STRUCT;
+}pwr_mgmt_t;
 
-PWR_MANAGEMENT_STRUCT PowerManagement;
+pwr_mgmt_t PowerManagement;
 
 /** Functions *****************************************************************/
 
 
 /*
 *|----------------------------------------------------------------------------
-*|  Routine: PowerManagementInit
+*|  Routine: PwrMgmt_Init
 *|  Description:
 *|  Arguments:
 *|  Retval:
 *|----------------------------------------------------------------------------
 */
-void PowerManagementInit(void)
+void PwrMgmt_Init(void)
 {
     memset( &PowerManagement, 0x00, sizeof(PowerManagement) );
 }
@@ -66,9 +66,9 @@ void PowerManagementInit(void)
 *|  Retval:
 *|----------------------------------------------------------------------------
 */
-void PowerManagementShutdown(void)
+void PwrMgmt_Shutdown(void)
 {
-    POWER_5V_OFF;    
+//    POWER_5V_OFF;    
 }
 
 #define STAY_AWAKE_TIME 5000 // 30 seconds???
@@ -81,9 +81,9 @@ void PowerManagementShutdown(void)
 *|  Retval:
 *|----------------------------------------------------------------------------
 */
-void PowerManagementStateProcess
+void PwrMgmt_StateProcess
 (
-    PWR_MANAGEMENT_STRUCT *structInfo,
+    pwr_mgmt_t *structInfo,
     PwrManagementStatesTypeEnum nextState
 )
 {
@@ -102,7 +102,7 @@ void PowerManagementStateProcess
 *|  Retval:
 *|----------------------------------------------------------------------------
 */
-PwrManagementStatesTypeEnum PowerManagementMachine(void)
+PwrManagementStatesTypeEnum PwrMgmt_Machine(void)
 {             
     TickType_t xTicks;
     
@@ -225,7 +225,7 @@ void PowerUpPeripheral( PwrDownModuleTyepEnum periph )
         case PWR_MLINK_MODULE:
             break;            
         case PWR_5V_REGULATOR:
-            POWER_5V_ON;
+//            POWER_5V_ON;
             break;
         case PWR_ALL_PERIPH:            
             /* typically each device is turned on in its own machine, so no
@@ -256,7 +256,7 @@ void PowerDownPeripheral( PwrDownModuleTyepEnum periph )
         case PWR_MLINK_MODULE:
             break;
         case PWR_5V_REGULATOR:
-            POWER_5V_OFF;
+            //POWER_5V_OFF;
             break;            
         case PWR_ALL_PERIPH:
             /* disable all peripherals, any device on the 3V/5V regulators

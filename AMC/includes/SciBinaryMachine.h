@@ -52,11 +52,11 @@
 
 #define MLINK_START_OF_HEADER_INFO   (UINT8)2
 
-BOOL SciBinaryReceiverInit(UINT8 sciPort,UINT32 baudRate, SCI_DATA_STRUCT *pDataCom, void (*pCallBack)(int, char *) );
+BOOL SciBinaryReceiverInit(UINT8 sciPort,UINT32 baudRate, sci_data_t *pDataCom, void (*pCallBack)(int, char *) );
 BOOL SciBinaryStartReceiver(void);
 void SciSendPacket(UINT8 sciPort, UINT16 cmd, UINT16 nbrBytes, char *pPayload);
 
-int MlinkBinaryRxMachine(SCI_DATA_STRUCT *pSerialData,char sciPort);
+int MlinkBinaryRxMachine(sci_data_t *pSerialData,char sciPort);
 void SendMlinkPacket(UINT8 sciPort, UINT16 cmd, UINT16 nbrBytes, char *pPayload);
 void SendMlinkAsciiPacket(UINT8 sciPort, UINT16 nbrBytes, char *pPayload);
 

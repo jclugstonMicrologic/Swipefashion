@@ -6,13 +6,13 @@
 *
 * TARGET    
 *
-* TOOLS     IAR Embedded worbench for ARM v7.4
+* TOOLS     IAR Embedded worbench for ARM v8.20.2
 *
 * REVISION LOG
 *
 *******************************************************************************
-* Copyright (c) 2019, TRIG
-* Calgary, Alberta, Canada, www.webpage.ca
+* Copyright (c) 2020, MICROLOGIC
+* Calgary, Alberta, Canada, www.micrologic.ab.ca
 *******************************************************************************/
 
 
@@ -28,15 +28,12 @@
 
 #include "rtcHi.h"
 
+#include "gpioHi.h"
+
 #include "dataFlashFd.h"
-#include "GatewayConfig.h"
+#include "AmcConfig.h"
 #include "LogMachine.h"
-#include "TLoadMachine.h"
 #include "MainControlTask.h"
-
-#include "MlinkMachine.h"
-
-#include "PlcMachine.h"
 
 char SerialTxBuffer[256]; /* transmit buffer */   
 
@@ -80,20 +77,21 @@ void PCProcessCommands
     RTC_TimeTypeDef RtcTimeStruct;  
     RTC_DateTypeDef RtcDateStruct; 
 
-    GW_CONFIG_STRUCT gwConfig;
-    GW_SETUP_STRUCT gwSetup;
+    AMC_CONFIG_STRUCT amcConfig;
+    AMC_SETUP_STRUCT amcSetup;
       
-    ADC_READINGS_STRUCT adcData;
+    adc_readings_t adcData;
     
-    GwLogsEnum logType =(GwLogsEnum)0; 
+    //GwLogsEnum logType =(GwLogsEnum)0; 
     
     //char txBuffer[256]; /* transmit buffer */   
     
-    UINT8 status =0;        
+    //UINT8 status =0;        
+    UINT8 valveNbr =0;
     UINT16 nbrTxBytes =0;
-    UINT32 flashMemoryAddr =0;     
+    //UINT32 flashMemoryAddr =0;     
     
-    ErrorStatus errStatus =SUCCESS;
+    //ErrorStatus errStatus =SUCCESS;
     
     /* skip over packet number, only needed for messages that are receiving 
        data from PC */
@@ -138,7 +136,7 @@ void PCProcessCommands
             RtcDateStruct.RTC_Date  = (*pRxBuf &0x0f)*10; *pRxBuf++;
             RtcDateStruct.RTC_Date += (*pRxBuf &0x0f);    *pRxBuf++;            
  
-            errStatus =RtcSetDate(RTC_Format_BIN, &RtcDateStruct);            
+            //errStatus =RtcSetDate(RTC_Format_BIN, &RtcDateStruct);            
 
             /* read back */
             memset(&RtcDateStruct, 0x00, sizeof(RtcDateStruct));
@@ -157,30 +155,24 @@ void PCProcessCommands
             RtcSetTime(RTC_Format_BIN, &RtcTimeStruct);                                   
             break;            
         case CMD_GW_GET_CONFIG:
-            GwGetConfig(&gwConfig);
+            AmcGetConfig(&amcConfig);
                          
-            memcpy(SerialTxBuffer, &gwConfig, sizeof(gwConfig));
+            memcpy(SerialTxBuffer, &amcConfig, sizeof(amcConfig));
             
-            nbrTxBytes =sizeof(gwConfig);            
+            nbrTxBytes =sizeof(amcConfig);            
             break;
         case CMD_GW_SET_CONFIG:
-            memcpy(&gwConfig, pRxBuf, sizeof(gwConfig));
-            
-            //gwConfig.crc =CrcCalc16( (unsigned char *)&gwConfig, sizeof(gwConfig)-sizeof(UINT16) );
-            GwWriteConfigToFlash(&gwConfig);
+            memcpy(&amcConfig, pRxBuf, sizeof(amcConfig));
             break;              
         case CMD_GW_GET_SETUP:
-            GwGetSetup(&gwSetup);
+            AmcGetSetup(&amcSetup);
                          
-            memcpy(SerialTxBuffer, &gwSetup, sizeof(gwSetup));
+            memcpy(SerialTxBuffer, &amcSetup, sizeof(amcSetup));
             
-            nbrTxBytes =sizeof(gwSetup);
+            nbrTxBytes =sizeof(amcSetup);
             break;
         case CMD_GW_SET_SETUP:
-            memcpy(&gwSetup, pRxBuf, sizeof(gwSetup));
-                    
-            //gwSetup.crc =CrcCalc16( (unsigned char *)&gwSetup, sizeof(gwSetup)-sizeof(UINT16) );
-            GwWriteSetupToFlash(&gwSetup);          
+            memcpy(&amcSetup, pRxBuf, sizeof(amcSetup));                   
             break;
         case CMD_GW_GET_ANALOG:
             AdcGetData(&adcData);
@@ -189,6 +181,14 @@ void PCProcessCommands
             
             nbrTxBytes =sizeof(adcData);            
             break;   
+        case CMD_OPEN_VALUE:
+            valveNbr  =*pRxBuf++;            
+            OpenValve(valveNbr);
+            break;
+        case CMD_CLOSE_VALUE:
+            valveNbr  =*pRxBuf++;
+            CloseValve(valveNbr);
+            break;            
         default:
             cmd =0x7fff;
             break;

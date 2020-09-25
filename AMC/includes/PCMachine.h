@@ -6,13 +6,13 @@
 *
 * TARGET    
 *
-* TOOLS     IAR Embedded worbench for ARM v7.4
+* TOOLS     IAR Embedded worbench for ARM v8.20.2
 *
 * REVISION LOG
 *
 *******************************************************************************
-* Copyright (c) 2017, TRIG
-* Calgary, Alberta, Canada, www.webpage.ca
+* Copyright (c) 2020, MICROLOGIC
+* Calgary, Alberta, Canada, www.micrologic.ab.ca
 *******************************************************************************/
 
 #ifndef PC_MACHINE_H
@@ -33,11 +33,6 @@
 #define CMD_GET_DEV_INFO                        0x0108
 #define CMD_GET_FW_VER                          0x0109
 
-/* commands for MLINK base to EP */
-#define CMD_EP_DATA                             0x0180
-#define CMD_EP_POLL                             0x0181
-
-#define CMD_GW_FW_UPDATE_LAST                   0x01ff
 
 /* PC application commands */
 #define CMD_GW_GET_FW_VERSION                   0x0200
@@ -58,13 +53,8 @@
 #define CMD_ERASE_ALL_LOG_MEMORY                0x020b
 #define CMD_GET_ERASE_STATUS                    0x020c
           
-#define CMD_GET_TLOAD_DATA                      0x020d
-#define CMD_GW_STOP_ALL_LOGS                    0x020e
-#define CMD_GW_START_ALL_LOGS                   0x020f
-
-#define CMD_GW_GET_MB_REGISTER                  0x0210
-
-#define CMD_GW_GET_MLINK_STATUS                 0x0211
+#define CMD_OPEN_VALUE                          0x020d
+#define CMD_CLOSE_VALUE                         0x020e
 
 #define CMD_GW_LAST                             0x02ff
 

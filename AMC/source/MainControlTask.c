@@ -24,10 +24,10 @@
 
 #include "wdtHi.h"
 #include "gpioHi.h"
-#include "dataFlashHi.h"
 
 #include "AdcFd.h"
 #include "PressureTdrHi.h"
+#include "BluetoothMachine.h"
    
 void MainControlTask(void * pvParameters);
 
@@ -77,24 +77,31 @@ void MainControlTask(void * pvParameters)
     TickType_t xNextWakeTime;
     xNextWakeTime = xTaskGetTickCount();
 
-    UINT32 pressure =0;
+    //UINT8 chipId;
     
   //  TickType_t delayTime = xTaskGetTickCount();    
 
+    /* !!! test !!! */
     S_VALVE1_OPEN;
+    S_VALVE4_OPEN;
+    S_VALVE7_OPEN;
     
     for( ;; )
     {      
         KickWdt();         
               
-        /* if wake up tasks are complete, power down modules, put micro to sleep */                     
         AdcMeasureReadings();
-                 
-        PressureTdrRead(0, 24, (UINT8 *)pressure);
+         
+        PressureTdr_Read(BMP3_PRESS_DATA_ADDR, 0, 3, (UINT8 *)PressureValue[0]);
+        PressureTdr_Read(BMP3_PRESS_DATA_ADDR, 8, 3, (UINT8 *)PressureValue[7]);
 
+        SciSendByte(SCI_PC_COM, 'H');
+        
         /* this delay allows lower priorty tasks to run */
         //vTaskDelay(1);
-   
+
+        BluetoothMachine();
+
         /* place this task in the blocked state until it is time to run again */
         vTaskDelayUntil( &xNextWakeTime, 1 );        
     }
