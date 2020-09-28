@@ -22,6 +22,10 @@
 #include "FreeRTOS.h"
 #include "timers.h"
 
+#include "string.h"
+#include "stdlib.h"
+#include "stdio.h"
+
 #include "wdtHi.h"
 #include "gpioHi.h"
 
@@ -76,31 +80,76 @@ void MainControlTask(void * pvParameters)
 {
     TickType_t xNextWakeTime;
     xNextWakeTime = xTaskGetTickCount();
+UINT32 loopCnt =0;
+char aStr[32];
+UINT8 valveState =0;
 
     //UINT8 chipId;
     
   //  TickType_t delayTime = xTaskGetTickCount();    
 
     /* !!! test !!! */
-    S_VALVE1_OPEN;
-    S_VALVE4_OPEN;
-    S_VALVE7_OPEN;
+    strcpy(aStr, "AMC v");
+    strcat(aStr, FW_VERSION);
+    strcat(aStr, "\r\n\r\n");
+     
+    SendString(aStr);
     
     for( ;; )
     {      
         KickWdt();         
               
-        AdcMeasureReadings();
-         
-        PressureTdr_Read(BMP3_PRESS_DATA_ADDR, 0, 3, (UINT8 *)PressureValue[0]);
-        PressureTdr_Read(BMP3_PRESS_DATA_ADDR, 8, 3, (UINT8 *)PressureValue[7]);
+   //     AdcMeasureReadings();
+                 
+        if( (loopCnt++ %1000) ==0 )
+        {
+            PressureTdr_ReadPT(0, &PressureValue[0], &TemperatureValue[0]);
+            PressureTdr_ReadPT(7, &PressureValue[7], &TemperatureValue[7]);                  
+            
+            memset(&aStr, 0x00,sizeof(aStr));
+            sprintf(aStr, "P1 %2.2fkPa T1 %2.1fdegC\n\r", PressureValue[0], TemperatureValue[0]);
+            SendString(aStr);
+            
+            memset(&aStr, 0x00,sizeof(aStr));
+            sprintf(aStr, "P7 %2.2fkPa T7 %2.1fdegC\r\n\r\n", PressureValue[7], TemperatureValue[7]);
+            SendString(aStr);
+        }
+   
+        if( valveState == 0)
+        {
+            if( !GPIO_ReadInputDataBit(USER_BTN_PORT, USER_BTN_PIN) )
+            {
+                OpenValve(1);      
+                valveState =1;
+            }
+        }
+        else if( valveState == 1)
+        {
+            if( GPIO_ReadInputDataBit(USER_BTN_PORT, USER_BTN_PIN) )
+            {
+                valveState =2;
+            }
+        }
+        else if( valveState == 2)
+        {
+            if( !GPIO_ReadInputDataBit(USER_BTN_PORT, USER_BTN_PIN) )
+            {
+                CloseValve(1); 
+                valveState =3;
+            }
+        }                
+        else if( valveState ==3)
+        {
+            if( GPIO_ReadInputDataBit(USER_BTN_PORT, USER_BTN_PIN) )
+            {
+                valveState =0;
+            }
+        }               
 
-        SciSendByte(SCI_PC_COM, 'H');
-        
         /* this delay allows lower priorty tasks to run */
         //vTaskDelay(1);
 
-        BluetoothMachine();
+       // BluetoothMachine();
 
         /* place this task in the blocked state until it is time to run again */
         vTaskDelayUntil( &xNextWakeTime, 1 );        

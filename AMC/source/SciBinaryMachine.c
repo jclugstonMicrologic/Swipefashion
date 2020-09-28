@@ -136,10 +136,15 @@ void SciBinaryTaskComx(void * pvParameters)
     TickType_t xNextWakeTime;
     xNextWakeTime = xTaskGetTickCount();
     
+//char SerialTxBuffer[16];
+
     for( ;; )
     {        
         SciBinaryRxMachine(&PcDataCom, SCI_PC_COM);
-                
+            
+        //SerialTxBuffer[0] ='H';
+        //SciSendPacket(SCI_PC_COM, 1, 1, SerialTxBuffer);     
+        
         /* place this task in the blocked state until it is time to run again */
         vTaskDelayUntil( &xNextWakeTime, 1 );         
     }

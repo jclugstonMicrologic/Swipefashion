@@ -22,6 +22,9 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32l4xx_gpio.h"
 
+#define USER_BTN_PIN          GPIO_Pin_13
+#define USER_BTN_PORT         GPIOC
+
 #define TP204_PIN             GPIO_Pin_7
 #define TP204_PORT            GPIOA
 
@@ -163,6 +166,9 @@
 #define S_VALVE6_CLOSE   GPIO_ResetBits(S_VALVE6_PORT, S_VALVE6_PIN)
 #define S_VALVE7_OPEN    GPIO_SetBits(S_VALVE7_PORT, S_VALVE7_PIN)
 #define S_VALVE7_CLOSE   GPIO_ResetBits(S_VALVE7_PORT, S_VALVE7_PIN)
+
+#define S_PULSE1_ON      GPIO_SetBits(S_PULSE1_PORT, S_PULSE1_PIN)
+#define S_PULSE1_OFF     GPIO_ResetBits(S_PULSE1_PORT, S_PULSE1_PIN)
 
 #define TST_PIN_ON       GPIO_SetBits(TST_PORT, TST_PIN)
 #define TST_PIN_OFF      GPIO_ResetBits(TST_PORT, TST_PIN)

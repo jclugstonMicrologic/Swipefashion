@@ -266,4 +266,11 @@ int SciAsciiRxMachine
     return status;   
 } 
 
-
+void SendString(char *pStr)
+{
+    for(int j=0; j<strlen(pStr); j++)
+    {
+        SciSendByte(SCI_PC_COM, pStr[j]);
+    }    
+      
+}

@@ -133,6 +133,7 @@ typedef enum
     
     SPI_PERIPHERAL7,    
     SPI_PERIPHERAL8,    
+    SPI_PERIPHERAL9,    
     
     SPI_PERIPHERAL_END
       

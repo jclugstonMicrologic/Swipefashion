@@ -22,6 +22,8 @@
 #include "FreeRTOS.h"
 #include "task.h"
 
+#include "sysTimers.h"
+
 /** Functions *****************************************************************/
 
 
@@ -39,8 +41,8 @@ void Gpio_Init
 {
     GPIO_InitTypeDef  GPIO_InitStructure;
  
-    NVIC_InitTypeDef NVIC_InitStructure;
-    EXTI_InitTypeDef EXTI_InitStructure;
+    //NVIC_InitTypeDef NVIC_InitStructure;
+    //EXTI_InitTypeDef EXTI_InitStructure;
   
     /* enable the GPIO Clock */
     RCC_AHB2PeriphClockCmd(RCC_AHB2Periph_GPIOA, ENABLE);
@@ -49,6 +51,14 @@ void Gpio_Init
     RCC_AHB2PeriphClockCmd(RCC_AHB2Periph_GPIOD, ENABLE); 
     RCC_AHB2PeriphClockCmd(RCC_AHB2Periph_GPIOE, ENABLE); 
 
+    PRESS_SENSOR1_NEGATE_CS;
+    PRESS_SENSOR2_NEGATE_CS;
+    PRESS_SENSOR3_NEGATE_CS;
+    PRESS_SENSOR4_NEGATE_CS;
+    PRESS_SENSOR5_NEGATE_CS;
+    PRESS_SENSOR6_NEGATE_CS;
+    PRESS_SENSOR7_NEGATE_CS;
+    PRESS_SENSOR8_NEGATE_CS;
      
     /* configure the following GPIO pins as outputs */
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
@@ -80,6 +90,7 @@ void Gpio_Init
     GPIO_InitStructure.GPIO_Pin = PRESS_SENSOR8_CS_PIN;
     GPIO_Init(PRESS_SENSOR8_CS_PORT, &GPIO_InitStructure);        
 
+    /* solenoid control */
     GPIO_InitStructure.GPIO_Pin = S_VALVE1_PIN;
     GPIO_Init(S_VALVE1_PORT, &GPIO_InitStructure);   
     GPIO_InitStructure.GPIO_Pin = S_VALVE2_PIN;
@@ -94,14 +105,34 @@ void Gpio_Init
     GPIO_Init(S_VALVE6_PORT, &GPIO_InitStructure);       
     GPIO_InitStructure.GPIO_Pin = S_VALVE7_PIN;
     GPIO_Init(S_VALVE7_PORT, &GPIO_InitStructure);       
+
+    GPIO_InitStructure.GPIO_Pin = S_PULSE1_PIN;
+    GPIO_Init(S_PULSE1_PORT, &GPIO_InitStructure);   
+    GPIO_InitStructure.GPIO_Pin = S_PULSE2_PIN;
+    GPIO_Init(S_PULSE2_PORT, &GPIO_InitStructure);   
+    GPIO_InitStructure.GPIO_Pin = S_PULSE3_PIN;
+    GPIO_Init(S_PULSE3_PORT, &GPIO_InitStructure);   
+    GPIO_InitStructure.GPIO_Pin = S_PULSE4_PIN;
+    GPIO_Init(S_PULSE4_PORT, &GPIO_InitStructure);   
+    GPIO_InitStructure.GPIO_Pin = S_PULSE5_PIN;
+    GPIO_Init(S_PULSE5_PORT, &GPIO_InitStructure);   
+    GPIO_InitStructure.GPIO_Pin = S_PULSE6_PIN;
+    GPIO_Init(S_PULSE6_PORT, &GPIO_InitStructure);       
+    GPIO_InitStructure.GPIO_Pin = S_PULSE7_PIN;
+    GPIO_Init(S_PULSE7_PORT, &GPIO_InitStructure);    
+    
     
     /* configure the following GPIO pins as inputs */
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
     GPIO_InitStructure.GPIO_OType = GPIO_OType_OD;
     GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_25MHz;  
-                
+
+    GPIO_InitStructure.GPIO_Pin =USER_BTN_PIN;
+    GPIO_Init(USER_BTN_PORT, &GPIO_InitStructure);    
     
+    
+#if 0
     GPIO_InitStructure.GPIO_Pin =GPIO_Pin_12;
     GPIO_Init(GPIOC, &GPIO_InitStructure);    
     GPIO_InitStructure.GPIO_Pin =GPIO_Pin_2;
@@ -136,6 +167,7 @@ void Gpio_Init
         
     GPIO_InitStructure.GPIO_Pin =GPIO_Pin_0;                                 
     GPIO_Init(GPIOB, &GPIO_InitStructure);		           
+#endif    
 }
 
 
@@ -262,6 +294,9 @@ void OpenValve(uint8_t valveNbr)
     {
         case 1:
           S_VALVE1_OPEN;
+          S_PULSE1_ON;                    
+          TimerDelayUs(12000);
+          S_PULSE1_OFF;                    
           break;
     }    
 }

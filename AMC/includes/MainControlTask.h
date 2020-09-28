@@ -6,12 +6,12 @@
 *
 * TARGET    
 *
-* TOOLS     IAR Embedded worbench for ARM v7.4
+* TOOLS     IAR Embedded worbench for ARM v8.20.2
 *
 * REVISION LOG
 *
 *******************************************************************************
-* Copyright (c) 2018, TRIG
+* Copyright (c) 2020, MICROLOGIC
 * Calgary, Alberta, Canada, www.transrailinnovation.ca
 *******************************************************************************/
 
@@ -20,7 +20,7 @@
 
 #include "types.h"
 
-#define FW_VERSION "0.01 " 
+#define FW_VERSION "0.00 Sept 27, 2020" 
 
 BOOL MainControlTaskInit(void);
 

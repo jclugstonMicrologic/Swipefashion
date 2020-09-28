@@ -133,18 +133,19 @@ void SpiDeviceInit(UINT8 periph)
     switch( periph )
     {
         case SPI_PERIPHERAL1:
-            SPI_I2S_DeInit(SPI1_PORT);
+        case SPI_PERIPHERAL8:
+            SPI_I2S_DeInit(SPI2_PORT);
             
             /* SPI Mode 3 */
             SPI_InitStructure.SPI_CPOL = SPI_CPOL_High;
-            SPI_InitStructure.SPI_CPHA = SPI_CPHA_2Edge;
+            SPI_InitStructure.SPI_CPHA =SPI_CPHA_2Edge;
             SPI_InitStructure.SPI_NSS = SPI_NSS_Soft;
-            SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_256;
+            SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_2;
             
-            SPI_Init(SPI1_PORT, &SPI_InitStructure);
+            SPI_Init(SPI2_PORT, &SPI_InitStructure);
             
              /* enable the SPI peripheral */
-            SPI_Cmd(SPI1_PORT, ENABLE);
+            SPI_Cmd(SPI2_PORT, ENABLE);
             break;
         case SPI_PERIPHERAL2:
         case SPI_PERIPHERAL3:          
@@ -191,6 +192,10 @@ void spiStart(UINT8 periph)
             /* assert cs */
             ASSERT_SPI_PERIPH4_CS;
             break;            
+        case SPI_PERIPHERAL8:
+            /* assert cs */
+            ASSERT_SPI_PERIPH8_CS;
+            break;             
     }
     
     TimerDelayUs(10);
@@ -225,6 +230,10 @@ void spiStop(UINT8 periph)
             /* neagte cs */
             NEGATE_SPI_PERIPH4_CS;
             break;            
+        case SPI_PERIPHERAL8:
+            /* neagte cs */
+            NEGATE_SPI_PERIPH8_CS;
+            break;                        
     }
     
     TimerDelayUs(10);  
