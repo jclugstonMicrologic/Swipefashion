@@ -51,9 +51,10 @@
             this.button3 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
             this.CounterBox = new System.Windows.Forms.GroupBox();
+            this.counterUpDown = new System.Windows.Forms.NumericUpDown();
             this.button7 = new System.Windows.Forms.Button();
             this.button8 = new System.Windows.Forms.Button();
-            this.counterUpDown = new System.Windows.Forms.NumericUpDown();
+            this.ComDescLbl = new System.Windows.Forms.Label();
             this.CommportBox.SuspendLayout();
             this.FpcParamBox.SuspendLayout();
             this.FpcGroupBox.SuspendLayout();
@@ -63,6 +64,7 @@
             // 
             // CommportBox
             // 
+            this.CommportBox.Controls.Add(this.ComDescLbl);
             this.CommportBox.Controls.Add(this.button2);
             this.CommportBox.Controls.Add(this.button1);
             this.CommportBox.Controls.Add(this.ComportBox);
@@ -290,6 +292,18 @@
             this.CounterBox.Text = "Counter";
             this.CounterBox.Visible = false;
             // 
+            // counterUpDown
+            // 
+            this.counterUpDown.Location = new System.Drawing.Point(20, 35);
+            this.counterUpDown.Maximum = new decimal(new int[] {
+            255,
+            0,
+            0,
+            0});
+            this.counterUpDown.Name = "counterUpDown";
+            this.counterUpDown.Size = new System.Drawing.Size(70, 20);
+            this.counterUpDown.TabIndex = 3;
+            // 
             // button7
             // 
             this.button7.DialogResult = System.Windows.Forms.DialogResult.Cancel;
@@ -311,17 +325,14 @@
             this.button8.UseVisualStyleBackColor = true;
             this.button8.Click += new System.EventHandler(this.button8_Click);
             // 
-            // counterUpDown
+            // ComDescLbl
             // 
-            this.counterUpDown.Location = new System.Drawing.Point(20, 35);
-            this.counterUpDown.Maximum = new decimal(new int[] {
-            255,
-            0,
-            0,
-            0});
-            this.counterUpDown.Name = "counterUpDown";
-            this.counterUpDown.Size = new System.Drawing.Size(70, 20);
-            this.counterUpDown.TabIndex = 3;
+            this.ComDescLbl.AutoSize = true;
+            this.ComDescLbl.Location = new System.Drawing.Point(27, 70);
+            this.ComDescLbl.Name = "ComDescLbl";
+            this.ComDescLbl.Size = new System.Drawing.Size(58, 13);
+            this.ComDescLbl.TabIndex = 38;
+            this.ComDescLbl.Text = "Comm Port";
             // 
             // PanelsFrm
             // 
@@ -333,6 +344,7 @@
             this.Controls.Add(this.CommportBox);
             this.Name = "PanelsFrm";
             this.CommportBox.ResumeLayout(false);
+            this.CommportBox.PerformLayout();
             this.FpcParamBox.ResumeLayout(false);
             this.FpcGroupBox.ResumeLayout(false);
             this.FpcGroupBox.PerformLayout();
@@ -370,5 +382,6 @@
         private System.Windows.Forms.NumericUpDown counterUpDown;
         private System.Windows.Forms.Button button7;
         private System.Windows.Forms.Button button8;
+        private System.Windows.Forms.Label ComDescLbl;
     }
 }

@@ -16,7 +16,43 @@ namespace ERRORCHECK
             return eplCrc;
         }
 
-        public int Xmodem_crc(int len, int seed, params byte[] ptr)
+        public UInt16 CrcCalc16(int numBytes, params byte[] ptr)
+        {
+            int i, j;
+            int x;
+            ushort crc, feed;
+
+            crc = 0;
+
+            for (j = 0; j < numBytes; j++)
+            {
+                feed = ptr[j];
+
+                for (i = 0; i < 8; i++)
+                {
+                    x = crc & 0x0001;
+                    crc = (ushort)(crc >> 1);
+
+                    if ((feed & 0x0001) != 0x0000)
+                    {
+                        crc = (ushort)(crc | 0x8000);
+                    }
+
+                    feed = (ushort)(feed >> 1);
+
+                    if (x != 0)
+                    {
+                        crc = (ushort)(crc ^0x1021);
+                    }
+                }
+            }
+
+            return crc;
+
+        }// end CRC16_calcCrc()
+    
+
+    public int Xmodem_crc(int len, int seed, params byte[] ptr)
         {
             int tblInitialized;
             int crcReg = 0;

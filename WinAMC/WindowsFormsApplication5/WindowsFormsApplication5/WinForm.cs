@@ -1,36 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using System.IO;
-using System.Net;
-using System.Net.Sockets;
 using System.Threading;
-using System.Net.Mail;
 
 using STRUCTARRAY;
 using ERRORCHECK;
 using FileHandling;
 using TcpClientServer;
-using EmailHandler;
 using SerialCom;
 
 using Gigasoft.ProEssentials.Enums;
 
 using System.Runtime.InteropServices; // required for DllImport( string, entrypoint )
 
-using System.Diagnostics;
 
 namespace WindowsFormsApplication5
 {
     enum SERIAL_COMMS
     {
        PORT =0,
-       BAUDRATE =57600 //115200
+       BAUDRATE =115200
     }
 
     enum PACKET
@@ -42,20 +32,17 @@ namespace WindowsFormsApplication5
 
         SIZEOF_HEADER = 0x04,
 
-        CMD_GET_FTC_SETUP = 0x2000,
+        MSG_ACK = 0x8000,
+
+        /* AMC commands */
+        CMD_GET_VERSION = 0x0200,
+        CMD_OPEN_VALVE  =0x020d,
+        CMD_CLOSE_VALVE =0x020e,
+        CMD_GET_PRESS  =0x020f,
+        CMD_GET_BRD_ID =0x0210,
+
         CMD_SET_FTC_SETUP = 0x2001,
-        CMD_GET_MOTOR_DATA =0x2002,
-        CMD_GET_FTC_OP   =0x2003,
-        CMD_CLEAR_PULSER_OP = 0x2004,
-        CMD_GET_ANALOGS = 0x2005,
-        CMD_START_MOTOR =0x2006,
-        CMD_GET_FTC_LOG = 0x2007,
-        CMD_CLEAR_LOG = 0x2008,
-        CMD_RESTART =0x2009,
-        CMD_RESET = 0x200A,
-
-        CMD_GET_VERSION = 0x2FFF,
-
+        CMD_RESET = 0x200A,        
     }
 
     enum CRC
@@ -76,45 +63,37 @@ namespace WindowsFormsApplication5
 
             AboutBox1 aboutBox = new AboutBox1();
 
-            this.Text = String.Format("WinMAN {0}", String.Format(" v{0}", aboutBox.AssemblyVersion));
+            this.Text = String.Format("WinAMC {0}", String.Format(" v{0}", aboutBox.AssemblyVersion));
 
-            DeployComboBox.SelectedIndex = -1;
         }
 
         [DllImport("UsbComms.dll", EntryPoint = "OpenUsbPort")]
         public static extern bool OpenUsbPort();
-
-        cServer tcpServer =new cServer();
-        cClient tcpClient = new cClient();
 
         public SerialFd serialFd = new SerialFd();
 
         public byte[] Payload = new byte[2000];
         public uint PayloadSize;
 
-        string server = null;
-        int port = (int)CLIENTS.PORT;
-        int EmailCounter =0;
-        int NbrEmails = 0;
-        int MaxRecords = 7;
+        //string server = null;
+        //int port = (int)CLIENTS.PORT;
 
         public int PanelSelect = 0;
 
-        public struct MAN_OP
+        int dataPt = 0;
+
+        public struct AMC_OP
         {
-            public byte ballCount;
+            public byte ioStates;
             public byte machState;
 
             public UInt16 vBatt;
             public UInt16 iBatt;
 
-            public byte ioStates;
-            public byte pulseCnt;
-
-            public UInt32 timeStamp;
-            public UInt32 timeOfTravel;
+            public UInt32 spare1;
+            public UInt32 spare2;
    
- //           public UInt16 crc;
+            public UInt16 crc;
         }
 
         public struct ANALOGS
@@ -123,36 +102,25 @@ namespace WindowsFormsApplication5
             public UInt16 iBatt;
             public UInt16 spareA2;
             public UInt16 spareA3;
-            public UInt16 spareA4;
-            public UInt16 accelCal;
-            public UInt16 accelY;
-            public UInt16 accelX;
         }
 
-        public struct MAN_SETUP
+        public struct AMC_SETUP
         {
             public byte setPoint;
             public byte deploy;
             public byte seqTime;
             public byte temp;
-            public UInt32 maxTravTime;
 
             public UInt32 pcTimeStamp;
-
-            public UInt16 deployWaitState;
 
             public UInt16 logAddr;
 
             public byte detailedLog;
 
-            public byte externalEeprom;
-
             public byte setupInfo; //bit0 trigger on both switches or only one 
 
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 18)]
             public byte[] spare;
-
-            public byte presSec;
 
             public UInt16 crc;
         }
@@ -163,18 +131,26 @@ namespace WindowsFormsApplication5
             public float relativeAngle;
         }
 
-        public MAN_OP FtcOp = new MAN_OP();
+        public AMC_OP AmcOp = new AMC_OP();
         public ANALOGS Analogs = new ANALOGS();
-        public MAN_SETUP FtcSetup = new MAN_SETUP();
+        public AMC_SETUP AmcSetup = new AMC_SETUP();
         public MOTOR_DATA MotorData = new MOTOR_DATA();
                 
         public UInt16 Counter =0;
         public UInt16 DownloadStart = 0;
         public UInt16 EraseCnt = 0;
-        public byte MotorRequest = 0;
-        public UInt32 PrevFtcTimeStamp = 0;
-        public UInt16 PrevBallCount = 0;
-        public UInt16 TooFastBallCount = 0;
+
+        public byte ValveNbr = 0;
+        public float Pressure = 0;
+
+        public struct P_SENSOR_DATA
+        {
+            public float press;
+            public float temp;
+        }
+        public P_SENSOR_DATA[] PSensorData = new P_SENSOR_DATA[8];
+
+        int BoardId = 0;
 
         private void InitDataGrid()
         {
@@ -196,7 +172,7 @@ namespace WindowsFormsApplication5
             // create the rows
             for (int i = 1; i < 7; i++)
             {
-                dataGridView.Rows.Add("Parameter " + i.ToString(), "", "", "");
+                dataGridView.Rows.Add("Target P" + i.ToString(), "", "", "");
             }
 
             dataGridView.Columns[0].HeaderText = "Setup";
@@ -214,6 +190,217 @@ revolutions required
 ◦ Amperage threshold for the end of the extension phase to limit force exerted in a
 dead-end-stop position*/
         }
+
+        private void InitProfileGrid()
+        {
+            ProfileGridView.Width = 240;
+            ProfileGridView.Height = 180;
+            ProfileGridView.Left = 10;
+            ProfileGridView.Top = 20;
+
+            ProfileGridView.ColumnCount = 1;
+            ProfileGridView.ColumnHeadersVisible = true;
+            ProfileGridView.RowHeadersVisible = true;
+
+            ProfileGridView.Columns[0].Width = 80;
+            //ProfileGridView.Columns[1].Width = 80;
+
+            /* create the rows */
+            for (int i = 1; i < 8; i++)
+            {
+     //           ProfileGridView.Rows.Add("Parameter " + i.ToString(), "", "", "");
+                ProfileGridView.Rows.Add("","", "");
+                ProfileGridView.Rows[i-1].HeaderCell.Value = "Target P" + i.ToString();
+            }
+
+            ProfileGridView.Columns[0].HeaderText = "Press(psi)";
+            //ProfileGridView.Columns[1].HeaderText = "Value";
+
+            ProfileGridView.Visible = true;
+            //dataGridView.Rows[0].HeaderCell.Value = "1";
+
+        }
+
+        private void InitControllerGrid()
+        {
+            ControllerGridView.Width = 420;
+            ControllerGridView.Height = 240;
+            ControllerGridView.Left = 15;
+            ControllerGridView.Top = 20;
+
+            ControllerGridView.ColumnCount = 4;
+            ControllerGridView.ColumnHeadersVisible = true;
+            ControllerGridView.RowHeadersVisible = true;
+            ControllerGridView.RowHeadersWidth = 60;
+
+            ControllerGridView.Columns[0].Width = 80;
+            ControllerGridView.Columns[1].Width = 80;
+            ControllerGridView.Columns[2].Width = 80;
+            ControllerGridView.Columns[3].Width = 80;
+
+            /* create the rows */
+            for (int i = 1; i < 9; i++)
+            {
+                ControllerGridView.Rows.Add("", "", "");
+                ControllerGridView.Rows[i - 1].HeaderCell.Value = "S" + i.ToString();
+            }
+
+            ControllerGridView.Columns[0].HeaderText = "Press (psi)";
+            ControllerGridView.Columns[1].HeaderText = "Temp (DegC)";
+            ControllerGridView.Columns[2].HeaderText = "Target (psi)";
+            ControllerGridView.Columns[3].HeaderText = "Delta P (psi)";
+
+
+            ControllerGridView.Visible = true;
+        }
+
+        private void InitGenericPlot(Gigasoft.ProEssentials.Pesgo pePlot, string title_,          string xaxisLbl_,                    string yaxisLbl_            )
+        {
+            pePlot.PeFunction.Reset();
+
+            //pePlot.PeGrid.GridBands = false;
+
+            pePlot.PeConfigure.PrepareImages = true;
+            pePlot.Left = 620;// 20;
+            pePlot.Top = 25;// 490;
+            pePlot.Width = 610;// 600;
+            pePlot.Height = 375;
+            // PESGraph.BringToFront();
+
+            pePlot.PeData.Subsets = 2;
+            pePlot.PeData.Points = 1000;
+
+            pePlot.PeString.SubsetLabels[0] = "G Vol";// "Range";
+            pePlot.PeString.SubsetLabels[1] = "G Heel";
+            //        pePlot.PeString.SubsetLabels[2] = "";
+
+            pePlot.PeString.YAxisLabel = "Liters";
+            pePlot.PeGrid.Configure.ManualMinY = 0;
+            pePlot.PeGrid.Configure.ManualMaxY = 10000;
+
+            pePlot.PeLegend.SubsetColors[0] = System.Drawing.Color.DarkBlue;
+            pePlot.PeLegend.SubsetLineTypes[0] = LineType.MediumSolid;
+
+            pePlot.PeLegend.SubsetColors[1] = System.Drawing.Color.Red;
+            pePlot.PeLegend.SubsetLineTypes[1] = LineType.ThinSolid;
+
+            // Set Manual Y scale
+            //pePlot.PeGrid.Configure.ManualScaleControlY = ManualScaleControl.MinMax;
+
+            pePlot.PeLegend.SubsetColors[2] = System.Drawing.Color.Red;
+            pePlot.PeLegend.SubsetLineTypes[2] = LineType.ThickSolid;
+
+
+            pePlot.PeString.MainTitle = title_;
+            pePlot.PeString.SubTitle = "";
+
+            // Set Manual X scale
+            pePlot.PeGrid.Configure.ManualScaleControlX = ManualScaleControl.MinMax;
+            pePlot.PeGrid.Configure.ManualMinX = 0;// DateTime.Now.ToOADate();
+            pePlot.PeGrid.Configure.ManualMaxX = pePlot.PeData.Points;// FluidLevelStripChart.PeGrid.Configure.ManualMinX + 0.021;// 0.0035;
+
+            // Enable Bar Glass Effect 
+            //pePlot.PePlot.Option.BarGlassEffect = true;
+
+            // Set X scale label stuff bottom
+            // PESGraph.XAxisOnTop =false;
+            pePlot.PeAnnotation.Line.XAxisColor[0] = System.Drawing.Color.Red;
+            pePlot.PeString.XAxisLabel = "Data Point";
+
+            pePlot.PePlot.MarkDataPoints = false;
+            pePlot.Visible = true;
+
+            // enable double precision which is usually 
+            // required for date time handling 
+            // This means we pass x data to XDataII
+            pePlot.PeData.UsingXDataii = false;
+
+            pePlot.PeUserInterface.Cursor.PromptTracking = true;
+            pePlot.PeUserInterface.Cursor.PromptStyle = CursorPromptStyle.XYValues;
+            pePlot.PeUserInterface.Menu.MultiAxisStyle = MenuControl.Show;
+
+            pePlot.PeUserInterface.Allow.Zooming = AllowZooming.HorzAndVert;
+            pePlot.PeUserInterface.Allow.ZoomStyle = ZoomStyle.Ro2Not;
+
+            pePlot.PePlot.Option.GradientBars = 12;
+
+            pePlot.PeColor.BitmapGradientMode = false;
+            pePlot.PeColor.QuickStyle = QuickStyle.LightInset;
+            pePlot.PeLegend.Style = LegendStyle.OneLineTopOfAxis;
+            pePlot.PeUserInterface.Menu.ShowLegend = MenuControl.Show;
+            pePlot.PeUserInterface.Menu.LegendLocation = MenuControl.Show;
+
+            pePlot.PeFont.FontSize = FontSize.Large;
+
+            pePlot.PeLegend.SimplePoint = true;
+            pePlot.PeLegend.SimpleLine = true;
+            pePlot.PeLegend.Style = LegendStyle.OneLineInsideOverlap;
+
+            //    FuelLevelStripChart.PeColor.GraphForeground = Color.FromArgb(50, 0, 0, 0);
+            pePlot.PeGrid.LineControl = GridLineControl.Both;
+            pePlot.PeGrid.Style = GridStyle.Dot;
+            pePlot.PeConfigure.BorderTypes = TABorder.SingleLine;
+
+            pePlot.PeData.NullDataValueX = 0;
+
+            pePlot.PeUserInterface.HotSpot.Data = false;
+            pePlot.PeUserInterface.HotSpot.Size = HotSpotSize.Large;
+
+            // Improves Metafile Export 
+            pePlot.PeSpecial.DpiX = 600;
+            pePlot.PeSpecial.DpiY = 600;
+
+            pePlot.PeData.DateTimeMode = false;
+
+            for (int j = 0; j < 10; j++)
+            {
+                pePlot.PeData.X[0, j] = j;
+                pePlot.PeData.Y[0, j] = 0;
+
+                pePlot.PeData.X[1, j] = j;
+                pePlot.PeData.Y[1, j] = 0;
+
+                pePlot.PeData.X[1, j] = j;
+                pePlot.PeData.Y[1, j] = 0;
+            }
+
+            pePlot.PeColor.Desk = System.Drawing.Color.WhiteSmoke;
+            pePlot.PeColor.GraphBackground = System.Drawing.Color.White;
+
+            // Update image and force paint 
+            pePlot.PeFunction.ReinitializeResetImage();
+            pePlot.Refresh();
+        }
+
+        
+        private void UpdateGenericPlot(Gigasoft.ProEssentials.Pesgo pePlot, float fluidLvl, float fluidMass, float temperature)
+        {
+            float[] newY = new float[3];
+            float[] newX = new float[3];
+
+            newY[0] = fluidLvl;
+            newY[1] = fluidMass;
+            newY[2] = temperature;
+
+            // New y value and x value
+            newX[0] = dataPt;// DateTime.Now.ToOADate();
+            newX[1] = newX[0];
+            newX[2] = newX[0];
+
+            Gigasoft.ProEssentials.Api.PEvset(pePlot.PeSpecial.HObject, Gigasoft.ProEssentials.DllProperties.AppendYData, newY, 1);
+            Gigasoft.ProEssentials.Api.PEvset(pePlot.PeSpecial.HObject, Gigasoft.ProEssentials.DllProperties.AppendXData, newX, 1);
+            
+            dataPt++;
+
+            if (dataPt == pePlot.PeData.Points)
+                pePlot.PeGrid.Configure.ManualScaleControlX = ManualScaleControl.None;
+
+
+            // Update image and force paint 
+            pePlot.PeFunction.ReinitializeResetImage();
+            pePlot.Refresh();
+        }
+        
 
         private void InitDownloadGrid()
         {
@@ -265,116 +452,10 @@ dead-end-stop position*/
         }
 
 
-        private void FileHandleBtn_Click(object sender, EventArgs e)
-        {
-            openFileDialog1.Filter = "text Files (*.txt)|*.txt";
-            openFileDialog1.FileName = "";
-
-            openFileDialog1.Title = "File1";
-
-            if (openFileDialog1.ShowDialog() != System.Windows.Forms.DialogResult.OK)
-            {
-                // user has canceled save
-                return;
-            }
-
-            FileStream fs;
-            byte[] dataArray = new byte[100];
-            for (int i = 0; i < dataArray.Length; i++)
-            {
-                dataArray[i] = (byte)i;
-            }
-
-            cFileHandle fhandle = new cFileHandle();
-
-            fhandle.Open(openFileDialog1.FileName, out fs);
-            fhandle.Write(fs, dataArray.Length, dataArray);
-
-            System.Text.ASCIIEncoding encoding = new System.Text.ASCIIEncoding();
-            string theString = "hello";
-            dataArray = encoding.GetBytes(theString);
-
-            fhandle.Write(fs, dataArray.Length, dataArray);
-            fhandle.Read(fs, dataArray.Length, dataArray);
-            fhandle.Close(fs);
-
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            int myValue = 0;
-            Class1 theClass = new Class1();
-            theClass.setValue(2);
-            theClass.getValue(out myValue);
-        }
-
-        private void InitBasicGraph
-        (
-           string title_,
-           string xaxisLbl_,
-           string yaxisLbl_
-        )
-        {
-/*
-           PEGraph.PeFunction.Reset(); 
-           PEGraph.PeConfigure.PrepareImages = true;
-           PEGraph.Left =100;
-           PEGraph.Top =29;
-           PEGraph.Width =550;
-           PEGraph.Height =325;
-//           PEGraph.BringToFront();
-
-           PEGraph.PeData.Subsets = 2;
-           PEGraph.PeData.Points =1000;
-
-           PEGraph.PeString.MainTitle = title_;
-           PEGraph.PeString.SubTitle = "";
-
-           // Set X scale label stuff bottom
-//           PEGraph.XAxisOnTop =false;
-           PEGraph.PeAnnotation.Line.XAxisColor[0] = System.Drawing.Color.Red;
-           PEGraph.PeString.XAxisLabel = xaxisLbl_;
-           
-           // Set Manual X scale bottom
-//           PEGraph.PeGrid.Configure.XAxisScaleControl = Gigasoft.ProEssentials.Enums.ScaleControl.Linear;
-//           PEGraph.PeGrid.Configure.ManualScaleControlX = ManualScaleControl.MinMax;
-
-           // Set Manual Y scale
-           PEGraph.PeGrid.Configure.ManualScaleControlY = ManualScaleControl.MinMax;
-           PEGraph.PeGrid.Configure.ManualMaxY =4000;
-           PEGraph.PeGrid.Configure.ManualMinY =0;
-           PEGraph.PeString.YAxisLabel = yaxisLbl_;
-           PEGraph.PeAnnotation.Line.YAxisColor[0] =System.Drawing.Color.Black;
-
-           PEGraph.PeUserInterface.Allow.Zooming = AllowZooming.HorzAndVert;
-
-           PEGraph.PePlot.MarkDataPoints =true;
-           PEGraph.PePlot.Method = GraphPlottingMethod.Line;
-           PEGraph.Visible =true;
-
-           for (int i =0; i < 10; i++)
-           {
-               PEGraph.PeData.Y[0, i] = 0;
-               PEGraph.PeData.Y[1, i] = 0;
-           }
-
-           for (int i =0; i <10; i++)
-           {
-              PEGraph.PeData.Y[0, i] =i+1;
-           }
-           for (Int32 i = 0; i <100; i++)
-           {
-               PEGraph.PeData.Y[1, i] = 5*(float)(System.Math.Sin(i / 10.0) + System.Math.Sin(3 * i / 10.0)/3);
-           }
-
-           PEGraph.PeFunction.ReinitializeResetImage();
-*/
-        }
-
         private void Form1_Load(object sender, EventArgs e)
         {
-            this.Width = 515;
-            this.Height = 595;
+            this.Width = 650;
+            this.Height = 700;
 
             InitDataGrid();
 
@@ -383,7 +464,7 @@ dead-end-stop position*/
             MainPanel.Top = 40;
             MainPanel.Left = 10;
             MainPanel.Width = 770;
-            MainPanel.Height = 520;
+            MainPanel.Height = 600;
 
             DiagnosticPnl.Top = MainPanel.Top;
             DiagnosticPnl.Left = MainPanel.Left;
@@ -400,42 +481,6 @@ dead-end-stop position*/
             CommSelectPnl.Top = 10;
             CommSelectPnl.Left =80;
 
-            /*
-            for (int j = 1; j < 32; j++)
-            {
-                String aStr;
-                String result;
-                int findStr;
-
-                aStr = "COM" + j.ToString();
-
-                result = serialFd.OpenPort((int)SERIAL_COMMS.PORT, (int)SERIAL_COMMS.BAUDRATE, aStr);
-                findStr = result.IndexOf("Access to the port");
-
-                if (result == "OK" ||
-                   findStr != -1
-                  )
-                {
-                    CommportComboBox.Items.Add(aStr);
-                }
-            }
-            try
-            {
-                CommportComboBox.SelectedIndex = 0;
-            }
-            catch (Exception ex)
-            {
-                    MessageBox.Show("No Serial Ports Were Found",
-                                    "Serial",
-                                    MessageBoxButtons.OK,
-                                    MessageBoxIcon.Warning
-                                   );
-     
-
-            }
-     */
-
-   //         InitBasicGraph("BLDC Motor", "Time", "Speed");
 
             Sw1TextBox.BackColor = System.Drawing.Color.LightGray;
             Sw2TextBox.BackColor = System.Drawing.Color.LightGray;
@@ -444,12 +489,21 @@ dead-end-stop position*/
             CommTextBox.BackColor = System.Drawing.Color.LightGray;
             EncTextBox.BackColor = System.Drawing.Color.LightGray;
             SuTextBox.BackColor = System.Drawing.Color.LightGray;
-            SlTextBox.BackColor = System.Drawing.Color.LightGray;
+            
+
+            InitProfileGrid();
+            InitControllerGrid();
+            //InitGenericPlot(GenericPlot, "1", "2", "3");
 
             PanelSelect = (int)SET_COMMANDS.SET_COMMPORT;
 
             PanelsFrm panelsForm = new PanelsFrm(this);
             panelsForm.ShowDialog();
+
+            if(!panelsForm.GetCommStatus())
+            {
+                FtcStatusStrip.Items[0].Text = "Disconnected";
+            }
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -519,9 +573,7 @@ dead-end-stop position*/
 
         private void button4_Click(object sender, EventArgs e)
         {
-           button4.Enabled = false;
-
-           tcpServer.StartServerSocket();
+           button4.Enabled = false;           
 
            Thread ctThread = new Thread(clientChat);            
            ctThread.Start();
@@ -557,195 +609,73 @@ dead-end-stop position*/
         {
            uint nbrBytesRx = 0;
            uint response = 0;
+           byte sw1State = 0;
+           byte sw2State = 0;
+           byte sw3State = 0;
+           byte sw4State = 0;
+           byte commState = 0;
+           byte encState = 0;
+
+           float vBatt, iBatt;
+           float delatP = 0.0F;
 
            while (true)
            {
-              byte[] rxBuffer = new byte[1056];
-              byte sw1State = 0;
-              byte sw2State = 0;
-              byte sw3State = 0;
-              byte sw4State = 0;
-              byte commState = 0;
-              byte encState = 0;
-              byte stuckSwitchUpper = 0;
-              byte stuckSwitchLower = 0;
-              
-              float vBatt, iBatt;
+               byte[] rxBuffer = new byte[1056];
 
-              nbrBytesRx = serialFd.ReceiveMessage(0, 100, rxBuffer);
+               nbrBytesRx = serialFd.ReceiveMessage(0, 100, rxBuffer);
 
-              if (nbrBytesRx != 0)
-              {
-                  SerialMonitorTimer.Enabled = false;
+               if (nbrBytesRx != 0)
+               {
+                   SerialMonitorTimer.Enabled = false;
 
 //                  RxListBox.Items.Add(rxBuffer[0].ToString("x") );
 
-                  if (ParseMessage(out response, nbrBytesRx, rxBuffer))
-                  {                     
-                     switch(response)
-                     {
-                         case (int)PACKET.CMD_GET_FTC_SETUP:
-                             if (FtcSetup.crc != 0x5aa5)
-                             {
-                                 MessageBox.Show("FTC Setup parameter error",
-                                                 "FTC Communications",
-                                                 MessageBoxButtons.OK,
-                                                 MessageBoxIcon.Error
-                                                );
-                             }
-                             if (FtcSetup.deploy == 0xff)
-                             {
-                                 MessageBox.Show("FTC Setup Erased",
-                                                 "FTC Erased",
-                                                  MessageBoxButtons.OK,
-                                                  MessageBoxIcon.Warning
-                                                );
+                   if (ParseMessage(out response, nbrBytesRx, rxBuffer))
+                   {                     
+                        switch(response)
+                        { 
+                            case (int)PACKET.CMD_GET_PRESS:                               
+                                ValveNbr =0;
 
-                                 TriggerTextBox.Text ="0";
-                                 DeployTextBox.Text = "0";
-                                 DeployDelayTime.Text = "0";
+                                for (int j = 0; j < 8; j++)
+                                {
+                                    delatP =(float)(PSensorData[j].press - PSensorData[7].press) / (float)6.89476;
 
-                                 DeployComboBox.SelectedIndex = 1;
-                                 LogTypeComboBox.SelectedIndex = 0;
-                             }
-                             else
-                             {
-                                 TriggerTextBox.Text = FtcSetup.setPoint.ToString();
-                                 DeployTextBox.Text = FtcSetup.deploy.ToString();
-                                 DeployDelayTime.Text =FtcSetup.deployWaitState.ToString(); // FtcSetup.maxTravTime.ToString();
+                                    if (PSensorData[j].press != -1)
+                                    {
+                                        ControllerGridView[0, j].Value = (PSensorData[j].press / 6.89476).ToString("0.000");
+                                        ControllerGridView[1, j].Value = (PSensorData[j].temp).ToString("0.0");
 
-                                 DeployComboBox.SelectedIndex = FtcSetup.deploy;
-                                 LogTypeComboBox.SelectedIndex = FtcSetup.detailedLog;
-                                 SwitchTriggerComboBox.SelectedIndex = (FtcSetup.setupInfo &0x01);
-                             }
+                                        ControllerGridView[3, j].Value = delatP.ToString("0.000");
 
-                             if (FtcSetup.externalEeprom == 1)
-                             {
-                                MaxRecords = 64;
-                                label27.Text = "     Extended EEPROM";
-                             }
-                             else
-                             {
-                                MaxRecords = 7;
-                                label27.Text = "     Standard EEPROM";
-                             }
-                             
-                             break;
-                         case (int)PACKET.CMD_SET_FTC_SETUP:
-         
-                             MessageBox.Show("FTC Setup Successfully for\n\n              "+ DeployComboBox.Text,
-                                             "FTC Communications",
-                                              MessageBoxButtons.OK                                            
-                                            );
-                             break;
-                         case (int)PACKET.CMD_GET_FTC_OP:
-                             sw1State = (byte)((FtcOp.ioStates & 0x01));
-                             sw2State = (byte)((FtcOp.ioStates & 0x02) >> 1);
-                             sw3State = (byte)((FtcOp.ioStates & 0x04) >> 2);
-                             sw4State = (byte)((FtcOp.ioStates & 0x08) >> 3);
-                             commState =(byte)((FtcOp.ioStates & 0x10) >> 4);
-                             encState = (byte)((FtcOp.ioStates & 0x20) >> 5);
+                                        try
+                                        {
+                                            if (delatP >= Convert.ToSingle(ControllerGridView[2, j].Value))
+                                                ValveNbr |= (byte)(0x01 << j);
+                                        }
+                                        catch (Exception ex){ }
+                                    }
+                                    else
+                                    {
+                                        ControllerGridView[0, j].Value = "FAULT";
+                                        ControllerGridView[1, j].Value = "FAULT";
 
-                             stuckSwitchUpper = (byte)((FtcOp.ioStates & 0x40) >> 6);
-                             stuckSwitchLower = (byte)((FtcOp.ioStates & 0x80) >> 7);
-                             
-                             vBatt = (float)(((float)FtcOp.vBatt) / 1024 * 3.3 * 6);
-                             iBatt = (float)(((float)FtcOp.iBatt) / 1024 * 3.3 /5.53)/(float)0.05;
+                                        ControllerGridView[3, j].Value = "FAULT";
+                                    }
+                                }
 
-                             VBattTextBox.Text = vBatt.ToString("0.00");
-                             IBattTextBox.Text = iBatt.ToString("0.00");
-                             BallCntTextBox.Text = FtcOp.ballCount.ToString();
-                             PulseCntTextBox.Text = FtcOp.pulseCnt.ToString();
-
-                             if (sw1State == 1)
-                                 Sw1TextBox.BackColor = System.Drawing.Color.DarkGreen; //sw1State.ToString();
-                             else
-                                 Sw1TextBox.BackColor = System.Drawing.Color.LightGray;
-
-                             if (sw2State == 1)
-                                 Sw2TextBox.BackColor = System.Drawing.Color.DarkGreen; //sw1State.ToString();
-                             else
-                                 Sw2TextBox.BackColor = System.Drawing.Color.LightGray;
-
-                             if (sw3State == 1)
-                                 Sw3TextBox.BackColor = System.Drawing.Color.DarkGreen; //sw1State.ToString();
-                             else
-                                 Sw3TextBox.BackColor = System.Drawing.Color.LightGray;
-
-                             if (sw4State == 1)
-                                 Sw4TextBox.BackColor = System.Drawing.Color.DarkGreen; //sw1State.ToString();
-                             else
-                                 Sw4TextBox.BackColor = System.Drawing.Color.LightGray;
-
-                             if (commState == 1)
-                                 CommTextBox.BackColor = System.Drawing.Color.DarkGreen; //sw1State.ToString();
-                             else
-                                 CommTextBox.BackColor = System.Drawing.Color.LightGray;
-
-                             if (encState == 1)
-                                 EncTextBox.BackColor = System.Drawing.Color.DarkGreen; //sw1State.ToString();
-                             else
-                                 EncTextBox.BackColor = System.Drawing.Color.LightGray;
-
-                             if(stuckSwitchUpper ==1)
-                                SuTextBox.BackColor = System.Drawing.Color.DarkGreen;
-                             else
-                                SuTextBox.BackColor = System.Drawing.Color.LightGray;
-
-                             if (stuckSwitchLower == 1)
-                                 SlTextBox.BackColor = System.Drawing.Color.DarkGreen;
-                             else
-                                 SlTextBox.BackColor = System.Drawing.Color.LightGray;
-
-                             switch (FtcOp.machState)
-                             { 
-                                 case 4:
-                                     FtcMachState.Text = "Ball Monitor State";
-                                     break;
-                                 case 5:
-                                     FtcMachState.Text = "1 upper switch triggered, waiting for other";
-                                     break;
-                                 case 6:
-                                     FtcMachState.Text = "1 lower switch triggered, waiting for other";
-                                     break;
-                                 case 7:
-                                     FtcMachState.Text = "Upper switches triggered, waiting for lower";
-                                     break;
-                                 case 8:
-                                     FtcMachState.Text = "Lower switches triggered, waiting for upper";
-                                     break;
-                                 case 10:
-                                     FtcMachState.Text = "Ball Count complete";
-                                     break;
-                                 case 11:
-                                     FtcMachState.Text = "Ball Fail State";
-                                     break;
-                                 case 13:
-                                     FtcMachState.Text = "Debouncing State";
-                                     break;
-                                 default:
-                                     FtcMachState.Text = FtcOp.machState.ToString();
-                                     break;
-                             }
-
-                             FtcMachState.Text +=" (" + FtcOp.machState.ToString() + ")";
-                             
-                             break;
-                         case (int)PACKET.CMD_GET_ANALOGS:
-                             VBattTextBox.Text = Analogs.vBatt.ToString();
-                             IBattTextBox.Text = Analogs.iBatt.ToString();
-                             break;  
-                         case (int)PACKET.CMD_GET_MOTOR_DATA:                             
-                             break;
-                         case (int)PACKET.CMD_GET_VERSION:
-                             FwVersionLbl.Text = "FTC: " + System.Text.Encoding.ASCII.GetString(Payload);
-
-                                //                             FpcGroupBox.Text = "FPC: " + System.Text.Encoding.ASCII.GetString(Payload);
-                                //                             MessageBox.Show("FW Version: " + System.Text.Encoding.ASCII.GetString(Payload),
-                                //                                           "FPC Packet",
-                                //                                         MessageBoxButtons.OK                                            
-                                //                                      );
+                                if(ValveNbr !=0)
+                                    BuildSerialMessage((int)PACKET.CMD_CLOSE_VALVE);
                                 break;
+                            case (int)PACKET.CMD_SET_FTC_SETUP:         
+                               break;
+                           case (int)PACKET.CMD_GET_VERSION:
+                               FwVersionLbl.Text = "AMC: " + System.Text.Encoding.ASCII.GetString(Payload);
+                               break;
+                           case (int)PACKET.CMD_GET_BRD_ID:
+                                BrdTypeLbl.Text ="Board Type: " + BoardId.ToString();
+                               break;                                
                      }
                   }
               }
@@ -755,68 +685,21 @@ dead-end-stop position*/
         }
 
 
-        private void button5_Click(object sender, EventArgs e)
-        {
-            String clientInfo;
-
-            server = Dns.GetHostName();
-
-            server = IPAddrBox.Text;
-
-            try
-            {                
-                clientInfo = tcpClient.StartClient(server, port);
-                RxListBox.Items.Add(clientInfo + '\n');                
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.ToString(),
-                                "Exception Error",
-                                MessageBoxButtons.OK,
-                                MessageBoxIcon.Error
-                               );
-            }
-
-        }
-
-        private void button6_Click(object sender, EventArgs e)
-        {
-            String clientData;
-            clientData = tcpClient.SocketSendReceive();
-            RxListBox.Items.Add(clientData + '\n');
-            RxListBox.SelectedIndex = RxListBox.Items.Count - 1;
-        }
-
         private void timer1_Tick(object sender, EventArgs e)
         {
             SerialMonitorTimer.Enabled = true;
-            /*
-            if (!BuildSerialMessage((int)PACKET.CMD_GET_MOTOR_DATA)) 
-            {
-                timer1.Enabled = false;
-                return;
-            }
-*/
-            if( !BuildSerialMessage((int)PACKET.CMD_GET_FTC_OP) )
+
+            if( !BuildSerialMessage((int)PACKET.CMD_GET_PRESS) )
             {                
                 timer1.Enabled = false;
                 return;
             }
-/*
-            if (!BuildSerialMessage((int)PACKET.CMD_GET_ANALOGS))
-            {                
-                timer1.Enabled = false;
-                return;
-            }
-*/                            
             Refresh();
 
         }
 
         private void button8_Click(object sender, EventArgs e)
         {
-            EmailPanel.Top = 120;
-            EmailPanel.Visible =true;
         }
 
         private void button9_Click(object sender, EventArgs e)
@@ -831,113 +714,9 @@ dead-end-stop position*/
                 // user has canceled save
                 return;
             }
-
-            label6.Visible = true;
-            label6.Text = openFileDialog1.FileName;
-
         }
 
-        private void button7_Click_1(object sender, EventArgs e)
-        {
-            cSmtpEmail smtpEmail = new cSmtpEmail();
-            MAIL_INFO mailInfo = new MAIL_INFO();
-
-            String emailResponse ="";
-
-            panel1.Visible = true;
-            
-            mailInfo.ssl = true;
-            mailInfo.mailServer = MailServerTextBox.Text; 
-
-            mailInfo.fromAddr = FromAddrTextBox.Text; 
-            mailInfo.toAddr = ToAddrTextBox.Text;
-
-            NbrEmails = 0;
-
-            while( NbrEmails++ < Convert.ToInt16(textBox1.Text) )
-            {
-                label7.Text ="Sending, Please Wait..." +NbrEmails.ToString();               
-                Application.DoEvents();
-
-                mailInfo.subject = SubjectTextBox.Text;
-                mailInfo.body = BodyRichTextBox.Text;
-
-                mailInfo.attachment = openFileDialog1.FileName;
-
-                mailInfo.sslCredentials.username = "anaddress@gmail.com"; 
-                mailInfo.sslCredentials.password = "talonrx8";
-
-                emailResponse = smtpEmail.SendEmail(mailInfo);
-            }
-  
-            panel1.Visible = false;
-            textBox1.Visible = false;           
-
-            MessageBox.Show(emailResponse,
-                            "Email Status",
-                            MessageBoxButtons.OK
-                           );
-
-            EmailPanel.Visible = false;
-        }
-
-        private void button10_Click(object sender, EventArgs e)
-        {
-            EmailPanel.Visible = false;
-            label6.Visible = false;
-
-            NbrEmails = 25;
-        }
-
-        private void EmailPanel_DoubleClick(object sender, EventArgs e)
-        {
-            ToAddrTextBox.Text = "someaddress@somewhere.com";
-            textBox1.Visible = true;
-
-            switch( EmailCounter )
-            {
-                case 0:
-                    BodyRichTextBox.Text ="1";   
-                    break;
-                case 1:
-                    BodyRichTextBox.Text ="2";
-                    break;
-                case 2:
-                    BodyRichTextBox.Text ="3";
-                    break;
-                case 3:
-                    BodyRichTextBox.Text ="4";
-                    break;
-            }
-
-            if(EmailCounter++ == 3)
-                EmailCounter = 0;        
-        }
-
-        private void button11_Click(object sender, EventArgs e)
-        {
-           String result;
-
-           result = serialFd.OpenPort((int)SERIAL_COMMS.PORT, (int)SERIAL_COMMS.BAUDRATE, "COM20");
-
-           if (result == "OK")           
-           {
-              Thread serialThread = new Thread(rxDataThread);
-              serialThread.Start();
-
-              // get motor run state (on/off)
-              serialFd.SendMessage(0, 1, (byte)'B');
-           }
-           else
-           {
-              MessageBox.Show("Serial Port Open Failed",
-                              "Serial Comm",
-                              MessageBoxButtons.OK,
-                              MessageBoxIcon.Error
-                             );
-           }
-        }
-       
+      
         private void button12_Click(object sender, EventArgs e)
         {
            serialFd.SendMessage(0, 1, (byte)'S');
@@ -975,8 +754,7 @@ dead-end-stop position*/
             MainPanel.Visible = true;
             DiagPnl.Visible = false;
             DownloadPanel.Visible = false;
-            FtcMachState.Visible = true;
-            label27.Visible = true;
+            BrdTypeLbl.Visible = true;
         }
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1021,31 +799,33 @@ dead-end-stop position*/
             // there is a message in our que, build, and transmit
             switch (command)
             {
-                case (int)PACKET.CMD_GET_FTC_SETUP:
+                case (int)PACKET.CMD_OPEN_VALVE:
+                    // build the message here, then send
+                    ConvetToBuffer16((int)command, out tempBuf);
+                    tempBuf.CopyTo(TxBuf, (int)PACKET.SIZEOF_HEADER);
+                    nbrBytes = (int)PACKET.SIZEOF_HEADER + 2;
+
+                    Payload[0] = ValveNbr;
+
+                    TxBuf[nbrBytes++] = Payload[0];
+                    break;
+                case (int)PACKET.CMD_CLOSE_VALVE:
+                    // build the message here, then send
+                    ConvetToBuffer16((int)command, out tempBuf);
+                    tempBuf.CopyTo(TxBuf, (int)PACKET.SIZEOF_HEADER);
+                    nbrBytes = (int)PACKET.SIZEOF_HEADER + 2;
+
+                    Payload[0] = ValveNbr;
+
+                    TxBuf[nbrBytes++] = Payload[0];
+                    break;
+                case (int)PACKET.CMD_GET_PRESS:
                     // build the message here, then send
                     ConvetToBuffer16((int)command, out tempBuf);
                     tempBuf.CopyTo(TxBuf, (int)PACKET.SIZEOF_HEADER);
                     nbrBytes = (int)PACKET.SIZEOF_HEADER + 2;
                     break;
-                case (int)PACKET.CMD_GET_MOTOR_DATA:
-                    // build the message here, then send
-                    ConvetToBuffer16((int)command, out tempBuf);
-                    tempBuf.CopyTo(TxBuf, (int)PACKET.SIZEOF_HEADER);
-                    nbrBytes = (int)PACKET.SIZEOF_HEADER + 2;
-                    break;
-                case (int)PACKET.CMD_GET_FTC_OP:
-                    // build the message here, then send
-                    ConvetToBuffer16((int)command, out tempBuf);
-                    tempBuf.CopyTo(TxBuf, (int)PACKET.SIZEOF_HEADER);
-                    nbrBytes = (int)PACKET.SIZEOF_HEADER + 2;
-                    break;
-                case (int)PACKET.CMD_CLEAR_PULSER_OP:
-                    // build the message here, then send
-                    ConvetToBuffer16((int)command, out tempBuf);
-                    tempBuf.CopyTo(TxBuf, (int)PACKET.SIZEOF_HEADER);
-                    nbrBytes = (int)PACKET.SIZEOF_HEADER + 2;
-                    break;
-                case (int)PACKET.CMD_GET_ANALOGS:
+                case (int)PACKET.CMD_GET_BRD_ID:
                     // build the message here, then send
                     ConvetToBuffer16((int)command, out tempBuf);
                     tempBuf.CopyTo(TxBuf, (int)PACKET.SIZEOF_HEADER);
@@ -1057,51 +837,18 @@ dead-end-stop position*/
                     tempBuf.CopyTo(TxBuf, (int)PACKET.SIZEOF_HEADER);
                     nbrBytes = (int)PACKET.SIZEOF_HEADER + 2;
                     break;
-                case (int)PACKET.CMD_START_MOTOR:
-                    // build the message here, then send
-                    ConvetToBuffer16((int)command, out tempBuf);
-                    tempBuf.CopyTo(TxBuf, (int)PACKET.SIZEOF_HEADER);
-                    nbrBytes = (int)PACKET.SIZEOF_HEADER + 2;
-
-                    Payload[0] = MotorRequest;
-
-                    TxBuf[nbrBytes++] = Payload[0];
-
-                    break;                    
                 case (int)PACKET.CMD_SET_FTC_SETUP:
                     // build the message here, then send
                     ConvetToBuffer16((int)command, out tempBuf);
                     tempBuf.CopyTo(TxBuf, (int)PACKET.SIZEOF_HEADER);
                     nbrBytes = (int)PACKET.SIZEOF_HEADER + 2;
 
-                    Payload = StructArray.StructToByteArray(FtcSetup);
+                    Payload = StructArray.StructToByteArray(AmcSetup);
 
-                    for (int j = 0; j < Marshal.SizeOf(FtcSetup); j++)
+                    for (int j = 0; j < Marshal.SizeOf(AmcSetup); j++)
                     {
                         TxBuf[nbrBytes++] = Payload[j];
                     }                        
-                    break;
-                case (int)PACKET.CMD_GET_FTC_LOG:
-                    // build the message here, then send
-                    ConvetToBuffer16((int)command, out tempBuf);
-                    tempBuf.CopyTo(TxBuf, (int)PACKET.SIZEOF_HEADER);
-                    nbrBytes = (int)PACKET.SIZEOF_HEADER + 2;
-
-                    Payload[0] = (byte)Counter;
-
-                    TxBuf[nbrBytes++] = Payload[0];
-                    break;
-                case (int)PACKET.CMD_CLEAR_LOG:
-                    // build the message here, then send
-                    ConvetToBuffer16((int)command, out tempBuf);
-                    tempBuf.CopyTo(TxBuf, (int)PACKET.SIZEOF_HEADER);
-                    nbrBytes = (int)PACKET.SIZEOF_HEADER + 2;
-                    break;
-                case (int)PACKET.CMD_RESTART:
-                    // build the message here, then send
-                    ConvetToBuffer16((int)command, out tempBuf);
-                    tempBuf.CopyTo(TxBuf, (int)PACKET.SIZEOF_HEADER);
-                    nbrBytes = (int)PACKET.SIZEOF_HEADER + 2;
                     break;
                 case (int)PACKET.CMD_RESET:
                     // build the message here, then send
@@ -1117,7 +864,7 @@ dead-end-stop position*/
             TxBuf[3] = (byte)(nbrBytesToTx & 0x00ff);
 
             // calculate CRC of transmit buffer
-            calculatedCRC = errCheck.Xmodem_crc((int)(nbrBytes), (int)CRC.SEED, TxBuf);
+            calculatedCRC = errCheck.CrcCalc16((int)(nbrBytes), TxBuf);
 
             // tail 
             TxBuf[nbrBytes++] = (byte)((calculatedCRC & 0xff00) >> 8); //0x5a;  // CRC MSB
@@ -1177,240 +924,46 @@ dead-end-stop position*/
             rxCrc = (UInt16)((UInt16)(rxBuffer[PayloadSize - 2] << 8) | (UInt16)rxBuffer[PayloadSize - 1]);
 
             // calculate CRC of received data
-            calculatedCRC = errCheck.Xmodem_crc((int)(PayloadSize - 2), (int)CRC.SEED, rxBuffer);
-
-            /*
+            calculatedCRC = errCheck.CrcCalc16((int)(PayloadSize - 2), rxBuffer);
+            
             // check CRC
             if (rxCrc != calculatedCRC)
             {
                 response = 1;
                 return true;
-            }
-            */
+            }           
 
             // get payload (i.e. remove header)
             System.Array.Copy(rxBuffer, ((int)PACKET.SIZEOF_HEADER + 2), tempBuf, 0, PayloadSize);
 
             status = true;
 
+            response &= ~(uint)PACKET.MSG_ACK;
+
             // process response (could all be done in WinForm, where GUI stuff is done)
             switch (response)
             {
-                case (int)PACKET.CMD_GET_FTC_SETUP:
+                case (int)PACKET.CMD_GET_PRESS:
                     //tempBuf = StructArray.SwapByteArray16(tempBuf);
 
-                    FtcSetup = (MAN_SETUP)StructArray.ByteArrayToStruct(typeof(MAN_SETUP), tempBuf);
-                    break;
-                case (int)PACKET.CMD_GET_MOTOR_DATA:
-                    tempBuf = StructArray.SwapByteArray16(tempBuf);
-
-                    MotorData = (MOTOR_DATA)StructArray.ByteArrayToStruct(typeof(MOTOR_DATA), tempBuf);
-
-//                    RelativeAngle = BitConverter.ToSingle(tempBuf, 12);
-                    break;
-                case (int)PACKET.CMD_GET_FTC_OP:                 
-                    FtcOp = (MAN_OP)StructArray.ByteArrayToStruct(typeof(MAN_OP), tempBuf);
-                    break;
-                case (int)PACKET.CMD_GET_FTC_LOG:
-                    //  downloadGridView[0, 0].Value = FtcOp.timeStamp;
-
-                    label10.Text = label10.Text = "Ball Trigger Value: " + FtcSetup.setPoint.ToString();
-
-                    System.DateTime dtDateTime = new DateTime(1970,1,1,0,0,0,0,System.DateTimeKind.Utc);
-                    dtDateTime = dtDateTime.AddSeconds(FtcSetup.pcTimeStamp).ToLocalTime();
-                    SetupTimeLbl.Text = "Setup Time: " + dtDateTime.ToString("MM/dd/yy HH:mm:ss");
-
-         //           logDoneCnt =(FtcSetup.logAddr - 32)/16;
-                    for (int k = 0; k < 2; k++)
+                    //AmcSetup = (AMC_SETUP)StructArray.ByteArrayToStruct(typeof(AMC_SETUP), tempBuf);
+                    //Pressure    = System.BitConverter.ToSingle(tempBuf, 0);
+                    //Temperature = System.BitConverter.ToSingle(tempBuf, 0);
+                    for (int j = 0; j < PSensorData.Length; j++)
                     {
-                        float vBatt, iBatt;
-                        FtcOp = (MAN_OP)StructArray.ByteArrayToStruct(typeof(MAN_OP), tempBuf);
+                        int sizeofData = System.Runtime.InteropServices.Marshal.SizeOf(PSensorData[0]);
 
-                        if (FtcOp.vBatt == 0xffff && FtcOp.iBatt == 0xffff
-                           )
-                        {
-                            EraseCnt++;
-                            button16.Enabled = true;
+                        PSensorData[j] = (P_SENSOR_DATA)StructArray.ByteArrayToStruct(typeof(P_SENSOR_DATA), tempBuf);
 
-                            if (FtcSetup.logAddr == 32)
-                            {
-                                MessageBox.Show("No Data Found, Log is Erased",
-                                            "FTC Log",
-                                            MessageBoxButtons.OK
-                                    //MessageBoxIcon.Error
-                                            );
-                            }
-                            else 
-                            {
-                                MessageBox.Show("Download Complete\n" + (downloadGridView.RowCount-1).ToString() + " Records Downloaded",
-                                                "FTC Log",
-                                                MessageBoxButtons.OK
-                                                //MessageBoxIcon.Error
-                                               );
-
-                                if (TooFastBallCount > 0)
-                                {
-                                    MessageBox.Show((TooFastBallCount + " missed ball counts detected due to ball travel time too fast\n").ToString(),
-                                                    "FTC Log",
-                                                     MessageBoxButtons.OK,
-                                                    MessageBoxIcon.Warning
-                                                    );
-                                }
-                            }
-                            return true; // continue;
-                        }
-
-                        vBatt = (float)(((float)FtcOp.vBatt) / 1024 * 3.3 * 6);                  // 1/6 R divider cct
-                        iBatt = (float)(((float)FtcOp.iBatt) / 1024 * 3.3 / 5.53) / (float)0.05; // 5.53 gain 0.05ohm sense resistor                        
-
-                        dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0,System.DateTimeKind.Utc);
-                        dtDateTime = dtDateTime.AddSeconds(FtcSetup.pcTimeStamp +(double)FtcSetup.presSec/100 + (double)FtcOp.timeStamp / 1000 + Convert.ToInt16(textBox2.Text) ).ToLocalTime();// +(double)FtcOp.timeOfTravel/1000).ToLocalTime();
-
-                        if (FtcOp.timeStamp == PrevFtcTimeStamp)
-                        {
-                            for (int j = 0; j < 16; j++)
-                                tempBuf[j] = tempBuf[j + 16];
-
-                            continue;
-                        }
-
-                        PrevFtcTimeStamp = FtcOp.timeStamp;
-
-                        if ( (byte)(FtcOp.ioStates & 0x01) ==0x01)
-                            sw1State ="Closed";
-                        else
-                            sw1State = "Open";
-
-                        if( (byte)(FtcOp.ioStates & 0x02) ==0x02 )
-                            sw2State = "Closed";
-                        else
-                            sw2State = "Open";
-
-                        if ((byte)(FtcOp.ioStates & 0x04) == 0x04)
-                            sw3State = "Closed";
-                        else
-                            sw3State = "Open";
-
-                        if ((byte)(FtcOp.ioStates & 0x08) == 0x08)
-                            sw4State = "Closed";
-                        else
-                            sw4State = "Open";
-
-                        //sw3State = (byte)((FtcOp.ioStates & 0x04) >> 2);
-                        //sw4State = (byte)((FtcOp.ioStates & 0x08) >> 3);
-
-                        if (iBatt < 0.015)
-                            iBatt = 0.0F;
-
-                        //if( FtcOp.pulseCnt != 0 && (FtcOp.ballCount == FtcSetup.setPoint))
-                        if ((FtcOp.ballCount == FtcSetup.setPoint) &&
-                            iBatt > 1.0
-                            //(FtcOp.machState ==0x0d || FtcOp.machState ==0x03)
-                            //(FtcOp.machState >= 0x0a)
-                            )
-                        {
-                            // trigger point
-                            try
-                            {
-                                downloadGridView.Rows.Add(dtDateTime.ToString("HH:mm:ss.ffff"), "NA", FtcOp.timeOfTravel, vBatt.ToString("0.0"), iBatt.ToString("0.000"), FtcOp.ballCount, sw1State, sw2State, sw3State, sw4State);
-                            }
-                            catch (Exception ex)
-                            {
-                            }
-
-                            for (int j = 0; j < downloadGridView.ColumnCount; j++)
-                            {
-                                downloadGridView[j, downloadGridView.RowCount - 2].Style.BackColor = Color.GreenYellow;
-                            }
-                        }
-                        else if(PrevBallCount != 0 &&
-                                FtcOp.ballCount == PrevBallCount
-                             )
-                        {
-                            try
-                            {
-                                downloadGridView.Rows.Add(dtDateTime.ToString("HH:mm:ss.ffff"), FtcOp.timeOfTravel, "NA", vBatt.ToString("0.0"), iBatt.ToString("0.000"), FtcOp.ballCount, sw1State, sw2State, sw3State, sw4State);
-                            }
-                            catch (Exception ex)
-                            {
-                            }
-
-                            for (int j = 0; j < downloadGridView.ColumnCount; j++)
-                            {
-                                downloadGridView[j, downloadGridView.RowCount - 2].Style.BackColor = Color.Red;
-                            }
-
-                            TooFastBallCount++;
-                        }
-                        else
-                        {
-                            try
-                            {
-                                downloadGridView.Rows.Add(dtDateTime.ToString("HH:mm:ss.ffff"), FtcOp.timeOfTravel, "NA", vBatt.ToString("0.0"), iBatt.ToString("0.000"), FtcOp.ballCount, sw1State, sw2State, sw3State, sw4State);
-                            }
-                            catch (Exception ex)
-                            {
-                            }
-                        }
-
-                        PrevBallCount = FtcOp.ballCount;
-
-                        for (int j = 0; j < 16; j++)
-                            tempBuf[j] = tempBuf[j + 16];
+                        System.Array.Copy(tempBuf, sizeofData, tempBuf, 0, (PayloadSize - sizeofData));
                     }
-
-                    if (++DownloadStart >= MaxRecords)
-                    {
-                        button16.Enabled = true;
-
-                        MessageBox.Show("Download Complete\n" + (downloadGridView.RowCount - 1).ToString() + " Records Downloaded",
-                                        "FTC Log",
-                                        MessageBoxButtons.OK
-                                        //MessageBoxIcon.Error
-                                        );
-
-
-                        if (TooFastBallCount > 0)
-                        { 
-                            MessageBox.Show( (TooFastBallCount + " missed ball counts detected due to ball travel time too fast\n").ToString(),
-                                            "FTC Log",
-                                             MessageBoxButtons.OK,
-                                            MessageBoxIcon.Warning
-                                            );
-                        }
-                        return true;
-                    }
-                    else
-                    {
-                        Thread.Sleep(10);
-                        BuildSerialMessage((int)PACKET.CMD_GET_FTC_LOG);
-                    }
-/*
-                    else
-                    {
-                        button16.Enabled = true;
-
-                        if (EraseCnt >= 14)
-                        {
-                            MessageBox.Show("No Data Found, Log is Erased",
-                                            "FTC Log",
-                                            MessageBoxButtons.OK
-                                //MessageBoxIcon.Error
-                                            );
-                        }
-                    }
- */
-
-                    break;
-                case (int)PACKET.CMD_GET_ANALOGS:
-                    //tempBuf = StructArray.SwapByteArray16(tempBuf);
-
-                    Analogs = (ANALOGS)StructArray.ByteArrayToStruct(typeof(ANALOGS), tempBuf);
                     break;
                 case (int)PACKET.CMD_GET_VERSION:
                     System.Array.Copy(tempBuf, 0, Payload, 0, (PayloadSize - 8));
                     break;
-
+                case (int)PACKET.CMD_GET_BRD_ID:
+                    BoardId = Convert.ToByte(tempBuf[0]);
+                    break;
             }
 
             return status;
@@ -1424,18 +977,8 @@ dead-end-stop position*/
             txBufPtr[1] = (byte)((theValue & 0x00ff));
         }
 
-        private void button11_Click_1(object sender, EventArgs e)
-        {
-
-        }
-
         private void fPCToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            MainPanel.Visible = false;
-            DiagnosticPnl.Visible = false;
-            DownloadPanel.Visible = true;
-
-            BuildSerialMessage((int)PACKET.CMD_GET_FTC_LOG);
         }
 
         private void ClearFpcLogBtn_Click(object sender, EventArgs e)
@@ -1452,9 +995,7 @@ dead-end-stop position*/
         {
             try
             {
-                FtcSetup.setPoint = Convert.ToByte(TriggerTextBox.Text);
-
-                if(FtcSetup.setPoint ==0)
+                if(AmcSetup.setPoint ==0)
                 {
                     MessageBox.Show("Ball trigger cannot be 0",
                                     "Table Setup Error",
@@ -1464,27 +1005,17 @@ dead-end-stop position*/
 
                     return;
                 }
-                FtcSetup.deploy = Convert.ToByte(DeployComboBox.SelectedIndex );//DeployTextBox.Text);
-
-                FtcSetup.setupInfo = Convert.ToByte(SwitchTriggerComboBox.SelectedIndex);//DeployTextBox.Text);
-
-                FtcSetup.deployWaitState = Convert.ToUInt16(DeployDelayTime.Text); // Convert.ToByte(DeployComboBox.SelectedIndex);//DeployTextBox.Text);
-  //              PulserSetup.spare[0] = Convert.ToByte(P3TextBox.Text);                
 
                 DateTime localDate = DateTime.Now;
                 DateTime origin = new DateTime(1970, 1, 1, 0, 0, 0, 0);
                 TimeSpan diff = localDate.ToUniversalTime() - origin;
-//                double x=diff.TotalSeconds;
-                
-                FtcSetup.pcTimeStamp =(UInt32)diff.TotalSeconds;
+
+                AmcSetup.pcTimeStamp =(UInt32)diff.TotalSeconds;
 
                 UInt64 theDiff = (UInt64)diff.TotalMilliseconds;
                 theDiff = theDiff % 1000;
-                FtcSetup.presSec = (byte)(theDiff / 10);
 
-                FtcSetup.detailedLog = Convert.ToByte(LogTypeComboBox.SelectedIndex);
-
-                FtcSetup.crc = 0x5aa5;
+                AmcSetup.crc = 0x5aa5;
 
                 BuildSerialMessage((int)PACKET.CMD_SET_FTC_SETUP);
             }
@@ -1500,65 +1031,28 @@ dead-end-stop position*/
 
         private void button11_Click_2(object sender, EventArgs e)
         {
-            BuildSerialMessage((int)PACKET.CMD_GET_FTC_SETUP);
+            BuildSerialMessage((int)PACKET.CMD_GET_PRESS);
         }
 
         private void ClearFpcLogBtn_Click_1(object sender, EventArgs e)
         {
-            DialogResult result1 = MessageBox.Show("Are you sure you wish to clear the FTC log",
-                                                   "Memory Clear",
-                                                    MessageBoxButtons.YesNo,
-                                                    MessageBoxIcon.Warning
-                                                   );
-
-            if (result1 == DialogResult.No)
-                return;
-
-            if (!BuildSerialMessage((int)PACKET.CMD_CLEAR_LOG))
-                return;
-
-            MessageBox.Show("Log Erased Succesfully",
-                            "FTC Log",
-                            MessageBoxButtons.OK
-                           );
         }
 
         private void button12_Click_2(object sender, EventArgs e)
         {
-            if(button12.Text == "Start")
-            {
-                TriggerTextBox.Text ="";
-                DeployTextBox.Text ="";
-
-                // get FTC fw version
-                if (!BuildSerialMessage((int)PACKET.CMD_GET_VERSION))
-                    return;
-
-                // get FTC setup information
-                if (!BuildSerialMessage((int)PACKET.CMD_GET_FTC_SETUP))
-                    return;
-
-                button12.Text ="Stop";
-                timer1.Enabled = true;
-            }
-            else
-            {
-                button12.Text = "Start";
-                timer1.Enabled = false;
-            }
         }
 
         private void SerialMonitorTimer_Tick(object sender, EventArgs e)
         {
             timer1.Enabled = false;
             SerialMonitorTimer.Enabled = false;
-            button12.Text = "Start";
 
-            MessageBox.Show("No response from FTC",
-                            "FTC Communications",
-                            MessageBoxButtons.OK,
-                            MessageBoxIcon.Error
-                           );
+
+      //      MessageBox.Show("No response from FTC",
+           //                 "FTC Communications",
+                        //    MessageBoxButtons.OK,
+                        //    MessageBoxIcon.Error
+                        //   );
             
         }
 
@@ -1606,11 +1100,6 @@ dead-end-stop position*/
 
         private void StartMotorBtn_Click(object sender, EventArgs e)
         {
-//            if (!BuildSerialMessage((int)PACKET.CMD_GET_MOTOR_DATA))
-//                return;
-
-            if (!BuildSerialMessage((int)PACKET.CMD_START_MOTOR))
-                return;
         }
 
         private void fPCParametersToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1628,8 +1117,6 @@ dead-end-stop position*/
 
         private void timer2_Tick(object sender, EventArgs e)
         {
-            BuildSerialMessage((int)PACKET.CMD_GET_MOTOR_DATA);
-
         }
 
         private void counterToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1661,40 +1148,14 @@ dead-end-stop position*/
             DiagPnl.Height = 520;
             DiagPnl.Visible = true;
 
-            FtcMachState.Visible = false;
-            label27.Visible = false;
+            BrdTypeLbl.Visible = false;
 
             downloadGridView.Rows.Clear();
         }
 
         private void button16_Click_1(object sender, EventArgs e)
         {
-            if( button12.Text =="Stop")
-            {
-                DialogResult result1 = MessageBox.Show("Real time updates are running, click OK to continue with download",
-                                                       "Download",
-                                                       MessageBoxButtons.OKCancel,
-                                                       MessageBoxIcon.Warning
-                                                      );
 
-                if (result1 == DialogResult.Cancel)
-                    return;
-            }
-
-            PrevFtcTimeStamp = 0;
-            PrevBallCount = 0;
-            TooFastBallCount = 0;
-
-            button12.Text = "Start";
-            timer1.Enabled = false;
-
-            button16.Enabled = false;
-            DownloadStart = 0;
-            EraseCnt = 0;
-            downloadGridView.Rows.Clear();
-
-            BuildSerialMessage((int)PACKET.CMD_GET_FTC_SETUP);
-            BuildSerialMessage((int)PACKET.CMD_GET_FTC_LOG);
         }
       
         public void UpdateStatusStrip(String aStr)  
@@ -1704,10 +1165,7 @@ dead-end-stop position*/
        
         private void button18_Click_1(object sender, EventArgs e)
         {
-            // send stop command
-            MotorRequest = 0;
 
-            BuildSerialMessage((int)PACKET.CMD_START_MOTOR);          
         }
 
         private void button17_Click(object sender, EventArgs e)
@@ -1746,7 +1204,7 @@ dead-end-stop position*/
 
             cFileHandle fhandle = new cFileHandle();
 
-            fhandle.Open(saveFileDialog1.FileName, out fs);
+            fhandle.Open(saveFileDialog1.FileName, out fs, 2);
 
             string theString = "MAN\nMAN Log\n";
             dataArray = encoding.GetBytes(theString);
@@ -1797,26 +1255,16 @@ dead-end-stop position*/
 
         private void button20_Click(object sender, EventArgs e)
         {
-            MotorRequest = 0x81;
+            ValveNbr = 0x01;
 
-            BuildSerialMessage((int)PACKET.CMD_START_MOTOR);
+            BuildSerialMessage((int)PACKET.CMD_CLOSE_VALVE);
         }
 
         private void button19_Click(object sender, EventArgs e)
         {
-            MotorRequest = 0x80;
+            ValveNbr = 0x01;
 
-            BuildSerialMessage((int)PACKET.CMD_START_MOTOR);
-
-            
-            // command line stuff
-      //      Process process = new Process();
-        //    process.StartInfo.FileName = "convbin.exe";
-         //   process.StartInfo.WorkingDirectory = "C:\\PhotoGeoTag";
-          //  process.StartInfo.Arguments = "test.obs ubx_20090515c.ubx";
-           // process.Start();
-            
-
+            BuildSerialMessage((int)PACKET.CMD_OPEN_VALVE);            
         }
 
         private void button21_Click(object sender, EventArgs e)
@@ -1830,7 +1278,21 @@ dead-end-stop position*/
             if (result1 == DialogResult.No)
                 return;
 
-            BuildSerialMessage((int)PACKET.CMD_RESTART);  
+            byte[] aBuf = new byte[256];
+            aBuf[0] = (byte)'$';
+            aBuf[1] = (byte)'$';
+            aBuf[2] = (byte)'$';
+
+            /* string to array */
+            System.Text.ASCIIEncoding encoding = new System.Text.ASCIIEncoding();
+            aBuf = encoding.GetBytes("$$$");
+
+            serialFd.SendMessage(0, (uint)aBuf.Length, aBuf);
+
+            /* array to string */
+            //aStr = System.Text.Encoding.ASCII.GetString(anArray);
+
+            //BuildSerialMessage((int)PACKET.CMD_RESTART);  
         }
 
         private void button22_Click(object sender, EventArgs e)
@@ -1845,6 +1307,176 @@ dead-end-stop position*/
                 return;
 
             BuildSerialMessage((int)PACKET.CMD_RESET); 
+        }
+
+        private void SaveProfileBtn_Click(object sender, EventArgs e)
+        {
+            saveFileDialog1.Filter = "Profile Files (*.txt)|*.txt";
+            saveFileDialog1.FileName = "AMCProf.txt";
+
+            saveFileDialog1.Title = "AMC Profile File";
+
+            if (saveFileDialog1.ShowDialog() != System.Windows.Forms.DialogResult.OK)
+            {
+                // user has canceled save
+                return;
+            }
+
+            FileStream fs;
+            byte[] dataArray = new byte[100];
+            string[] profileValue = new string[10];
+            System.Text.ASCIIEncoding encoding = new System.Text.ASCIIEncoding();
+
+            cFileHandle fhandle = new cFileHandle();
+
+            fhandle.Open(saveFileDialog1.FileName, out fs, 0);
+
+            string theString = "AMC\nAMC Profile\n";
+            dataArray = encoding.GetBytes(theString);
+            fhandle.Write(fs, dataArray.Length, dataArray);
+
+            theString = DateTime.Now.ToString("MMM/dd/yyyy hh:mm:ss tt\n\n");
+            dataArray = encoding.GetBytes(theString);
+            fhandle.Write(fs, dataArray.Length, dataArray);
+
+            theString = "Time,Spot1,";
+            dataArray = encoding.GetBytes(theString);
+            fhandle.Write(fs, dataArray.Length, dataArray);
+
+            for (int j = 0; j <7; j++)// (downloadGridView.RowCount - 1); j++)
+            {
+                dataArray[0] = (byte)'\n';
+
+                fhandle.Write(fs, 1, dataArray);
+                //for (int i = 0; i <1; i++)// ProfileGridView.ColumnCount; i++)
+                int i = 0;
+                {
+                    try
+                    {
+                        profileValue[i] = ProfileGridView[i, j].Value.ToString() + ",";
+
+                        dataArray = encoding.GetBytes(profileValue[i]);
+
+                        fhandle.Write(fs, dataArray.Length, dataArray);
+                    }
+                    catch (Exception)
+                    {
+                        MessageBox.Show("Table contains invalid entries",
+                                        "Exception Error",
+                                        MessageBoxButtons.OK,
+                                        MessageBoxIcon.Error
+                                       );
+
+                        fhandle.Close(fs);
+                        return;
+                    }
+                }
+            }
+
+            fhandle.Close(fs);
+        }
+
+        private void LoadProfileBtn_Click(object sender, EventArgs e)
+        {
+            FileStream fs;
+            cFileHandle fhandle = new cFileHandle();
+            byte[] dataArray = new byte[100];
+            int rowCnt = 0;
+            int rowProfileStart = 5;
+
+            String textLine = string.Empty;
+            String[] splitLine;
+
+            openFileDialog1.Filter = "text Files (*.txt)|*.txt";
+            openFileDialog1.FileName = "";
+            //openFileDialog1.InitialDirectory "";
+                
+            openFileDialog1.Title = "File1";
+
+            if (openFileDialog1.ShowDialog() != System.Windows.Forms.DialogResult.OK)
+            {
+                /* user has canceled save */
+                return;
+            }
+
+            if (System.IO.File.Exists(openFileDialog1.FileName))
+            {
+                try
+                {
+                    System.IO.StreamReader objReader = new System.IO.StreamReader(openFileDialog1.FileName);
+
+                    do
+                    {
+                        textLine = objReader.ReadLine();
+                        if (textLine != "")
+                        {
+                            splitLine = textLine.Split(',');
+
+                            if (rowCnt >= rowProfileStart)
+                                ProfileGridView[0, (rowCnt- rowProfileStart)].Value = splitLine[0];
+                        }
+
+                        rowCnt++;
+
+                    } while (objReader.Peek() != -1);
+
+                    objReader.Close();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show((string)ex.ToString(),
+                                    "File Error",
+                                    MessageBoxButtons.OK,
+                                    MessageBoxIcon.Error
+                                    );
+                }
+            }
+
+            //fhandle.Open(openFileDialog1.FileName, out fs, 2);
+            //fhandle.Read(fs, dataArray.Length, dataArray);
+            //fhandle.Close(fs);
+        }
+
+        private void StartFitBtn_Click(object sender, EventArgs e)
+        {            
+            for (int row = 0; row < 7; row++)
+            {
+                if (ProfileGridView[0, row].Value == "")
+                {
+                    MessageBox.Show("No Profile Selected",
+                                    "Error",
+                                    MessageBoxButtons.OK,
+                                    MessageBoxIcon.Error
+                                   );
+                    return;
+                }
+                ControllerGridView[2, row].Value = ProfileGridView[0, row].Value;
+            }
+
+            if (!BuildSerialMessage((int)PACKET.CMD_GET_PRESS))
+            {
+                timer1.Enabled = false;
+                return;
+            }
+
+            ValveNbr = 0x87;
+
+            if (!BuildSerialMessage((int)PACKET.CMD_OPEN_VALVE))
+            {
+                timer1.Enabled = false;
+                return;
+            }
+
+            ControllerGridView[2, 7].Value = "0";
+
+            timer1.Enabled = true;
+
+            Refresh();
+        }
+
+        private void GetPressBtn_Click(object sender, EventArgs e)
+        {
+            BuildSerialMessage((int)PACKET.CMD_GET_PRESS);
         }
     }
 }

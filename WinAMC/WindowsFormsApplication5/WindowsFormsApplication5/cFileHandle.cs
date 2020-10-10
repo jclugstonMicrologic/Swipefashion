@@ -9,9 +9,26 @@ namespace FileHandling //WindowsFormsApplication2
 {
     class cFileHandle
     {
-        public void Open(string fileName, out FileStream fs )
+        public bool Open(string fileName, out FileStream fs, int mode)
         {
-            fs = new FileStream(fileName, FileMode.Create);
+            fs = null;
+            try
+            {
+                if (mode == 0)
+                    fs = new FileStream(fileName, FileMode.Create);
+                else if (mode == 1)
+                    fs = new FileStream(fileName, FileMode.Append);
+                else
+                {
+                    fs = new FileStream(fileName, FileMode.Open, FileAccess.Read);
+                }
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         public void Read(FileStream fs, int size_, params byte[] data )
@@ -32,6 +49,11 @@ namespace FileHandling //WindowsFormsApplication2
            {
                fs.WriteByte(data[i]);
            }
+        }
+
+        public void Seek(FileStream fs, long pos)
+        {
+            fs.Seek(pos, SeekOrigin.Begin);
         }
 
         public void Close(FileStream fs)

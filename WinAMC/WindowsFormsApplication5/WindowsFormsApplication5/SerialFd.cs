@@ -52,7 +52,7 @@ namespace SerialCom
 
       bool[] fPortActive = new bool[ (int)SERIAL_DEF.PORTS];
 
-      System.IO.Ports.SerialPort[] SerialComPort = new System.IO.Ports.SerialPort[(int)SERIAL_DEF.PORTS];
+      static System.IO.Ports.SerialPort[] SerialComPort = new System.IO.Ports.SerialPort[(int)SERIAL_DEF.PORTS];
 
       public String OpenPort    /*| true if successful                        */
       (
@@ -109,12 +109,26 @@ namespace SerialCom
             /* the serial port object exists, shut it down */
             fPortActive[ portIndex_ ] = false;
             SerialComPort[portIndex_].Close();
+            Thread.Sleep(200);
          }
+
          return true;
       } /* ClosePort */
 
 
-      bool SendByte   //*| false if error occurred during send, else true
+        public bool CheckPortOpen()
+        {
+            if (SerialComPort[0] != null &&
+                SerialComPort[0].IsOpen
+              )
+            {
+                return true;
+            }
+            else
+                return false;
+        }
+
+        bool SendByte   //*| false if error occurred during send, else true
       (                            //*|
          int portIndex_, //*| identifies the port
          byte aByte_,              //*| the character to be sent out
@@ -168,17 +182,21 @@ namespace SerialCom
           int i;
           uint numBytes;
 
-          if (!SerialComPort[portIndex_].IsOpen) //fPortActive[portIndex_] == false)
-          {
-              MessageBox.Show("No serial port is open",
-                              "Commport",
-                              MessageBoxButtons.OK,
-                              MessageBoxIcon.Warning
-                             );
+            try
+            {
+                if (!SerialComPort[portIndex_].IsOpen) //fPortActive[portIndex_] == false)
+                {
+                    MessageBox.Show("No serial port is open",
+                                    "Commport",
+                                    MessageBoxButtons.OK,
+                                    MessageBoxIcon.Warning
+                                   );
 
 
-              return false;
-          }
+                    return false;
+                }
+            }
+            catch (Exception ex) { }
 
           TxContext[portIndex_].txBuf = new byte[1040];
 

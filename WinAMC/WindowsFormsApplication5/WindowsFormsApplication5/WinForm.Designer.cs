@@ -29,56 +29,32 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
-            this.FileHandleBtn = new System.Windows.Forms.Button();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle97 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle98 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle99 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle100 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle101 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle102 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle103 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle104 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle105 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle106 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle107 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle108 = new System.Windows.Forms.DataGridViewCellStyle();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
             this.button5 = new System.Windows.Forms.Button();
             this.button6 = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.button7 = new System.Windows.Forms.Button();
-            this.SendToFpcBtn = new System.Windows.Forms.Button();
-            this.button11 = new System.Windows.Forms.Button();
-            this.ClearFpcLogBtn = new System.Windows.Forms.Button();
-            this.button12 = new System.Windows.Forms.Button();
-            this.TriggerTextBox = new System.Windows.Forms.TextBox();
             this.button16 = new System.Windows.Forms.Button();
             this.button17 = new System.Windows.Forms.Button();
-            this.button18 = new System.Windows.Forms.Button();
             this.SaveLogBtn = new System.Windows.Forms.Button();
             this.textBox2 = new System.Windows.Forms.TextBox();
-            this.button21 = new System.Windows.Forms.Button();
-            this.button22 = new System.Windows.Forms.Button();
             this.label20 = new System.Windows.Forms.Label();
-            this.label21 = new System.Windows.Forms.Label();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.EmailPanel = new System.Windows.Forms.Panel();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.panel1 = new System.Windows.Forms.Panel();
-            this.label7 = new System.Windows.Forms.Label();
-            this.button10 = new System.Windows.Forms.Button();
-            this.label6 = new System.Windows.Forms.Label();
-            this.button9 = new System.Windows.Forms.Button();
-            this.BodyRichTextBox = new System.Windows.Forms.RichTextBox();
-            this.label5 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
-            this.SubjectTextBox = new System.Windows.Forms.TextBox();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
-            this.ToAddrTextBox = new System.Windows.Forms.TextBox();
-            this.FromAddrTextBox = new System.Windows.Forms.TextBox();
-            this.MailServerTextBox = new System.Windows.Forms.TextBox();
             this.button8 = new System.Windows.Forms.Button();
-            this.IPAddrBox = new System.Windows.Forms.TextBox();
             this.serialPort1 = new System.IO.Ports.SerialPort(this.components);
             this.OpenSerialPortBtn = new System.Windows.Forms.Button();
             this.MotorDirBtn = new System.Windows.Forms.Button();
@@ -99,16 +75,40 @@
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.MainPanel = new System.Windows.Forms.Panel();
-            this.label27 = new System.Windows.Forms.Label();
-            this.FtcMachState = new System.Windows.Forms.TextBox();
+            this.ControllerGridView = new System.Windows.Forms.DataGridView();
+            this.ProfileGroupBox = new System.Windows.Forms.GroupBox();
+            this.LoadProfileBtn = new System.Windows.Forms.Button();
+            this.ProfileGridView = new System.Windows.Forms.DataGridView();
+            this.SaveProfileBtn = new System.Windows.Forms.Button();
+            this.textBox3 = new System.Windows.Forms.TextBox();
+            this.BrdTypeLbl = new System.Windows.Forms.Label();
             this.DiagPnl = new System.Windows.Forms.Panel();
             this.label19 = new System.Windows.Forms.Label();
             this.SetupTimeLbl = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
             this.downloadGridView = new System.Windows.Forms.DataGridView();
             this.button15 = new System.Windows.Forms.Button();
+            this.CommSelectPnl = new System.Windows.Forms.Panel();
+            this.label22 = new System.Windows.Forms.Label();
+            this.button14 = new System.Windows.Forms.Button();
+            this.button13 = new System.Windows.Forms.Button();
+            this.CommportComboBox = new System.Windows.Forms.ComboBox();
+            this.DownloadPanel = new System.Windows.Forms.Panel();
+            this.dataGridView = new System.Windows.Forms.DataGridView();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.radioButton3 = new System.Windows.Forms.RadioButton();
+            this.radioButton2 = new System.Windows.Forms.RadioButton();
+            this.V1RadioBtn = new System.Windows.Forms.RadioButton();
+            this.button20 = new System.Windows.Forms.Button();
+            this.button19 = new System.Windows.Forms.Button();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.label11 = new System.Windows.Forms.Label();
+            this.SenThresTextBox = new System.Windows.Forms.TextBox();
+            this.TemperatureTextBox = new System.Windows.Forms.TextBox();
+            this.PressureTextBox = new System.Windows.Forms.TextBox();
+            this.label9 = new System.Windows.Forms.Label();
+            this.FwVersionLbl = new System.Windows.Forms.Label();
             this.GeneralGroupBox = new System.Windows.Forms.GroupBox();
-            this.SlTextBox = new System.Windows.Forms.TextBox();
             this.SuTextBox = new System.Windows.Forms.TextBox();
             this.EncTextBox = new System.Windows.Forms.TextBox();
             this.label16 = new System.Windows.Forms.Label();
@@ -131,39 +131,6 @@
             this.Sw3TextBox = new System.Windows.Forms.TextBox();
             this.Sw2TextBox = new System.Windows.Forms.TextBox();
             this.Sw1TextBox = new System.Windows.Forms.TextBox();
-            this.CommSelectPnl = new System.Windows.Forms.Panel();
-            this.label22 = new System.Windows.Forms.Label();
-            this.button14 = new System.Windows.Forms.Button();
-            this.button13 = new System.Windows.Forms.Button();
-            this.CommportComboBox = new System.Windows.Forms.ComboBox();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.DownloadPanel = new System.Windows.Forms.Panel();
-            this.dataGridView = new System.Windows.Forms.DataGridView();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.button20 = new System.Windows.Forms.Button();
-            this.button19 = new System.Windows.Forms.Button();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.PulseCntTextBox = new System.Windows.Forms.TextBox();
-            this.label13 = new System.Windows.Forms.Label();
-            this.label12 = new System.Windows.Forms.Label();
-            this.label11 = new System.Windows.Forms.Label();
-            this.SenThresTextBox = new System.Windows.Forms.TextBox();
-            this.BallCntTextBox = new System.Windows.Forms.TextBox();
-            this.IBattTextBox = new System.Windows.Forms.TextBox();
-            this.VBattTextBox = new System.Windows.Forms.TextBox();
-            this.label9 = new System.Windows.Forms.Label();
-            this.FpcGroupBox = new System.Windows.Forms.GroupBox();
-            this.SwitchTriggerComboBox = new System.Windows.Forms.ComboBox();
-            this.label28 = new System.Windows.Forms.Label();
-            this.LogTypeComboBox = new System.Windows.Forms.ComboBox();
-            this.label23 = new System.Windows.Forms.Label();
-            this.DeployComboBox = new System.Windows.Forms.ComboBox();
-            this.label18 = new System.Windows.Forms.Label();
-            this.label17 = new System.Windows.Forms.Label();
-            this.DeployDelayTime = new System.Windows.Forms.TextBox();
-            this.DeployTextBox = new System.Windows.Forms.TextBox();
-            this.label8 = new System.Windows.Forms.Label();
-            this.FwVersionLbl = new System.Windows.Forms.Label();
             this.DiagnosticPnl = new System.Windows.Forms.Panel();
             this.RelativeAngleLbl = new System.Windows.Forms.Label();
             this.RxListBox = new System.Windows.Forms.ListBox();
@@ -173,50 +140,30 @@
             this.FtcStatusStrip = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
-            this.EmailPanel.SuspendLayout();
-            this.panel1.SuspendLayout();
+            this.GenericPlot = new Gigasoft.ProEssentials.Pesgo();
+            this.GetPressBtn = new System.Windows.Forms.Button();
+            this.StartFitBtn = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.MainPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.ControllerGridView)).BeginInit();
+            this.ProfileGroupBox.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.ProfileGridView)).BeginInit();
             this.DiagPnl.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.downloadGridView)).BeginInit();
-            this.GeneralGroupBox.SuspendLayout();
             this.CommSelectPnl.SuspendLayout();
-            this.groupBox3.SuspendLayout();
             this.DownloadPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).BeginInit();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
-            this.FpcGroupBox.SuspendLayout();
+            this.GeneralGroupBox.SuspendLayout();
             this.DiagnosticPnl.SuspendLayout();
             this.FtcStatusStrip.SuspendLayout();
             this.SuspendLayout();
             // 
-            // FileHandleBtn
-            // 
-            this.FileHandleBtn.Location = new System.Drawing.Point(398, 12);
-            this.FileHandleBtn.Name = "FileHandleBtn";
-            this.FileHandleBtn.Size = new System.Drawing.Size(75, 23);
-            this.FileHandleBtn.TabIndex = 0;
-            this.FileHandleBtn.Text = "&File Handle";
-            this.FileHandleBtn.UseVisualStyleBackColor = true;
-            this.FileHandleBtn.Visible = false;
-            this.FileHandleBtn.Click += new System.EventHandler(this.FileHandleBtn_Click);
-            // 
             // openFileDialog1
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
-            // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(479, 41);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 1;
-            this.button1.Text = "C# Class";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Visible = false;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // button2
             // 
@@ -260,7 +207,6 @@
             this.button5.Text = "Start Client";
             this.button5.UseVisualStyleBackColor = true;
             this.button5.Visible = false;
-            this.button5.Click += new System.EventHandler(this.button5_Click);
             // 
             // button6
             // 
@@ -272,70 +218,6 @@
             this.toolTip1.SetToolTip(this.button6, "Send a message from a client socket connection to the server");
             this.button6.UseVisualStyleBackColor = true;
             this.button6.Visible = false;
-            this.button6.Click += new System.EventHandler(this.button6_Click);
-            // 
-            // button7
-            // 
-            this.button7.Location = new System.Drawing.Point(19, 253);
-            this.button7.Name = "button7";
-            this.button7.Size = new System.Drawing.Size(75, 23);
-            this.button7.TabIndex = 18;
-            this.button7.Text = "Send Email";
-            this.toolTip1.SetToolTip(this.button7, "Send email using SSL or standard security");
-            this.button7.UseVisualStyleBackColor = true;
-            this.button7.Click += new System.EventHandler(this.button7_Click_1);
-            // 
-            // SendToFpcBtn
-            // 
-            this.SendToFpcBtn.Location = new System.Drawing.Point(15, 25);
-            this.SendToFpcBtn.Name = "SendToFpcBtn";
-            this.SendToFpcBtn.Size = new System.Drawing.Size(82, 23);
-            this.SendToFpcBtn.TabIndex = 18;
-            this.SendToFpcBtn.Text = "Send to FTC";
-            this.toolTip1.SetToolTip(this.SendToFpcBtn, "Send Setup Information to FTC");
-            this.SendToFpcBtn.UseVisualStyleBackColor = true;
-            this.SendToFpcBtn.Click += new System.EventHandler(this.SendToFpcBtn_Click_1);
-            // 
-            // button11
-            // 
-            this.button11.Location = new System.Drawing.Point(101, 25);
-            this.button11.Name = "button11";
-            this.button11.Size = new System.Drawing.Size(82, 23);
-            this.button11.TabIndex = 19;
-            this.button11.Text = "Get From FTC";
-            this.toolTip1.SetToolTip(this.button11, "Get Setup Information from FTC");
-            this.button11.UseVisualStyleBackColor = true;
-            this.button11.Click += new System.EventHandler(this.button11_Click_2);
-            // 
-            // ClearFpcLogBtn
-            // 
-            this.ClearFpcLogBtn.Location = new System.Drawing.Point(15, 54);
-            this.ClearFpcLogBtn.Name = "ClearFpcLogBtn";
-            this.ClearFpcLogBtn.Size = new System.Drawing.Size(82, 23);
-            this.ClearFpcLogBtn.TabIndex = 31;
-            this.ClearFpcLogBtn.Text = "Clear Log";
-            this.toolTip1.SetToolTip(this.ClearFpcLogBtn, "Clear FTC Log");
-            this.ClearFpcLogBtn.UseVisualStyleBackColor = true;
-            this.ClearFpcLogBtn.Click += new System.EventHandler(this.ClearFpcLogBtn_Click_1);
-            // 
-            // button12
-            // 
-            this.button12.Location = new System.Drawing.Point(101, 54);
-            this.button12.Name = "button12";
-            this.button12.Size = new System.Drawing.Size(82, 23);
-            this.button12.TabIndex = 35;
-            this.button12.Text = "Start";
-            this.toolTip1.SetToolTip(this.button12, "Start Real Time ");
-            this.button12.UseVisualStyleBackColor = true;
-            this.button12.Click += new System.EventHandler(this.button12_Click_2);
-            // 
-            // TriggerTextBox
-            // 
-            this.TriggerTextBox.Location = new System.Drawing.Point(108, 25);
-            this.TriggerTextBox.Name = "TriggerTextBox";
-            this.TriggerTextBox.Size = new System.Drawing.Size(60, 20);
-            this.TriggerTextBox.TabIndex = 30;
-            this.toolTip1.SetToolTip(this.TriggerTextBox, "Set Frac Tool Ball Count Trigger Value");
             // 
             // button16
             // 
@@ -359,17 +241,6 @@
             this.button17.UseVisualStyleBackColor = true;
             this.button17.Click += new System.EventHandler(this.button17_Click);
             // 
-            // button18
-            // 
-            this.button18.Location = new System.Drawing.Point(57, 68);
-            this.button18.Name = "button18";
-            this.button18.Size = new System.Drawing.Size(82, 23);
-            this.button18.TabIndex = 37;
-            this.button18.Text = "Stop Motor";
-            this.toolTip1.SetToolTip(this.button18, "Start Real Time ");
-            this.button18.UseVisualStyleBackColor = true;
-            this.button18.Click += new System.EventHandler(this.button18_Click_1);
-            // 
             // SaveLogBtn
             // 
             this.SaveLogBtn.Location = new System.Drawing.Point(407, 90);
@@ -390,222 +261,20 @@
             this.textBox2.Text = "0";
             this.toolTip1.SetToolTip(this.textBox2, "Offset starttime in seconds");
             // 
-            // button21
-            // 
-            this.button21.Location = new System.Drawing.Point(15, 83);
-            this.button21.Name = "button21";
-            this.button21.Size = new System.Drawing.Size(82, 23);
-            this.button21.TabIndex = 36;
-            this.button21.Text = "Restart";
-            this.toolTip1.SetToolTip(this.button21, "Restart ball count monitoring");
-            this.button21.UseVisualStyleBackColor = true;
-            this.button21.Click += new System.EventHandler(this.button21_Click);
-            // 
-            // button22
-            // 
-            this.button22.Location = new System.Drawing.Point(101, 83);
-            this.button22.Name = "button22";
-            this.button22.Size = new System.Drawing.Size(82, 23);
-            this.button22.TabIndex = 37;
-            this.button22.Text = "Reset";
-            this.toolTip1.SetToolTip(this.button22, "Reset FTC/controller");
-            this.button22.UseVisualStyleBackColor = true;
-            this.button22.Click += new System.EventHandler(this.button22_Click);
-            // 
             // label20
             // 
             this.label20.AutoSize = true;
             this.label20.Location = new System.Drawing.Point(105, 78);
             this.label20.Name = "label20";
-            this.label20.Size = new System.Drawing.Size(22, 13);
+            this.label20.Size = new System.Drawing.Size(20, 13);
             this.label20.TabIndex = 59;
-            this.label20.Text = "SU";
+            this.label20.Text = "V7";
             this.toolTip1.SetToolTip(this.label20, "Stuck upper switch");
-            // 
-            // label21
-            // 
-            this.label21.AutoSize = true;
-            this.label21.Location = new System.Drawing.Point(105, 103);
-            this.label21.Name = "label21";
-            this.label21.Size = new System.Drawing.Size(20, 13);
-            this.label21.TabIndex = 60;
-            this.label21.Text = "SL";
-            this.toolTip1.SetToolTip(this.label21, "Stuck lower switch");
             // 
             // timer1
             // 
             this.timer1.Interval = 250;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
-            // 
-            // EmailPanel
-            // 
-            this.EmailPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.EmailPanel.Controls.Add(this.textBox1);
-            this.EmailPanel.Controls.Add(this.panel1);
-            this.EmailPanel.Controls.Add(this.button10);
-            this.EmailPanel.Controls.Add(this.button7);
-            this.EmailPanel.Controls.Add(this.label6);
-            this.EmailPanel.Controls.Add(this.button9);
-            this.EmailPanel.Controls.Add(this.BodyRichTextBox);
-            this.EmailPanel.Controls.Add(this.label5);
-            this.EmailPanel.Controls.Add(this.label4);
-            this.EmailPanel.Controls.Add(this.SubjectTextBox);
-            this.EmailPanel.Controls.Add(this.label3);
-            this.EmailPanel.Controls.Add(this.label2);
-            this.EmailPanel.Controls.Add(this.label1);
-            this.EmailPanel.Controls.Add(this.ToAddrTextBox);
-            this.EmailPanel.Controls.Add(this.FromAddrTextBox);
-            this.EmailPanel.Controls.Add(this.MailServerTextBox);
-            this.EmailPanel.Location = new System.Drawing.Point(834, 309);
-            this.EmailPanel.Name = "EmailPanel";
-            this.EmailPanel.Size = new System.Drawing.Size(350, 319);
-            this.EmailPanel.TabIndex = 12;
-            this.EmailPanel.Visible = false;
-            this.EmailPanel.DoubleClick += new System.EventHandler(this.EmailPanel_DoubleClick);
-            // 
-            // textBox1
-            // 
-            this.textBox1.Location = new System.Drawing.Point(245, 229);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(50, 20);
-            this.textBox1.TabIndex = 21;
-            this.textBox1.Text = "1";
-            this.textBox1.Visible = false;
-            // 
-            // panel1
-            // 
-            this.panel1.Controls.Add(this.label7);
-            this.panel1.Location = new System.Drawing.Point(120, 253);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(150, 50);
-            this.panel1.TabIndex = 20;
-            this.panel1.Visible = false;
-            // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(15, 17);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(118, 13);
-            this.label7.TabIndex = 0;
-            this.label7.Text = "Sending, Please Wait...";
-            // 
-            // button10
-            // 
-            this.button10.Location = new System.Drawing.Point(19, 282);
-            this.button10.Name = "button10";
-            this.button10.Size = new System.Drawing.Size(75, 23);
-            this.button10.TabIndex = 19;
-            this.button10.Text = "Cancel";
-            this.button10.UseVisualStyleBackColor = true;
-            this.button10.Click += new System.EventHandler(this.button10_Click);
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(126, 229);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(35, 13);
-            this.label6.TabIndex = 17;
-            this.label6.Text = "label6";
-            this.label6.Visible = false;
-            // 
-            // button9
-            // 
-            this.button9.Location = new System.Drawing.Point(19, 224);
-            this.button9.Name = "button9";
-            this.button9.Size = new System.Drawing.Size(75, 23);
-            this.button9.TabIndex = 16;
-            this.button9.Text = "Attachment";
-            this.button9.UseVisualStyleBackColor = true;
-            this.button9.Click += new System.EventHandler(this.button9_Click);
-            // 
-            // BodyRichTextBox
-            // 
-            this.BodyRichTextBox.Location = new System.Drawing.Point(120, 120);
-            this.BodyRichTextBox.Name = "BodyRichTextBox";
-            this.BodyRichTextBox.Size = new System.Drawing.Size(220, 96);
-            this.BodyRichTextBox.TabIndex = 15;
-            this.BodyRichTextBox.Text = "";
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(16, 120);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(31, 13);
-            this.label5.TabIndex = 9;
-            this.label5.Text = "Body";
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(16, 94);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(43, 13);
-            this.label4.TabIndex = 8;
-            this.label4.Text = "Subject";
-            // 
-            // SubjectTextBox
-            // 
-            this.SubjectTextBox.Location = new System.Drawing.Point(120, 91);
-            this.SubjectTextBox.Name = "SubjectTextBox";
-            this.SubjectTextBox.Size = new System.Drawing.Size(220, 20);
-            this.SubjectTextBox.TabIndex = 6;
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(16, 68);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(61, 13);
-            this.label3.TabIndex = 5;
-            this.label3.Text = "To Address";
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(16, 42);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(71, 13);
-            this.label2.TabIndex = 4;
-            this.label2.Text = "From Address";
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(16, 16);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(93, 13);
-            this.label1.TabIndex = 3;
-            this.label1.Text = "SMTP Mail Server";
-            // 
-            // ToAddrTextBox
-            // 
-            this.ToAddrTextBox.AccessibleRole = System.Windows.Forms.AccessibleRole.WhiteSpace;
-            this.ToAddrTextBox.Location = new System.Drawing.Point(120, 65);
-            this.ToAddrTextBox.Name = "ToAddrTextBox";
-            this.ToAddrTextBox.Size = new System.Drawing.Size(220, 20);
-            this.ToAddrTextBox.TabIndex = 2;
-            this.ToAddrTextBox.Text = "jeff@micrologic.ab.ca";
-            // 
-            // FromAddrTextBox
-            // 
-            this.FromAddrTextBox.AccessibleRole = System.Windows.Forms.AccessibleRole.WhiteSpace;
-            this.FromAddrTextBox.Location = new System.Drawing.Point(120, 39);
-            this.FromAddrTextBox.Name = "FromAddrTextBox";
-            this.FromAddrTextBox.Size = new System.Drawing.Size(220, 20);
-            this.FromAddrTextBox.TabIndex = 1;
-            this.FromAddrTextBox.Text = "c_sharp_email_test@ml.ab.ca";
-            // 
-            // MailServerTextBox
-            // 
-            this.MailServerTextBox.AccessibleRole = System.Windows.Forms.AccessibleRole.WhiteSpace;
-            this.MailServerTextBox.Location = new System.Drawing.Point(120, 13);
-            this.MailServerTextBox.Name = "MailServerTextBox";
-            this.MailServerTextBox.Size = new System.Drawing.Size(220, 20);
-            this.MailServerTextBox.TabIndex = 0;
-            this.MailServerTextBox.Text = "smtp.gmail.com";
             // 
             // button8
             // 
@@ -618,15 +287,6 @@
             this.button8.Visible = false;
             this.button8.Click += new System.EventHandler(this.button8_Click);
             // 
-            // IPAddrBox
-            // 
-            this.IPAddrBox.Location = new System.Drawing.Point(780, 82);
-            this.IPAddrBox.Name = "IPAddrBox";
-            this.IPAddrBox.Size = new System.Drawing.Size(120, 20);
-            this.IPAddrBox.TabIndex = 14;
-            this.IPAddrBox.Text = "192.168.1.109";
-            this.IPAddrBox.Visible = false;
-            // 
             // OpenSerialPortBtn
             // 
             this.OpenSerialPortBtn.Location = new System.Drawing.Point(838, 250);
@@ -636,7 +296,6 @@
             this.OpenSerialPortBtn.Text = "Open Port";
             this.OpenSerialPortBtn.UseVisualStyleBackColor = true;
             this.OpenSerialPortBtn.Visible = false;
-            this.OpenSerialPortBtn.Click += new System.EventHandler(this.button11_Click);
             // 
             // MotorDirBtn
             // 
@@ -705,10 +364,10 @@
             // 
             // connectToolStripMenuItem
             // 
-            this.connectToolStripMenuItem.Enabled = false;
             this.connectToolStripMenuItem.Name = "connectToolStripMenuItem";
-            this.connectToolStripMenuItem.Size = new System.Drawing.Size(119, 22);
+            this.connectToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.connectToolStripMenuItem.Text = "Connect";
+            this.connectToolStripMenuItem.Visible = false;
             this.connectToolStripMenuItem.Click += new System.EventHandler(this.connectToolStripMenuItem_Click);
             // 
             // diagnosticToolStripMenuItem
@@ -739,8 +398,9 @@
             // logToolStripMenuItem
             // 
             this.logToolStripMenuItem.Name = "logToolStripMenuItem";
-            this.logToolStripMenuItem.Size = new System.Drawing.Size(130, 22);
+            this.logToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.logToolStripMenuItem.Text = "Log";
+            this.logToolStripMenuItem.Visible = false;
             this.logToolStripMenuItem.Click += new System.EventHandler(this.logToolStripMenuItem_Click);
             // 
             // setToolStripMenuItem
@@ -801,38 +461,152 @@
             // 
             // MainPanel
             // 
-            this.MainPanel.Controls.Add(this.label27);
-            this.MainPanel.Controls.Add(this.FtcMachState);
+            this.MainPanel.Controls.Add(this.StartFitBtn);
+            this.MainPanel.Controls.Add(this.GetPressBtn);
+            this.MainPanel.Controls.Add(this.ControllerGridView);
+            this.MainPanel.Controls.Add(this.ProfileGroupBox);
+            this.MainPanel.Controls.Add(this.BrdTypeLbl);
             this.MainPanel.Controls.Add(this.DiagPnl);
             this.MainPanel.Controls.Add(this.button15);
-            this.MainPanel.Controls.Add(this.GeneralGroupBox);
             this.MainPanel.Controls.Add(this.CommSelectPnl);
-            this.MainPanel.Controls.Add(this.groupBox3);
             this.MainPanel.Controls.Add(this.DownloadPanel);
-            this.MainPanel.Controls.Add(this.groupBox2);
-            this.MainPanel.Controls.Add(this.groupBox1);
-            this.MainPanel.Controls.Add(this.FpcGroupBox);
             this.MainPanel.Controls.Add(this.FwVersionLbl);
             this.MainPanel.Location = new System.Drawing.Point(25, 40);
             this.MainPanel.Name = "MainPanel";
-            this.MainPanel.Size = new System.Drawing.Size(733, 512);
+            this.MainPanel.Size = new System.Drawing.Size(775, 650);
             this.MainPanel.TabIndex = 22;
             // 
-            // label27
+            // ControllerGridView
             // 
-            this.label27.AutoSize = true;
-            this.label27.Location = new System.Drawing.Point(150, 0);
-            this.label27.Name = "label27";
-            this.label27.Size = new System.Drawing.Size(85, 13);
-            this.label27.TabIndex = 46;
-            this.label27.Text = "Memory type NA";
+            this.ControllerGridView.AllowUserToAddRows = false;
+            this.ControllerGridView.AllowUserToDeleteRows = false;
+            this.ControllerGridView.AllowUserToResizeColumns = false;
+            this.ControllerGridView.AllowUserToResizeRows = false;
+            this.ControllerGridView.BackgroundColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle97.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle97.BackColor = System.Drawing.SystemColors.Info;
+            dataGridViewCellStyle97.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle97.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle97.SelectionBackColor = System.Drawing.Color.LightGray;
+            dataGridViewCellStyle97.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle97.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.ControllerGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle97;
+            this.ControllerGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.ControllerGridView.Cursor = System.Windows.Forms.Cursors.Default;
+            dataGridViewCellStyle98.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle98.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle98.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle98.ForeColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle98.SelectionBackColor = System.Drawing.Color.White;
+            dataGridViewCellStyle98.SelectionForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle98.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.ControllerGridView.DefaultCellStyle = dataGridViewCellStyle98;
+            this.ControllerGridView.Enabled = false;
+            this.ControllerGridView.EnableHeadersVisualStyles = false;
+            this.ControllerGridView.Location = new System.Drawing.Point(18, 32);
+            this.ControllerGridView.Name = "ControllerGridView";
+            this.ControllerGridView.ReadOnly = true;
+            dataGridViewCellStyle99.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle99.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle99.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle99.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle99.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle99.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle99.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.ControllerGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle99;
+            this.ControllerGridView.RowHeadersWidth = 120;
+            this.ControllerGridView.Size = new System.Drawing.Size(240, 75);
+            this.ControllerGridView.TabIndex = 48;
+            this.ControllerGridView.Visible = false;
             // 
-            // FtcMachState
+            // ProfileGroupBox
             // 
-            this.FtcMachState.Location = new System.Drawing.Point(235, 261);
-            this.FtcMachState.Name = "FtcMachState";
-            this.FtcMachState.Size = new System.Drawing.Size(225, 20);
-            this.FtcMachState.TabIndex = 44;
+            this.ProfileGroupBox.Controls.Add(this.LoadProfileBtn);
+            this.ProfileGroupBox.Controls.Add(this.ProfileGridView);
+            this.ProfileGroupBox.Controls.Add(this.SaveProfileBtn);
+            this.ProfileGroupBox.Controls.Add(this.textBox3);
+            this.ProfileGroupBox.Location = new System.Drawing.Point(18, 318);
+            this.ProfileGroupBox.Name = "ProfileGroupBox";
+            this.ProfileGroupBox.Size = new System.Drawing.Size(261, 240);
+            this.ProfileGroupBox.TabIndex = 47;
+            this.ProfileGroupBox.TabStop = false;
+            this.ProfileGroupBox.Text = "Profile";
+            // 
+            // LoadProfileBtn
+            // 
+            this.LoadProfileBtn.Location = new System.Drawing.Point(130, 210);
+            this.LoadProfileBtn.Name = "LoadProfileBtn";
+            this.LoadProfileBtn.Size = new System.Drawing.Size(82, 23);
+            this.LoadProfileBtn.TabIndex = 46;
+            this.LoadProfileBtn.Text = "Load";
+            this.LoadProfileBtn.UseVisualStyleBackColor = true;
+            this.LoadProfileBtn.Click += new System.EventHandler(this.LoadProfileBtn_Click);
+            // 
+            // ProfileGridView
+            // 
+            this.ProfileGridView.AllowUserToAddRows = false;
+            this.ProfileGridView.AllowUserToDeleteRows = false;
+            this.ProfileGridView.AllowUserToResizeColumns = false;
+            this.ProfileGridView.AllowUserToResizeRows = false;
+            dataGridViewCellStyle100.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle100.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle100.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle100.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle100.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle100.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle100.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.ProfileGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle100;
+            this.ProfileGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.ProfileGridView.Cursor = System.Windows.Forms.Cursors.Default;
+            dataGridViewCellStyle101.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle101.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle101.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle101.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle101.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle101.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle101.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.ProfileGridView.DefaultCellStyle = dataGridViewCellStyle101;
+            this.ProfileGridView.Location = new System.Drawing.Point(10, 23);
+            this.ProfileGridView.Name = "ProfileGridView";
+            dataGridViewCellStyle102.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle102.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle102.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle102.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle102.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle102.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle102.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.ProfileGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle102;
+            this.ProfileGridView.RowHeadersWidth = 120;
+            this.ProfileGridView.Size = new System.Drawing.Size(240, 75);
+            this.ProfileGridView.TabIndex = 45;
+            this.ProfileGridView.Visible = false;
+            // 
+            // SaveProfileBtn
+            // 
+            this.SaveProfileBtn.Location = new System.Drawing.Point(10, 210);
+            this.SaveProfileBtn.Name = "SaveProfileBtn";
+            this.SaveProfileBtn.Size = new System.Drawing.Size(82, 23);
+            this.SaveProfileBtn.TabIndex = 44;
+            this.SaveProfileBtn.Text = "Save";
+            this.SaveProfileBtn.UseVisualStyleBackColor = true;
+            this.SaveProfileBtn.Click += new System.EventHandler(this.SaveProfileBtn_Click);
+            // 
+            // textBox3
+            // 
+            this.textBox3.Location = new System.Drawing.Point(7075, 101);
+            this.textBox3.Name = "textBox3";
+            this.textBox3.Size = new System.Drawing.Size(70, 20);
+            this.textBox3.TabIndex = 33;
+            // 
+            // BrdTypeLbl
+            // 
+            this.BrdTypeLbl.AutoSize = true;
+            this.BrdTypeLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.BrdTypeLbl.Location = new System.Drawing.Point(170, 0);
+            this.BrdTypeLbl.Name = "BrdTypeLbl";
+            this.BrdTypeLbl.Size = new System.Drawing.Size(96, 16);
+            this.BrdTypeLbl.TabIndex = 46;
+            this.BrdTypeLbl.Text = "Board type NA";
             // 
             // DiagPnl
             // 
@@ -844,7 +618,7 @@
             this.DiagPnl.Controls.Add(this.button17);
             this.DiagPnl.Controls.Add(this.button16);
             this.DiagPnl.Controls.Add(this.downloadGridView);
-            this.DiagPnl.Location = new System.Drawing.Point(235, 276);
+            this.DiagPnl.Location = new System.Drawing.Point(535, 37);
             this.DiagPnl.Name = "DiagPnl";
             this.DiagPnl.Size = new System.Drawing.Size(456, 167);
             this.DiagPnl.TabIndex = 26;
@@ -879,34 +653,34 @@
             // 
             // downloadGridView
             // 
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.downloadGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle103.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle103.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle103.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle103.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle103.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle103.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle103.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.downloadGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle103;
             this.downloadGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.downloadGridView.Cursor = System.Windows.Forms.Cursors.Default;
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.downloadGridView.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle104.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle104.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle104.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle104.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle104.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle104.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle104.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.downloadGridView.DefaultCellStyle = dataGridViewCellStyle104;
             this.downloadGridView.Location = new System.Drawing.Point(8, 21);
             this.downloadGridView.Name = "downloadGridView";
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.downloadGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle105.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle105.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle105.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle105.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle105.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle105.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle105.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.downloadGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle105;
             this.downloadGridView.Size = new System.Drawing.Size(240, 150);
             this.downloadGridView.TabIndex = 5;
             // 
@@ -921,11 +695,232 @@
             this.button15.Visible = false;
             this.button15.Click += new System.EventHandler(this.button15_Click);
             // 
+            // CommSelectPnl
+            // 
+            this.CommSelectPnl.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.CommSelectPnl.Controls.Add(this.label22);
+            this.CommSelectPnl.Controls.Add(this.button14);
+            this.CommSelectPnl.Controls.Add(this.button13);
+            this.CommSelectPnl.Controls.Add(this.CommportComboBox);
+            this.CommSelectPnl.Location = new System.Drawing.Point(543, 242);
+            this.CommSelectPnl.Name = "CommSelectPnl";
+            this.CommSelectPnl.Size = new System.Drawing.Size(156, 116);
+            this.CommSelectPnl.TabIndex = 37;
+            this.CommSelectPnl.Visible = false;
+            // 
+            // label22
+            // 
+            this.label22.AutoSize = true;
+            this.label22.Location = new System.Drawing.Point(16, 24);
+            this.label22.Name = "label22";
+            this.label22.Size = new System.Drawing.Size(46, 13);
+            this.label22.TabIndex = 40;
+            this.label22.Text = "Comport";
+            // 
+            // button14
+            // 
+            this.button14.Location = new System.Drawing.Point(92, 65);
+            this.button14.Name = "button14";
+            this.button14.Size = new System.Drawing.Size(50, 23);
+            this.button14.TabIndex = 39;
+            this.button14.Text = "Cancel";
+            this.button14.UseVisualStyleBackColor = true;
+            this.button14.Click += new System.EventHandler(this.button14_Click);
+            // 
+            // button13
+            // 
+            this.button13.Location = new System.Drawing.Point(17, 65);
+            this.button13.Name = "button13";
+            this.button13.Size = new System.Drawing.Size(50, 23);
+            this.button13.TabIndex = 38;
+            this.button13.Text = "OK";
+            this.button13.UseVisualStyleBackColor = true;
+            this.button13.Click += new System.EventHandler(this.button13_Click);
+            // 
+            // CommportComboBox
+            // 
+            this.CommportComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.CommportComboBox.FormattingEnabled = true;
+            this.CommportComboBox.Location = new System.Drawing.Point(70, 21);
+            this.CommportComboBox.Name = "CommportComboBox";
+            this.CommportComboBox.Size = new System.Drawing.Size(75, 21);
+            this.CommportComboBox.TabIndex = 37;
+            // 
+            // DownloadPanel
+            // 
+            this.DownloadPanel.Controls.Add(this.dataGridView);
+            this.DownloadPanel.Location = new System.Drawing.Point(543, 384);
+            this.DownloadPanel.Name = "DownloadPanel";
+            this.DownloadPanel.Size = new System.Drawing.Size(304, 174);
+            this.DownloadPanel.TabIndex = 26;
+            this.DownloadPanel.Visible = false;
+            // 
+            // dataGridView
+            // 
+            dataGridViewCellStyle106.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle106.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle106.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle106.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle106.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle106.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle106.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle106;
+            this.dataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView.Cursor = System.Windows.Forms.Cursors.Default;
+            dataGridViewCellStyle107.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle107.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle107.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle107.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle107.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle107.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle107.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridView.DefaultCellStyle = dataGridViewCellStyle107;
+            this.dataGridView.Location = new System.Drawing.Point(68, -15);
+            this.dataGridView.Name = "dataGridView";
+            dataGridViewCellStyle108.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle108.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle108.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle108.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle108.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle108.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle108.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle108;
+            this.dataGridView.Size = new System.Drawing.Size(240, 150);
+            this.dataGridView.TabIndex = 3;
+            this.dataGridView.Visible = false;
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.radioButton3);
+            this.groupBox2.Controls.Add(this.radioButton2);
+            this.groupBox2.Controls.Add(this.V1RadioBtn);
+            this.groupBox2.Controls.Add(this.button20);
+            this.groupBox2.Controls.Add(this.button19);
+            this.groupBox2.Location = new System.Drawing.Point(843, 331);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(205, 110);
+            this.groupBox2.TabIndex = 33;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Solenoids";
+            // 
+            // radioButton3
+            // 
+            this.radioButton3.AutoSize = true;
+            this.radioButton3.Location = new System.Drawing.Point(132, 29);
+            this.radioButton3.Name = "radioButton3";
+            this.radioButton3.Size = new System.Drawing.Size(38, 17);
+            this.radioButton3.TabIndex = 44;
+            this.radioButton3.Text = "V3";
+            this.radioButton3.UseVisualStyleBackColor = true;
+            // 
+            // radioButton2
+            // 
+            this.radioButton2.AutoSize = true;
+            this.radioButton2.Location = new System.Drawing.Point(65, 27);
+            this.radioButton2.Name = "radioButton2";
+            this.radioButton2.Size = new System.Drawing.Size(38, 17);
+            this.radioButton2.TabIndex = 43;
+            this.radioButton2.Text = "V2";
+            this.radioButton2.UseVisualStyleBackColor = true;
+            // 
+            // V1RadioBtn
+            // 
+            this.V1RadioBtn.AutoSize = true;
+            this.V1RadioBtn.Checked = true;
+            this.V1RadioBtn.Location = new System.Drawing.Point(15, 29);
+            this.V1RadioBtn.Name = "V1RadioBtn";
+            this.V1RadioBtn.Size = new System.Drawing.Size(38, 17);
+            this.V1RadioBtn.TabIndex = 42;
+            this.V1RadioBtn.TabStop = true;
+            this.V1RadioBtn.Text = "V1";
+            this.V1RadioBtn.UseVisualStyleBackColor = true;
+            // 
+            // button20
+            // 
+            this.button20.Location = new System.Drawing.Point(112, 78);
+            this.button20.Name = "button20";
+            this.button20.Size = new System.Drawing.Size(82, 23);
+            this.button20.TabIndex = 41;
+            this.button20.Text = "Close Valve";
+            this.button20.UseVisualStyleBackColor = true;
+            this.button20.Click += new System.EventHandler(this.button20_Click);
+            // 
+            // button19
+            // 
+            this.button19.Location = new System.Drawing.Point(15, 78);
+            this.button19.Name = "button19";
+            this.button19.Size = new System.Drawing.Size(82, 23);
+            this.button19.TabIndex = 40;
+            this.button19.Text = "Open Valve";
+            this.button19.UseVisualStyleBackColor = true;
+            this.button19.Click += new System.EventHandler(this.button19_Click);
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.label11);
+            this.groupBox1.Controls.Add(this.SenThresTextBox);
+            this.groupBox1.Controls.Add(this.TemperatureTextBox);
+            this.groupBox1.Controls.Add(this.PressureTextBox);
+            this.groupBox1.Controls.Add(this.label9);
+            this.groupBox1.Location = new System.Drawing.Point(844, 40);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(205, 99);
+            this.groupBox1.TabIndex = 32;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Operation";
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(18, 53);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(106, 13);
+            this.label11.TabIndex = 37;
+            this.label11.Text = "Temperature (Deg C)";
+            // 
+            // SenThresTextBox
+            // 
+            this.SenThresTextBox.Location = new System.Drawing.Point(7075, 101);
+            this.SenThresTextBox.Name = "SenThresTextBox";
+            this.SenThresTextBox.Size = new System.Drawing.Size(70, 20);
+            this.SenThresTextBox.TabIndex = 33;
+            // 
+            // TemperatureTextBox
+            // 
+            this.TemperatureTextBox.Location = new System.Drawing.Point(130, 50);
+            this.TemperatureTextBox.Name = "TemperatureTextBox";
+            this.TemperatureTextBox.Size = new System.Drawing.Size(60, 20);
+            this.TemperatureTextBox.TabIndex = 31;
+            // 
+            // PressureTextBox
+            // 
+            this.PressureTextBox.Location = new System.Drawing.Point(130, 25);
+            this.PressureTextBox.Name = "PressureTextBox";
+            this.PressureTextBox.Size = new System.Drawing.Size(60, 20);
+            this.PressureTextBox.TabIndex = 30;
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(18, 28);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(76, 13);
+            this.label9.TabIndex = 29;
+            this.label9.Text = "Pressure (kPa)";
+            // 
+            // FwVersionLbl
+            // 
+            this.FwVersionLbl.AutoSize = true;
+            this.FwVersionLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.FwVersionLbl.Location = new System.Drawing.Point(15, 0);
+            this.FwVersionLbl.Name = "FwVersionLbl";
+            this.FwVersionLbl.Size = new System.Drawing.Size(78, 16);
+            this.FwVersionLbl.TabIndex = 28;
+            this.FwVersionLbl.Text = "FW Version";
+            // 
             // GeneralGroupBox
             // 
-            this.GeneralGroupBox.Controls.Add(this.label21);
             this.GeneralGroupBox.Controls.Add(this.label20);
-            this.GeneralGroupBox.Controls.Add(this.SlTextBox);
             this.GeneralGroupBox.Controls.Add(this.SuTextBox);
             this.GeneralGroupBox.Controls.Add(this.EncTextBox);
             this.GeneralGroupBox.Controls.Add(this.label16);
@@ -948,19 +943,12 @@
             this.GeneralGroupBox.Controls.Add(this.Sw3TextBox);
             this.GeneralGroupBox.Controls.Add(this.Sw2TextBox);
             this.GeneralGroupBox.Controls.Add(this.Sw1TextBox);
-            this.GeneralGroupBox.Location = new System.Drawing.Point(15, 335);
+            this.GeneralGroupBox.Location = new System.Drawing.Point(843, 512);
             this.GeneralGroupBox.Name = "GeneralGroupBox";
             this.GeneralGroupBox.Size = new System.Drawing.Size(205, 146);
             this.GeneralGroupBox.TabIndex = 38;
             this.GeneralGroupBox.TabStop = false;
             this.GeneralGroupBox.Text = "I/O States";
-            // 
-            // SlTextBox
-            // 
-            this.SlTextBox.Location = new System.Drawing.Point(147, 100);
-            this.SlTextBox.Name = "SlTextBox";
-            this.SlTextBox.Size = new System.Drawing.Size(25, 20);
-            this.SlTextBox.TabIndex = 58;
             // 
             // SuTextBox
             // 
@@ -981,18 +969,18 @@
             this.label16.AutoSize = true;
             this.label16.Location = new System.Drawing.Point(105, 53);
             this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(29, 13);
+            this.label16.Size = new System.Drawing.Size(20, 13);
             this.label16.TabIndex = 55;
-            this.label16.Text = "ENC";
+            this.label16.Text = "V6";
             // 
             // label15
             // 
             this.label15.AutoSize = true;
             this.label15.Location = new System.Drawing.Point(105, 28);
             this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(40, 13);
+            this.label15.Size = new System.Drawing.Size(20, 13);
             this.label15.TabIndex = 54;
-            this.label15.Text = "COMM";
+            this.label15.Text = "V5";
             // 
             // CommTextBox
             // 
@@ -1006,9 +994,9 @@
             this.label14.AutoSize = true;
             this.label14.Location = new System.Drawing.Point(18, 103);
             this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(31, 13);
+            this.label14.Size = new System.Drawing.Size(20, 13);
             this.label14.TabIndex = 52;
-            this.label14.Text = "SW4";
+            this.label14.Text = "V4";
             // 
             // Sw4TextBox
             // 
@@ -1084,27 +1072,27 @@
             this.label24.AutoSize = true;
             this.label24.Location = new System.Drawing.Point(18, 78);
             this.label24.Name = "label24";
-            this.label24.Size = new System.Drawing.Size(31, 13);
+            this.label24.Size = new System.Drawing.Size(20, 13);
             this.label24.TabIndex = 39;
-            this.label24.Text = "SW3";
+            this.label24.Text = "V3";
             // 
             // label25
             // 
             this.label25.AutoSize = true;
             this.label25.Location = new System.Drawing.Point(18, 53);
             this.label25.Name = "label25";
-            this.label25.Size = new System.Drawing.Size(31, 13);
+            this.label25.Size = new System.Drawing.Size(20, 13);
             this.label25.TabIndex = 38;
-            this.label25.Text = "SW2";
+            this.label25.Text = "V2";
             // 
             // label26
             // 
             this.label26.AutoSize = true;
             this.label26.Location = new System.Drawing.Point(18, 28);
             this.label26.Name = "label26";
-            this.label26.Size = new System.Drawing.Size(31, 13);
+            this.label26.Size = new System.Drawing.Size(20, 13);
             this.label26.TabIndex = 37;
-            this.label26.Text = "SW1";
+            this.label26.Text = "V1";
             // 
             // Adc4TextBox
             // 
@@ -1133,363 +1121,6 @@
             this.Sw1TextBox.Name = "Sw1TextBox";
             this.Sw1TextBox.Size = new System.Drawing.Size(25, 20);
             this.Sw1TextBox.TabIndex = 32;
-            // 
-            // CommSelectPnl
-            // 
-            this.CommSelectPnl.BackColor = System.Drawing.SystemColors.ControlLight;
-            this.CommSelectPnl.Controls.Add(this.label22);
-            this.CommSelectPnl.Controls.Add(this.button14);
-            this.CommSelectPnl.Controls.Add(this.button13);
-            this.CommSelectPnl.Controls.Add(this.CommportComboBox);
-            this.CommSelectPnl.Location = new System.Drawing.Point(574, 330);
-            this.CommSelectPnl.Name = "CommSelectPnl";
-            this.CommSelectPnl.Size = new System.Drawing.Size(156, 116);
-            this.CommSelectPnl.TabIndex = 37;
-            this.CommSelectPnl.Visible = false;
-            // 
-            // label22
-            // 
-            this.label22.AutoSize = true;
-            this.label22.Location = new System.Drawing.Point(16, 24);
-            this.label22.Name = "label22";
-            this.label22.Size = new System.Drawing.Size(46, 13);
-            this.label22.TabIndex = 40;
-            this.label22.Text = "Comport";
-            // 
-            // button14
-            // 
-            this.button14.Location = new System.Drawing.Point(92, 65);
-            this.button14.Name = "button14";
-            this.button14.Size = new System.Drawing.Size(50, 23);
-            this.button14.TabIndex = 39;
-            this.button14.Text = "Cancel";
-            this.button14.UseVisualStyleBackColor = true;
-            this.button14.Click += new System.EventHandler(this.button14_Click);
-            // 
-            // button13
-            // 
-            this.button13.Location = new System.Drawing.Point(17, 65);
-            this.button13.Name = "button13";
-            this.button13.Size = new System.Drawing.Size(50, 23);
-            this.button13.TabIndex = 38;
-            this.button13.Text = "OK";
-            this.button13.UseVisualStyleBackColor = true;
-            this.button13.Click += new System.EventHandler(this.button13_Click);
-            // 
-            // CommportComboBox
-            // 
-            this.CommportComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.CommportComboBox.FormattingEnabled = true;
-            this.CommportComboBox.Location = new System.Drawing.Point(70, 21);
-            this.CommportComboBox.Name = "CommportComboBox";
-            this.CommportComboBox.Size = new System.Drawing.Size(75, 21);
-            this.CommportComboBox.TabIndex = 37;
-            // 
-            // groupBox3
-            // 
-            this.groupBox3.Controls.Add(this.button22);
-            this.groupBox3.Controls.Add(this.button21);
-            this.groupBox3.Controls.Add(this.button12);
-            this.groupBox3.Controls.Add(this.ClearFpcLogBtn);
-            this.groupBox3.Controls.Add(this.button11);
-            this.groupBox3.Controls.Add(this.SendToFpcBtn);
-            this.groupBox3.Location = new System.Drawing.Point(235, 25);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(200, 110);
-            this.groupBox3.TabIndex = 35;
-            this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Commands";
-            // 
-            // DownloadPanel
-            // 
-            this.DownloadPanel.Controls.Add(this.dataGridView);
-            this.DownloadPanel.Location = new System.Drawing.Point(467, 436);
-            this.DownloadPanel.Name = "DownloadPanel";
-            this.DownloadPanel.Size = new System.Drawing.Size(304, 174);
-            this.DownloadPanel.TabIndex = 26;
-            this.DownloadPanel.Visible = false;
-            // 
-            // dataGridView
-            // 
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
-            this.dataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView.Cursor = System.Windows.Forms.Cursors.Default;
-            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dataGridView.DefaultCellStyle = dataGridViewCellStyle5;
-            this.dataGridView.Location = new System.Drawing.Point(68, -15);
-            this.dataGridView.Name = "dataGridView";
-            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
-            this.dataGridView.Size = new System.Drawing.Size(240, 150);
-            this.dataGridView.TabIndex = 3;
-            this.dataGridView.Visible = false;
-            // 
-            // groupBox2
-            // 
-            this.groupBox2.Controls.Add(this.button20);
-            this.groupBox2.Controls.Add(this.button19);
-            this.groupBox2.Controls.Add(this.button18);
-            this.groupBox2.Location = new System.Drawing.Point(235, 145);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(200, 110);
-            this.groupBox2.TabIndex = 33;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Motor";
-            // 
-            // button20
-            // 
-            this.button20.Location = new System.Drawing.Point(101, 28);
-            this.button20.Name = "button20";
-            this.button20.Size = new System.Drawing.Size(82, 23);
-            this.button20.TabIndex = 41;
-            this.button20.Text = "Close Valve";
-            this.button20.UseVisualStyleBackColor = true;
-            this.button20.Click += new System.EventHandler(this.button20_Click);
-            // 
-            // button19
-            // 
-            this.button19.Location = new System.Drawing.Point(15, 28);
-            this.button19.Name = "button19";
-            this.button19.Size = new System.Drawing.Size(82, 23);
-            this.button19.TabIndex = 40;
-            this.button19.Text = "Open Valve";
-            this.button19.UseVisualStyleBackColor = true;
-            this.button19.Click += new System.EventHandler(this.button19_Click);
-            // 
-            // groupBox1
-            // 
-            this.groupBox1.Controls.Add(this.PulseCntTextBox);
-            this.groupBox1.Controls.Add(this.label13);
-            this.groupBox1.Controls.Add(this.label12);
-            this.groupBox1.Controls.Add(this.label11);
-            this.groupBox1.Controls.Add(this.SenThresTextBox);
-            this.groupBox1.Controls.Add(this.BallCntTextBox);
-            this.groupBox1.Controls.Add(this.IBattTextBox);
-            this.groupBox1.Controls.Add(this.VBattTextBox);
-            this.groupBox1.Controls.Add(this.label9);
-            this.groupBox1.Location = new System.Drawing.Point(15, 180);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(205, 145);
-            this.groupBox1.TabIndex = 32;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Operation";
-            // 
-            // PulseCntTextBox
-            // 
-            this.PulseCntTextBox.Location = new System.Drawing.Point(120, 100);
-            this.PulseCntTextBox.Name = "PulseCntTextBox";
-            this.PulseCntTextBox.Size = new System.Drawing.Size(60, 20);
-            this.PulseCntTextBox.TabIndex = 43;
-            // 
-            // label13
-            // 
-            this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(18, 103);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(64, 13);
-            this.label13.TabIndex = 39;
-            this.label13.Text = "Pulse Count";
-            // 
-            // label12
-            // 
-            this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(18, 78);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(55, 13);
-            this.label12.TabIndex = 38;
-            this.label12.Text = "Ball Count";
-            // 
-            // label11
-            // 
-            this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(18, 53);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(87, 13);
-            this.label11.TabIndex = 37;
-            this.label11.Text = "Motor Current (A)";
-            // 
-            // SenThresTextBox
-            // 
-            this.SenThresTextBox.Location = new System.Drawing.Point(7075, 101);
-            this.SenThresTextBox.Name = "SenThresTextBox";
-            this.SenThresTextBox.Size = new System.Drawing.Size(70, 20);
-            this.SenThresTextBox.TabIndex = 33;
-            // 
-            // BallCntTextBox
-            // 
-            this.BallCntTextBox.Location = new System.Drawing.Point(120, 75);
-            this.BallCntTextBox.Name = "BallCntTextBox";
-            this.BallCntTextBox.Size = new System.Drawing.Size(60, 20);
-            this.BallCntTextBox.TabIndex = 32;
-            // 
-            // IBattTextBox
-            // 
-            this.IBattTextBox.Location = new System.Drawing.Point(120, 50);
-            this.IBattTextBox.Name = "IBattTextBox";
-            this.IBattTextBox.Size = new System.Drawing.Size(60, 20);
-            this.IBattTextBox.TabIndex = 31;
-            // 
-            // VBattTextBox
-            // 
-            this.VBattTextBox.Location = new System.Drawing.Point(120, 25);
-            this.VBattTextBox.Name = "VBattTextBox";
-            this.VBattTextBox.Size = new System.Drawing.Size(60, 20);
-            this.VBattTextBox.TabIndex = 30;
-            // 
-            // label9
-            // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(18, 28);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(95, 13);
-            this.label9.TabIndex = 29;
-            this.label9.Text = "Battery Voltage (V)";
-            // 
-            // FpcGroupBox
-            // 
-            this.FpcGroupBox.Controls.Add(this.SwitchTriggerComboBox);
-            this.FpcGroupBox.Controls.Add(this.label28);
-            this.FpcGroupBox.Controls.Add(this.LogTypeComboBox);
-            this.FpcGroupBox.Controls.Add(this.label23);
-            this.FpcGroupBox.Controls.Add(this.DeployComboBox);
-            this.FpcGroupBox.Controls.Add(this.label18);
-            this.FpcGroupBox.Controls.Add(this.label17);
-            this.FpcGroupBox.Controls.Add(this.DeployDelayTime);
-            this.FpcGroupBox.Controls.Add(this.DeployTextBox);
-            this.FpcGroupBox.Controls.Add(this.TriggerTextBox);
-            this.FpcGroupBox.Controls.Add(this.label8);
-            this.FpcGroupBox.Location = new System.Drawing.Point(15, 25);
-            this.FpcGroupBox.Name = "FpcGroupBox";
-            this.FpcGroupBox.Size = new System.Drawing.Size(205, 150);
-            this.FpcGroupBox.TabIndex = 31;
-            this.FpcGroupBox.TabStop = false;
-            this.FpcGroupBox.Text = "Setup";
-            // 
-            // SwitchTriggerComboBox
-            // 
-            this.SwitchTriggerComboBox.DisplayMember = "0";
-            this.SwitchTriggerComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.SwitchTriggerComboBox.FormattingEnabled = true;
-            this.SwitchTriggerComboBox.Items.AddRange(new object[] {
-            "DUAL SW",
-            "SINGLE SW"});
-            this.SwitchTriggerComboBox.Location = new System.Drawing.Point(108, 100);
-            this.SwitchTriggerComboBox.Name = "SwitchTriggerComboBox";
-            this.SwitchTriggerComboBox.Size = new System.Drawing.Size(90, 21);
-            this.SwitchTriggerComboBox.TabIndex = 46;
-            // 
-            // label28
-            // 
-            this.label28.AutoSize = true;
-            this.label28.Location = new System.Drawing.Point(10, 103);
-            this.label28.Name = "label28";
-            this.label28.Size = new System.Drawing.Size(61, 13);
-            this.label28.TabIndex = 45;
-            this.label28.Text = "SW Trigger";
-            // 
-            // LogTypeComboBox
-            // 
-            this.LogTypeComboBox.DisplayMember = "0";
-            this.LogTypeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.LogTypeComboBox.FormattingEnabled = true;
-            this.LogTypeComboBox.Items.AddRange(new object[] {
-            "STANDARD",
-            "DETAILED"});
-            this.LogTypeComboBox.Location = new System.Drawing.Point(108, 75);
-            this.LogTypeComboBox.Name = "LogTypeComboBox";
-            this.LogTypeComboBox.Size = new System.Drawing.Size(90, 21);
-            this.LogTypeComboBox.TabIndex = 44;
-            // 
-            // label23
-            // 
-            this.label23.AutoSize = true;
-            this.label23.Location = new System.Drawing.Point(10, 128);
-            this.label23.Name = "label23";
-            this.label23.Size = new System.Drawing.Size(97, 13);
-            this.label23.TabIndex = 43;
-            this.label23.Text = "Deploy Delay(mins)";
-            // 
-            // DeployComboBox
-            // 
-            this.DeployComboBox.DisplayMember = "0";
-            this.DeployComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.DeployComboBox.FormattingEnabled = true;
-            this.DeployComboBox.Items.AddRange(new object[] {
-            "SHOP TEST",
-            "DEPLOY"});
-            this.DeployComboBox.Location = new System.Drawing.Point(108, 50);
-            this.DeployComboBox.Name = "DeployComboBox";
-            this.DeployComboBox.Size = new System.Drawing.Size(90, 21);
-            this.DeployComboBox.TabIndex = 42;
-            // 
-            // label18
-            // 
-            this.label18.AutoSize = true;
-            this.label18.Location = new System.Drawing.Point(10, 78);
-            this.label18.Name = "label18";
-            this.label18.Size = new System.Drawing.Size(52, 13);
-            this.label18.TabIndex = 37;
-            this.label18.Text = "Log Type";
-            // 
-            // label17
-            // 
-            this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(10, 53);
-            this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(40, 13);
-            this.label17.TabIndex = 36;
-            this.label17.Text = "Deploy";
-            // 
-            // DeployDelayTime
-            // 
-            this.DeployDelayTime.Location = new System.Drawing.Point(108, 125);
-            this.DeployDelayTime.Name = "DeployDelayTime";
-            this.DeployDelayTime.Size = new System.Drawing.Size(60, 20);
-            this.DeployDelayTime.TabIndex = 32;
-            // 
-            // DeployTextBox
-            // 
-            this.DeployTextBox.Location = new System.Drawing.Point(120, 50);
-            this.DeployTextBox.Name = "DeployTextBox";
-            this.DeployTextBox.Size = new System.Drawing.Size(60, 20);
-            this.DeployTextBox.TabIndex = 31;
-            // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(10, 28);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(71, 13);
-            this.label8.TabIndex = 29;
-            this.label8.Text = "Trigger Count";
-            // 
-            // FwVersionLbl
-            // 
-            this.FwVersionLbl.AutoSize = true;
-            this.FwVersionLbl.Location = new System.Drawing.Point(15, 0);
-            this.FwVersionLbl.Name = "FwVersionLbl";
-            this.FwVersionLbl.Size = new System.Drawing.Size(62, 13);
-            this.FwVersionLbl.TabIndex = 28;
-            this.FwVersionLbl.Text = "FW Version";
             // 
             // DiagnosticPnl
             // 
@@ -1553,57 +1184,89 @@
             this.toolStripStatusLabel1.Size = new System.Drawing.Size(118, 17);
             this.toolStripStatusLabel1.Text = "toolStripStatusLabel1";
             // 
+            // GenericPlot
+            // 
+            this.GenericPlot.BackColor = System.Drawing.Color.GreenYellow;
+            this.GenericPlot.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.GenericPlot.ForeColor = System.Drawing.Color.Black;
+            this.GenericPlot.Location = new System.Drawing.Point(826, 107);
+            this.GenericPlot.Name = "GenericPlot";
+            this.GenericPlot.Size = new System.Drawing.Size(116, 99);
+            this.GenericPlot.TabIndex = 154;
+            this.GenericPlot.Text = "GenericPlot";
+            this.GenericPlot.Visible = false;
+            // 
+            // GetPressBtn
+            // 
+            this.GetPressBtn.Location = new System.Drawing.Point(18, 280);
+            this.GetPressBtn.Name = "GetPressBtn";
+            this.GetPressBtn.Size = new System.Drawing.Size(82, 23);
+            this.GetPressBtn.TabIndex = 49;
+            this.GetPressBtn.Text = "Get Press";
+            this.toolTip1.SetToolTip(this.GetPressBtn, "Get Setup Information from FTC");
+            this.GetPressBtn.UseVisualStyleBackColor = true;
+            this.GetPressBtn.Click += new System.EventHandler(this.GetPressBtn_Click);
+            // 
+            // StartFitBtn
+            // 
+            this.StartFitBtn.Location = new System.Drawing.Point(127, 280);
+            this.StartFitBtn.Name = "StartFitBtn";
+            this.StartFitBtn.Size = new System.Drawing.Size(82, 23);
+            this.StartFitBtn.TabIndex = 50;
+            this.StartFitBtn.Text = "Start Fit";
+            this.toolTip1.SetToolTip(this.StartFitBtn, "Get Setup Information from FTC");
+            this.StartFitBtn.UseVisualStyleBackColor = true;
+            this.StartFitBtn.Click += new System.EventHandler(this.StartFitBtn_Click);
+            // 
             // TheMainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1100, 623);
+            this.Controls.Add(this.GenericPlot);
             this.Controls.Add(this.FtcStatusStrip);
             this.Controls.Add(this.MainPanel);
             this.Controls.Add(this.numericUpDown1);
             this.Controls.Add(this.DiagnosticPnl);
             this.Controls.Add(this.MotorDirBtn);
+            this.Controls.Add(this.GeneralGroupBox);
             this.Controls.Add(this.OpenSerialPortBtn);
-            this.Controls.Add(this.IPAddrBox);
             this.Controls.Add(this.button8);
-            this.Controls.Add(this.EmailPanel);
+            this.Controls.Add(this.groupBox2);
+            this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.button6);
             this.Controls.Add(this.button5);
             this.Controls.Add(this.button4);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.button2);
-            this.Controls.Add(this.button1);
-            this.Controls.Add(this.FileHandleBtn);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "TheMainForm";
-            this.Text = "WinMAN version 1.00";
+            this.Text = "WinAMC version 1.00";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.TheMainForm_FormClosed);
             this.Load += new System.EventHandler(this.Form1_Load);
-            this.EmailPanel.ResumeLayout(false);
-            this.EmailPanel.PerformLayout();
-            this.panel1.ResumeLayout(false);
-            this.panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.MainPanel.ResumeLayout(false);
             this.MainPanel.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.ControllerGridView)).EndInit();
+            this.ProfileGroupBox.ResumeLayout(false);
+            this.ProfileGroupBox.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.ProfileGridView)).EndInit();
             this.DiagPnl.ResumeLayout(false);
             this.DiagPnl.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.downloadGridView)).EndInit();
-            this.GeneralGroupBox.ResumeLayout(false);
-            this.GeneralGroupBox.PerformLayout();
             this.CommSelectPnl.ResumeLayout(false);
             this.CommSelectPnl.PerformLayout();
-            this.groupBox3.ResumeLayout(false);
             this.DownloadPanel.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).EndInit();
             this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
-            this.FpcGroupBox.ResumeLayout(false);
-            this.FpcGroupBox.PerformLayout();
+            this.GeneralGroupBox.ResumeLayout(false);
+            this.GeneralGroupBox.PerformLayout();
             this.DiagnosticPnl.ResumeLayout(false);
             this.DiagnosticPnl.PerformLayout();
             this.FtcStatusStrip.ResumeLayout(false);
@@ -1614,10 +1277,7 @@
         }
 
         #endregion
-
-        private System.Windows.Forms.Button FileHandleBtn;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
-        private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Button button4;
@@ -1625,26 +1285,7 @@
         private System.Windows.Forms.Button button6;
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.Timer timer1;
-        private System.Windows.Forms.TextBox MailServerTextBox;
         private System.Windows.Forms.Button button8;
-        private System.Windows.Forms.TextBox ToAddrTextBox;
-        private System.Windows.Forms.TextBox FromAddrTextBox;
-        private System.Windows.Forms.TextBox SubjectTextBox;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.RichTextBox BodyRichTextBox;
-        private System.Windows.Forms.Button button9;
-        private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.Panel EmailPanel;
-        private System.Windows.Forms.Button button7;
-        private System.Windows.Forms.Button button10;
-        private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.TextBox IPAddrBox;
         private System.IO.Ports.SerialPort serialPort1;
         private System.Windows.Forms.Button OpenSerialPortBtn;
         private System.Windows.Forms.Button MotorDirBtn;
@@ -1667,29 +1308,12 @@
         private System.Windows.Forms.Label RelativeAngleLbl;
         private System.Windows.Forms.Label FwVersionLbl;
         private System.Windows.Forms.ToolStripMenuItem fPCToolStripMenuItem;
-        private System.Windows.Forms.GroupBox FpcGroupBox;
-        private System.Windows.Forms.TextBox TriggerTextBox;
-        private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.TextBox DeployDelayTime;
-        private System.Windows.Forms.TextBox DeployTextBox;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.TextBox SenThresTextBox;
-        private System.Windows.Forms.TextBox BallCntTextBox;
-        private System.Windows.Forms.TextBox IBattTextBox;
-        private System.Windows.Forms.TextBox VBattTextBox;
+        private System.Windows.Forms.TextBox PressureTextBox;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.GroupBox groupBox2;
-        private System.Windows.Forms.GroupBox groupBox3;
-        private System.Windows.Forms.Button button12;
-        private System.Windows.Forms.Button ClearFpcLogBtn;
-        private System.Windows.Forms.Button button11;
-        private System.Windows.Forms.Button SendToFpcBtn;
-        private System.Windows.Forms.Label label13;
-        private System.Windows.Forms.Label label12;
         private System.Windows.Forms.Label label11;
-        private System.Windows.Forms.TextBox PulseCntTextBox;
-        private System.Windows.Forms.Label label18;
-        private System.Windows.Forms.Label label17;
         private System.Windows.Forms.Timer SerialMonitorTimer;
         private System.Windows.Forms.Panel CommSelectPnl;
         private System.Windows.Forms.Button button14;
@@ -1731,28 +1355,30 @@
         private System.Windows.Forms.Label label15;
         private System.Windows.Forms.TextBox CommTextBox;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
-        private System.Windows.Forms.Button button18;
         private System.Windows.Forms.Button SaveLogBtn;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
         private System.Windows.Forms.Button button20;
         private System.Windows.Forms.Button button19;
         private System.Windows.Forms.Label label10;
-        private System.Windows.Forms.ComboBox DeployComboBox;
         private System.Windows.Forms.Label SetupTimeLbl;
         private System.Windows.Forms.TextBox textBox2;
         private System.Windows.Forms.Label label19;
-        private System.Windows.Forms.TextBox FtcMachState;
-        private System.Windows.Forms.Button button22;
-        private System.Windows.Forms.Button button21;
-        private System.Windows.Forms.Label label21;
         private System.Windows.Forms.Label label20;
-        private System.Windows.Forms.TextBox SlTextBox;
         private System.Windows.Forms.TextBox SuTextBox;
-        private System.Windows.Forms.ComboBox LogTypeComboBox;
-        private System.Windows.Forms.Label label23;
-        private System.Windows.Forms.Label label27;
-        private System.Windows.Forms.ComboBox SwitchTriggerComboBox;
-        private System.Windows.Forms.Label label28;
+        private System.Windows.Forms.Label BrdTypeLbl;
+        private System.Windows.Forms.RadioButton radioButton3;
+        private System.Windows.Forms.RadioButton radioButton2;
+        private System.Windows.Forms.RadioButton V1RadioBtn;
+        private System.Windows.Forms.GroupBox ProfileGroupBox;
+        private System.Windows.Forms.Button SaveProfileBtn;
+        private System.Windows.Forms.TextBox textBox3;
+        private System.Windows.Forms.DataGridView ProfileGridView;
+        private System.Windows.Forms.Button LoadProfileBtn;
+        private Gigasoft.ProEssentials.Pesgo GenericPlot;
+        private System.Windows.Forms.TextBox TemperatureTextBox;
+        private System.Windows.Forms.DataGridView ControllerGridView;
+        private System.Windows.Forms.Button StartFitBtn;
+        private System.Windows.Forms.Button GetPressBtn;
     }
 }
 

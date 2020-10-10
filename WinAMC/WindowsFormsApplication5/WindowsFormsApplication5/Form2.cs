@@ -8,6 +8,10 @@ using System.Text;
 using System.Windows.Forms;
 using System.Threading;
 
+using System.IO.Ports;
+using System.Management;
+using System.Text.RegularExpressions;
+
 using SerialCom;
 using WindowsFormsApplication5;
                 
@@ -65,6 +69,7 @@ namespace WindowsFormsApplication5
                     CounterBox.Visible = true;
                     break;
                 case (int)SET_COMMANDS.SET_COMMPORT:
+                    /*
                     this.Height = 220;
                     this.Width = 220;
                     CommportBox.Visible =true;
@@ -102,7 +107,80 @@ namespace WindowsFormsApplication5
                                             MessageBoxIcon.Warning
                                            );
 
-                    }                    
+                    }   
+                    */
+                    this.Height = 260;
+                    this.Width = 300;
+
+                    SerialFd serialFd = new SerialFd();
+
+                    //HideAllPanels();
+                    int WirelessDonglePort = 0;
+
+                    CommportBox.Visible = true;
+
+                    ManagementClass processClass = new ManagementClass("Win32_PnPEntity");
+                    ManagementObjectCollection Ports = processClass.GetInstances();
+                    string[] device = new string[10];// = "No recognized";
+
+                    device[0] = "No recognized";
+
+                    foreach (ManagementObject property in Ports)
+                    {
+                        if (property.GetPropertyValue("Name") != null)
+                            if (//property.GetPropertyValue("Name").ToString().Contains("XDS110") &&
+                                //property.GetPropertyValue("Name").ToString().Contains("COM"))
+                                property.GetPropertyValue("Name").ToString().Contains("XDS110 Class Application/User UART"))
+                            {
+                                Console.WriteLine(property.GetPropertyValue("Name").ToString());
+                                device[0] = property.GetPropertyValue("Name").ToString();
+                                break;
+                            }
+                    }
+
+                    string[] ports = SerialPort.GetPortNames();
+                    int portNbr = 0;
+
+                    foreach (string port in ports)
+                    {
+                        //                    @"\bHello\b"
+                        string matchStr = "\\b" + ports[portNbr] + "\\b";
+
+                        ComportBox.Items.Add(port);// + " " + device[0]);
+                        ComportBox.SelectedIndex = portNbr;
+
+
+                        if (Regex.IsMatch(device[0], @matchStr))
+                        {
+                            //ComportSelectBox.Enabled = false;
+                            //BaudrateSelectBox.Enabled = false;
+                            ComDescLbl.Text = device[0];
+
+                            WirelessDonglePort = portNbr;
+                            //break;
+                        }
+
+                        portNbr++;
+                    }
+
+                    try
+                    {
+                        //   ComportSelectBox.SelectedIndex = 0;
+                        ComportBox.Select();
+                        ComportBox.Focus();
+
+                        ComportBox.SelectedIndex = WirelessDonglePort;
+                        //BaudrateSelectBox.SelectedIndex = 10;
+                    }
+                    catch (Exception)
+                    {
+                        MessageBox.Show("No Communication Ports Were Found",
+                                        "TRIG Communication",
+                                        MessageBoxButtons.OK,
+                                        MessageBoxIcon.Warning
+                                       );
+
+                    }
                     break;
             }
 

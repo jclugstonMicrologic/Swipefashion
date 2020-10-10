@@ -21,7 +21,7 @@ namespace WindowsFormsApplication5
         {
             InitializeComponent();
 
-            SwVersion.version = "1.00 Dec 17, 2019";
+            SwVersion.version = "1.00 Oct 10, 2020";
 
             this.Text = String.Format("About {0}", AssemblyTitle);
             this.labelProductName.Text = AssemblyProduct;
@@ -89,7 +89,7 @@ namespace WindowsFormsApplication5
                 }
 
 
-                return "WinMAN";// ((AssemblyProductAttribute)attributes[0]).Product;
+                return "WinAMC";// ((AssemblyProductAttribute)attributes[0]).Product;
             }
         }
 
@@ -113,7 +113,7 @@ namespace WindowsFormsApplication5
         {
             get
             {
-                return "MAN";
+                return "AMC";
                 /*
                 object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyCompanyAttribute), false);
                 if (attributes.Length == 0)
