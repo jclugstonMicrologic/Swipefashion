@@ -162,7 +162,7 @@ int main(void)
 *|----------------------------------------------------------------------------
 */
 BOOL TargetHardwareInit(void)
-{
+{   
     /* setup STM32 system (clock, PLL and Flash configuration) */
     SystemInit();
 
@@ -170,7 +170,7 @@ BOOL TargetHardwareInit(void)
     NVIC_PriorityGroupConfig( NVIC_PriorityGroup_4 );
 
     /* adjust interrupt vector table by vector offset (0x4000) */
-    NVIC_SetVectorTable(NVIC_VectTab_FLASH, (0x08000000 | 0x4000) );
+    NVIC_SetVectorTable(NVIC_VectTab_FLASH, (0x08000000 | 0x0000) ); //(0x08000000 | 0x4000) );
     
     /* check if the system has resumed from IWDG reset */
     if( RCC_GetFlagStatus(RCC_FLAG_IWDGRST) != RESET )
@@ -185,9 +185,9 @@ BOOL TargetHardwareInit(void)
     
     /* initialize all GPIO */
     Gpio_Init();
-             
+      
     /* initialize ADC */
-    Adc_Init();
+    //Adc_Init();
   
     /* initialize internal RTC */
     RtcInit();
@@ -209,7 +209,7 @@ BOOL TargetHardwareInit(void)
     /*!!! need to find out how to disable during sleep(don't think it's possible)
      OR allow reset, then go to sleep out of reset without enabling wdt    
     */
-//    WdtInit();  
+    //WdtInit();  
    
     return TRUE;    
 }
@@ -232,7 +232,7 @@ BOOL AmcTasksInit(void)
         return FALSE;      
     }
 #endif
-                  
+      
     /* initialize bluetooth serial comm port */    
     BluetoothMachine_Init();
             

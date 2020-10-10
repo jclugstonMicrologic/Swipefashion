@@ -29,7 +29,9 @@
 #include "wdtHi.h"
 #include "gpioHi.h"
 
-#include "AdcFd.h"
+#include "sysTimers.h"
+
+//#include "AdcFd.h"
 #include "PressureTdrHi.h"
 #include "BluetoothMachine.h"
    
@@ -80,76 +82,132 @@ void MainControlTask(void * pvParameters)
 {
     TickType_t xNextWakeTime;
     xNextWakeTime = xTaskGetTickCount();
+    
+#ifdef TERMINAL_ENABLED
 UINT32 loopCnt =0;
 char aStr[32];
 UINT8 valveState =0;
-
-    //UINT8 chipId;
+UINT8 sensorPresent =0;
+UINT8 debounceCnt =0;
+press_sensor_data_t PSensorData[8];
     
   //  TickType_t delayTime = xTaskGetTickCount();    
 
     /* !!! test !!! */
     strcpy(aStr, "AMC v");
     strcat(aStr, FW_VERSION);
+    strcat(aStr, __DATE__);
     strcat(aStr, "\r\n\r\n");
      
-    SendString(aStr);
+    SciAsciiSendString(SCI_PC_COM, aStr);
+    
+    sensorPresent =PressureTdr_GetTdrs();
+    
+    for(int j=0; j<8; j++)
+    {
+        if( sensorPresent & (0x01<<j) )
+        {
+            sprintf(aStr, "Pressure Sensor %d detected\r\n", j+1);
+        }
+        else
+        {
+            sprintf(aStr, "Pressure Sensor %d NOT detected\r\n", j+1);            
+        }
+        
+        SciAsciiSendString(SCI_PC_COM, aStr);
+    }
+#endif    
     
     for( ;; )
     {      
         KickWdt();         
               
    //     AdcMeasureReadings();
-                 
-        if( (loopCnt++ %1000) ==0 )
+
+#ifdef TERMINAL_ENABLED        
+        if( (++loopCnt %100) ==0 )
         {
-            PressureTdr_ReadPT(0, &PressureValue[0], &TemperatureValue[0]);
-            PressureTdr_ReadPT(7, &PressureValue[7], &TemperatureValue[7]);                  
+            for(int sensor =0; sensor<8; sensor++)
+            {
+                PressureTdr_ReadPT(sensor, &PSensorData[sensor].press, &PSensorData[sensor].temp);
+            }            
             
-            memset(&aStr, 0x00,sizeof(aStr));
-            sprintf(aStr, "P1 %2.2fkPa T1 %2.1fdegC\n\r", PressureValue[0], TemperatureValue[0]);
-            SendString(aStr);
-            
-            memset(&aStr, 0x00,sizeof(aStr));
-            sprintf(aStr, "P7 %2.2fkPa T7 %2.1fdegC\r\n\r\n", PressureValue[7], TemperatureValue[7]);
-            SendString(aStr);
+            if( (loopCnt %1000) ==0 )
+            {
+                memset(&aStr, 0x00,sizeof(aStr));
+                sprintf(aStr, "P1: %2.3fkPa T1: %2.1fdegC\r\n", PSensorData[0].press, PSensorData[0].temp);
+                SciAsciiSendString(SCI_PC_COM, aStr);
+                
+                memset(&aStr, 0x00,sizeof(aStr));
+                sprintf(aStr, "P8: %2.3fkPa T8: %2.1fdegC\r\n\r\n", PSensorData[7].press, PSensorData[7].temp);
+                SciAsciiSendString(SCI_PC_COM, aStr);
+            }
         }
-   
+        
         if( valveState == 0)
         {
-            if( !GPIO_ReadInputDataBit(USER_BTN_PORT, USER_BTN_PIN) )
+            debounceCnt =0;
+            
+            while( !GPIO_ReadInputDataBit(USER_BTN_PORT, USER_BTN_PIN) )
             {
-                OpenValve(1);      
-                valveState =1;
-            }
+                if( debounceCnt ++ >50 )
+                {                
+                    OpenValve(1);      
+                    valveState =1;
+                    break;
+                }                
+                TimerDelayUs(1000);
+            }                    
         }
         else if( valveState == 1)
         {
-            if( GPIO_ReadInputDataBit(USER_BTN_PORT, USER_BTN_PIN) )
+            debounceCnt =0;
+            
+            while( GPIO_ReadInputDataBit(USER_BTN_PORT, USER_BTN_PIN) )
             {
-                valveState =2;
+                if( debounceCnt ++ >50 )
+                {                
+                    valveState =2;
+                    break;
+                }                
+                TimerDelayUs(1000);
             }
         }
         else if( valveState == 2)
         {
-            if( !GPIO_ReadInputDataBit(USER_BTN_PORT, USER_BTN_PIN) )
+            debounceCnt =0;
+           
+            while( !GPIO_ReadInputDataBit(USER_BTN_PORT, USER_BTN_PIN) )
             {
-                CloseValve(1); 
-                valveState =3;
+                if( debounceCnt ++ >50 )
+                {
+                    CloseValve(1); 
+                    valveState =3;
+                    break;
+                }
+                TimerDelayUs(1000);
             }
         }                
         else if( valveState ==3)
         {
-            if( GPIO_ReadInputDataBit(USER_BTN_PORT, USER_BTN_PIN) )
+            debounceCnt =0;
+            
+            while( GPIO_ReadInputDataBit(USER_BTN_PORT, USER_BTN_PIN) )
             {
-                valveState =0;
+                if( debounceCnt ++ >50 )
+                {
+                    valveState =0;
+                    break;
+                }
+                TimerDelayUs(1000);
             }
         }               
-
+#endif
+        
         /* this delay allows lower priorty tasks to run */
         //vTaskDelay(1);
 
-       // BluetoothMachine();
+        BluetoothMachine();
 
         /* place this task in the blocked state until it is time to run again */
         vTaskDelayUntil( &xNextWakeTime, 1 );        

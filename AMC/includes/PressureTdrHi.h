@@ -63,14 +63,24 @@
 
 #define SPI_TRANSFER_PTDR(txByte)    SpiTransferSpi2(txByte)
 
-extern float PressureValue[8];
-extern float TemperatureValue[8];
+typedef struct
+{
+  float press;
+  float temp;
+}press_sensor_data_t;
+
+//extern float PressureValue[8];
+//extern float TemperatureValue[8];
 
 void PressureTdr_Init(void);
 BOOL PressureTdr_Read(UINT8 addr, UINT8 tdrNbr, UINT8 nbrBytes, UINT8 *pDataBuf);
 BOOL PressureTdr_Write(UINT8 addr, UINT8 tdrNbr, UINT8 nbrBytes, UINT8 *pDataBuf);
 
 BOOL PressureTdr_ReadPT(UINT8 tdrNbr, float *pPress, float *pTemp);
+
+void PressureTdr_ReadAll(void);
+
+UINT8 PressureTdr_GetTdrs(void);
 #endif
 
 

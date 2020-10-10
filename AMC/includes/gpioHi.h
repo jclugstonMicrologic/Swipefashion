@@ -47,31 +47,34 @@
 #define RED_LED_PIN           TP208_PIN //TP208
 #define RED_LED_PORT          TP208_PORT
 
-//#define TST_PIN               TP209_PIN //TP209
-//#define TST_PORT              TP209_PORT
 
+#define BRD_ID_BIT0_PIN       GPIO_Pin_7
+#define BRD_ID_BIT0_PORT      GPIOA
+
+#define BRD_ID_BIT1_PIN       GPIO_Pin_9
+#define BRD_ID_BIT1_PORT      GPIOB
 
 /* solenoid valves */
-#define S_VALVE1_PIN          GPIO_Pin_3
-#define S_VALVE1_PORT         GPIOC
+#define S_DRIVE1_PIN          GPIO_Pin_3
+#define S_DRIVE1_PORT         GPIOC
 
-#define S_VALVE2_PIN          GPIO_Pin_4
-#define S_VALVE2_PORT         GPIOC
+#define S_DRIVE2_PIN          GPIO_Pin_4
+#define S_DRIVE2_PORT         GPIOC
 
-#define S_VALVE3_PIN          GPIO_Pin_5
-#define S_VALVE3_PORT         GPIOC
+#define S_DRIVE3_PIN          GPIO_Pin_5
+#define S_DRIVE3_PORT         GPIOC
 
-#define S_VALVE4_PIN          GPIO_Pin_0
-#define S_VALVE4_PORT         GPIOB
+#define S_DRIVE4_PIN          GPIO_Pin_0
+#define S_DRIVE4_PORT         GPIOB
 
-#define S_VALVE5_PIN          GPIO_Pin_1
-#define S_VALVE5_PORT         GPIOB
+#define S_DRIVE5_PIN          GPIO_Pin_1
+#define S_DRIVE5_PORT         GPIOB
 
-#define S_VALVE6_PIN          GPIO_Pin_2
-#define S_VALVE6_PORT         GPIOB
+#define S_DRIVE6_PIN          GPIO_Pin_2
+#define S_DRIVE6_PORT         GPIOB
 
-#define S_VALVE7_PIN          GPIO_Pin_3
-#define S_VALVE7_PORT         GPIOB
+#define S_DRIVE7_PIN          GPIO_Pin_3
+#define S_DRIVE7_PORT         GPIOB
 
 /* solenoid pulse */
 #define S_PULSE1_PIN          GPIO_Pin_0
@@ -95,7 +98,7 @@
 #define S_PULSE7_PIN          GPIO_Pin_6
 #define S_PULSE7_PORT         GPIOA
 
-/* ac-drives1 */
+/* ac-drives */
 #define AC_DRIVE1_PIN          GPIO_Pin_0
 #define AC_DRIVE1_PORT         GPIOC
 #define AC_DRIVE2_PIN          GPIO_Pin_1
@@ -123,23 +126,15 @@
 #define PRESS_SENSOR8_CS_PIN   GPIO_Pin_8
 #define PRESS_SENSOR8_CS_PORT  GPIOA
 
-
 /* ADC channels */
-#define ADC_1_PIN             GPIO_Pin_0
-#define ADC_1_PORT            GPIOC
+//#define ADC_1_PIN             GPIO_Pin_0
+//#define ADC_1_PORT            GPIOC
 
-#define ADC_2_PIN             GPIO_Pin_1
-#define ADC_2_PORT            GPIOC
+//#define ADC_2_PIN             GPIO_Pin_1
+//#define ADC_2_PORT            GPIOC
+//#define ADC_PORT              GPIOC
 
-#define ADC_VSENSE1_PIN       GPIO_Pin_2
-#define ADC_VSENSE1_PORT      GPIOC
-
-#define ADC_VSENSE2_PIN       GPIO_Pin_3
-#define ADC_VSENSE2_PORT      GPIOC
-
-#define ADC_PORT              GPIOC
-
-/************** MACROS *****************/
+/********************* MACROS **************************************/
 #define GREEN_LED_ON     GPIO_SetBits(GREEN_LED_PORT, GREEN_LED_PIN)
 #define GREEN_LED_OFF    GPIO_ResetBits(GREEN_LED_PORT, GREEN_LED_PIN)
 #define GREEN_LED_TOGGLE GPIO_ToggleBits(GREEN_LED_PORT, GREEN_LED_PIN)
@@ -152,31 +147,39 @@
 #define RED_LED_OFF      GPIO_ResetBits(RED_LED_PORT, RED_LED_PIN)
 #define RED_LED_TOGGLE   GPIO_ToggleBits(RED_LED_PORT, RED_LED_PIN)
 
-#define S_VALVE1_OPEN    GPIO_SetBits(S_VALVE1_PORT, S_VALVE1_PIN)
-#define S_VALVE1_CLOSE   GPIO_ResetBits(S_VALVE1_PORT, S_VALVE1_PIN)
-#define S_VALVE2_OPEN    GPIO_SetBits(S_VALVE2_PORT, S_VALVE2_PIN)
-#define S_VALVE2_CLOSE   GPIO_ResetBits(S_VALVE2_PORT, S_VALVE2_PIN)
-#define S_VALVE3_OPEN    GPIO_SetBits(S_VALVE3_PORT, S_VALVE3_PIN)
-#define S_VALVE3_CLOSE   GPIO_ResetBits(S_VALVE3_PORT, S_VALVE3_PIN)
-#define S_VALVE4_OPEN    GPIO_SetBits(S_VALVE4_PORT, S_VALVE4_PIN)
-#define S_VALVE4_CLOSE   GPIO_ResetBits(S_VALVE4_PORT, S_VALVE4_PIN)
-#define S_VALVE5_OPEN    GPIO_SetBits(S_VALVE5_PORT, S_VALVE5_PIN)
-#define S_VALVE5_CLOSE   GPIO_ResetBits(S_VALVE5_PORT, S_VALVE5_PIN)
-#define S_VALVE6_OPEN    GPIO_SetBits(S_VALVE6_PORT, S_VALVE6_PIN)
-#define S_VALVE6_CLOSE   GPIO_ResetBits(S_VALVE6_PORT, S_VALVE6_PIN)
-#define S_VALVE7_OPEN    GPIO_SetBits(S_VALVE7_PORT, S_VALVE7_PIN)
-#define S_VALVE7_CLOSE   GPIO_ResetBits(S_VALVE7_PORT, S_VALVE7_PIN)
+#define BOARD_ID         GPIO_ReadInputDataBit(BRD_ID_BIT0_PORT, BRD_ID_BIT0_PIN) | \
+                         (GPIO_ReadInputDataBit(BRD_ID_BIT1_PORT, BRD_ID_BIT1_PIN)<<1)
+
+#define S_DRIVE1_ASSERT  GPIO_SetBits(S_DRIVE1_PORT, S_DRIVE1_PIN)
+#define S_DRIVE1_NEGATE  GPIO_ResetBits(S_DRIVE1_PORT, S_DRIVE1_PIN)
+#define S_DRIVE2_ASSERT  GPIO_SetBits(S_DRIVE2_PORT, S_DRIVE2_PIN)
+#define S_DRIVE2_NEGATE  GPIO_ResetBits(S_DRIVE2_PORT, S_DRIVE2_PIN)
+#define S_DRIVE3_ASSERT  GPIO_SetBits(S_DRIVE3_PORT, S_DRIVE3_PIN)
+#define S_DRIVE3_NEGATE  GPIO_ResetBits(S_DRIVE3_PORT, S_DRIVE3_PIN)
+#define S_DRIVE4_ASSERT  GPIO_SetBits(S_DRIVE4_PORT, S_DRIVE4_PIN)
+#define S_DRIVE4_NEGATE  GPIO_ResetBits(S_DRIVE4_PORT, S_DRIVE4_PIN)
+#define S_DRIVE5_ASSERT  GPIO_SetBits(S_DRIVE5_PORT, S_DRIVE5_PIN)
+#define S_DRIVE5_NEGATE  GPIO_ResetBits(S_DRIVE5_PORT, S_DRIVE5_PIN)
+#define S_DRIVE6_ASSERT  GPIO_SetBits(S_DRIVE6_PORT, S_DRIVE6_PIN)
+#define S_DRIVE6_NEGATE  GPIO_ResetBits(S_DRIVE6_PORT, S_DRIVE6_PIN)
+#define S_DRIVE7_ASSERT  GPIO_SetBits(S_DRIVE7_PORT, S_DRIVE7_PIN)
+#define S_DRIVE7_NEGATE  GPIO_ResetBits(S_DRIVE7_PORT, S_DRIVE7_PIN)
 
 #define S_PULSE1_ON      GPIO_SetBits(S_PULSE1_PORT, S_PULSE1_PIN)
 #define S_PULSE1_OFF     GPIO_ResetBits(S_PULSE1_PORT, S_PULSE1_PIN)
+#define S_PULSE2_ON      GPIO_SetBits(S_PULSE2_PORT, S_PULSE2_PIN)
+#define S_PULSE2_OFF     GPIO_ResetBits(S_PULSE2_PORT, S_PULSE2_PIN)
 
-#define TST_PIN_ON       GPIO_SetBits(TST_PORT, TST_PIN)
-#define TST_PIN_OFF      GPIO_ResetBits(TST_PORT, TST_PIN)
-#define TST_PIN_TOGGLE   GPIO_ToggleBits(TST_PORT, TST_PIN)
- 
-#define POWER_5V_ON           GPIO_SetBits(POWER_5V_ENABLE_PORT, POWER_5V_ENABLE_PIN)
-#define POWER_5V_OFF          GPIO_ResetBits(POWER_5V_ENABLE_PORT, POWER_5V_ENABLE_PIN)
-#define POWER_5V_TOGGLE       GPIO_ToggleBits(POWER_5V_ENABLE_PORT, POWER_5V_ENABLE_PIN)
+#define S_PULSE3_ON      GPIO_SetBits(S_PULSE3_PORT, S_PULSE3_PIN)
+#define S_PULSE3_OFF     GPIO_ResetBits(S_PULSE3_PORT, S_PULSE3_PIN)
+#define S_PULSE4_ON      GPIO_SetBits(S_PULSE4_PORT, S_PULSE4_PIN)
+#define S_PULSE4_OFF     GPIO_ResetBits(S_PULSE4_PORT, S_PULSE4_PIN)
+#define S_PULSE5_ON      GPIO_SetBits(S_PULSE5_PORT, S_PULSE5_PIN)
+#define S_PULSE5_OFF     GPIO_ResetBits(S_PULSE5_PORT, S_PULSE5_PIN)
+#define S_PULSE6_ON      GPIO_SetBits(S_PULSE6_PORT, S_PULSE6_PIN)
+#define S_PULSE6_OFF     GPIO_ResetBits(S_PULSE6_PORT, S_PULSE6_PIN)
+#define S_PULSE7_ON      GPIO_SetBits(S_PULSE7_PORT, S_PULSE7_PIN)
+#define S_PULSE7_OFF     GPIO_ResetBits(S_PULSE7_PORT, S_PULSE7_PIN)
 
 #define PRESS_SENSOR1_ASSERT_CS  GPIO_ResetBits(PRESS_SENSOR1_CS_PORT, PRESS_SENSOR1_CS_PIN)
 #define PRESS_SENSOR1_NEGATE_CS  GPIO_SetBits(PRESS_SENSOR1_CS_PORT, PRESS_SENSOR1_CS_PIN)
@@ -198,11 +201,28 @@
 #define PRESS_SENSOR8_ASSERT_CS  GPIO_ResetBits(PRESS_SENSOR8_CS_PORT, PRESS_SENSOR8_CS_PIN)
 #define PRESS_SENSOR8_NEGATE_CS  GPIO_SetBits(PRESS_SENSOR8_CS_PORT, PRESS_SENSOR8_CS_PIN)
 
+#define AC_DRIVE1_ASSERT         GPIO_SetBits(AC_DRIVE1_PORT, AC_DRIVE1_PIN)
+#define AC_DRIVE1_NEGATE         GPIO_ResetBits(AC_DRIVE1_PORT, AC_DRIVE1_PIN)
+
+#define AC_DRIVE2_ASSERT         GPIO_SetBits(AC_DRIVE2_PORT, AC_DRIVE2_PIN)
+#define AC_DRIVE2_NEGATE         GPIO_ResetBits(AC_DRIVE2_PORT, AC_DRIVE2_PIN)
+
+#define AC_DRIVE3_ASSERT         GPIO_SetBits(AC_DRIVE3_PORT, AC_DRIVE3_PIN)
+#define AC_DRIVE3_NEGATE         GPIO_ResetBits(AC_DRIVE3_PORT, AC_DRIVE3_PIN)
+
+#define AC_DRIVE4_ASSERT         GPIO_SetBits(AC_DRIVE4_PORT, AC_DRIVE4_PIN)
+#define AC_DRIVE4_NEGATE         GPIO_ResetBits(AC_DRIVE4_PORT, AC_DRIVE4_PIN)
+
+
+
 void Gpio_Init(void);
 void GpioSleep(void);
 
 void OpenValve(uint8_t valveNbr);
 void CloseValve(uint8_t valveNbr);
+
+void OpenReliefValve(uint8_t valveNbr);
+void CloseReliefValve(uint8_t valveNbr);
 
 #endif
 

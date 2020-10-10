@@ -54,29 +54,13 @@ typedef struct
 }sci_data_t;
 
 
-//#define SCI_ZIGBEE_COM          USART_3
-//#define SCI_ZIGBEE_BAUD_RATE    115200
-
 #define SCI_BLUETOOTH_COM        USART_1
 #define SCI_BLUETOOTH_BAUD_RATE  115200
 
 #define SCI_PC_COM              UART_4
 #define SCI_PC_BAUD_RATE        115200 //230400
 
-#define SCI_MLINK_COM           UART_5
-#define SCI_MLINK_BAUD_RATE     57600
-
-#define SCI_MTR_TCKT_COM        SCI_MLINK_COM
-#define SCI_MTR_TCKT_BAUD_RATE  19200
-
-#define SCI_GPS_COM             UART_4 
-#define SCI_GPS_BAUD_RATE       9600
-//#define SCI_IRIDIUM_COM         USART_2 
-//#define SCI_IRIDIUM_BAUD_RATE   19200
-
-#define SCI_HART_COM            USART_2
-#define SCI_HART_BAUD_RATE      1200
-    
+   
 
 BOOL SciCheckTimeout(COMMON *pCommonData,UINT32 timeout);
 void SciStateProcess(COMMON *pCommonData,UINT8 nextState);

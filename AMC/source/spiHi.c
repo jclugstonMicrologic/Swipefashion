@@ -133,6 +133,12 @@ void SpiDeviceInit(UINT8 periph)
     switch( periph )
     {
         case SPI_PERIPHERAL1:
+        case SPI_PERIPHERAL2:
+        case SPI_PERIPHERAL3:
+        case SPI_PERIPHERAL4:
+        case SPI_PERIPHERAL5:
+        case SPI_PERIPHERAL6:
+        case SPI_PERIPHERAL7:
         case SPI_PERIPHERAL8:
             SPI_I2S_DeInit(SPI2_PORT);
             
@@ -147,16 +153,14 @@ void SpiDeviceInit(UINT8 periph)
              /* enable the SPI peripheral */
             SPI_Cmd(SPI2_PORT, ENABLE);
             break;
-        case SPI_PERIPHERAL2:
-        case SPI_PERIPHERAL3:          
-        case SPI_PERIPHERAL4:
+        default:
             SPI_I2S_DeInit(SPI2_PORT);
                             
             /* SPI Mode 3 */
             SPI_InitStructure.SPI_CPOL = SPI_CPOL_High;
             SPI_InitStructure.SPI_CPHA = SPI_CPHA_2Edge;
             SPI_InitStructure.SPI_NSS = SPI_NSS_Soft;
-            SPI_InitStructure.SPI_BaudRatePrescaler =SPI_BaudRatePrescaler_4;
+            SPI_InitStructure.SPI_BaudRatePrescaler =SPI_BaudRatePrescaler_2;
             
             SPI_Init(SPI2_PORT, &SPI_InitStructure);
                          

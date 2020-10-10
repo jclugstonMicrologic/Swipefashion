@@ -90,21 +90,21 @@ void Gpio_Init
     GPIO_InitStructure.GPIO_Pin = PRESS_SENSOR8_CS_PIN;
     GPIO_Init(PRESS_SENSOR8_CS_PORT, &GPIO_InitStructure);        
 
-    /* solenoid control */
-    GPIO_InitStructure.GPIO_Pin = S_VALVE1_PIN;
-    GPIO_Init(S_VALVE1_PORT, &GPIO_InitStructure);   
-    GPIO_InitStructure.GPIO_Pin = S_VALVE2_PIN;
-    GPIO_Init(S_VALVE2_PORT, &GPIO_InitStructure);   
-    GPIO_InitStructure.GPIO_Pin = S_VALVE4_PIN;
-    GPIO_Init(S_VALVE3_PORT, &GPIO_InitStructure);   
-    GPIO_InitStructure.GPIO_Pin = S_VALVE4_PIN;
-    GPIO_Init(S_VALVE4_PORT, &GPIO_InitStructure);   
-    GPIO_InitStructure.GPIO_Pin = S_VALVE5_PIN;
-    GPIO_Init(S_VALVE5_PORT, &GPIO_InitStructure);   
-    GPIO_InitStructure.GPIO_Pin = S_VALVE6_PIN;
-    GPIO_Init(S_VALVE6_PORT, &GPIO_InitStructure);       
-    GPIO_InitStructure.GPIO_Pin = S_VALVE7_PIN;
-    GPIO_Init(S_VALVE7_PORT, &GPIO_InitStructure);       
+    /* solenoid control (pulse and drive pins) */
+    GPIO_InitStructure.GPIO_Pin = S_DRIVE1_PIN;
+    GPIO_Init(S_DRIVE1_PORT, &GPIO_InitStructure);   
+    GPIO_InitStructure.GPIO_Pin = S_DRIVE2_PIN;
+    GPIO_Init(S_DRIVE2_PORT, &GPIO_InitStructure);       
+    GPIO_InitStructure.GPIO_Pin = S_DRIVE3_PIN;
+    GPIO_Init(S_DRIVE3_PORT, &GPIO_InitStructure);      
+    GPIO_InitStructure.GPIO_Pin = S_DRIVE4_PIN;
+    GPIO_Init(S_DRIVE4_PORT, &GPIO_InitStructure);   
+    GPIO_InitStructure.GPIO_Pin = S_DRIVE5_PIN;
+    GPIO_Init(S_DRIVE5_PORT, &GPIO_InitStructure);   
+    GPIO_InitStructure.GPIO_Pin = S_DRIVE6_PIN;
+    GPIO_Init(S_DRIVE6_PORT, &GPIO_InitStructure);       
+    GPIO_InitStructure.GPIO_Pin = S_DRIVE7_PIN;
+    GPIO_Init(S_DRIVE7_PORT, &GPIO_InitStructure);       
 
     GPIO_InitStructure.GPIO_Pin = S_PULSE1_PIN;
     GPIO_Init(S_PULSE1_PORT, &GPIO_InitStructure);   
@@ -120,7 +120,15 @@ void Gpio_Init
     GPIO_Init(S_PULSE6_PORT, &GPIO_InitStructure);       
     GPIO_InitStructure.GPIO_Pin = S_PULSE7_PIN;
     GPIO_Init(S_PULSE7_PORT, &GPIO_InitStructure);    
-    
+        
+    GPIO_InitStructure.GPIO_Pin = AC_DRIVE1_PIN;
+    GPIO_Init(AC_DRIVE1_PORT, &GPIO_InitStructure);  
+    GPIO_InitStructure.GPIO_Pin = AC_DRIVE2_PIN;
+    GPIO_Init(AC_DRIVE2_PORT, &GPIO_InitStructure);  
+    GPIO_InitStructure.GPIO_Pin = AC_DRIVE3_PIN;
+    GPIO_Init(AC_DRIVE3_PORT, &GPIO_InitStructure);  
+    GPIO_InitStructure.GPIO_Pin = AC_DRIVE4_PIN;
+    GPIO_Init(AC_DRIVE4_PORT, &GPIO_InitStructure);      
     
     /* configure the following GPIO pins as inputs */
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
@@ -131,6 +139,11 @@ void Gpio_Init
     GPIO_InitStructure.GPIO_Pin =USER_BTN_PIN;
     GPIO_Init(USER_BTN_PORT, &GPIO_InitStructure);    
     
+    GPIO_InitStructure.GPIO_Pin =BRD_ID_BIT0_PIN;
+    GPIO_Init(BRD_ID_BIT0_PORT, &GPIO_InitStructure);        
+    
+    GPIO_InitStructure.GPIO_Pin =BRD_ID_BIT1_PIN;
+    GPIO_Init(BRD_ID_BIT1_PORT, &GPIO_InitStructure);            
     
 #if 0
     GPIO_InitStructure.GPIO_Pin =GPIO_Pin_12;
@@ -197,9 +210,8 @@ void GpioSleep
     GPIO_InitStructure.GPIO_Pin = RED_LED_PIN;
     GPIO_Init(RED_LED_PORT, &GPIO_InitStructure);              
        
-    GPIO_InitStructure.GPIO_Pin =(ADC_1_PIN | ADC_2_PIN | 
-                                  ADC_VSENSE1_PIN);
-    GPIO_Init(ADC_PORT, &GPIO_InitStructure);		   
+    //GPIO_InitStructure.GPIO_Pin =(ADC_1_PIN | ADC_2_PIN );                                
+    //GPIO_Init(ADC_PORT, &GPIO_InitStructure);		   
 
     GPIO_InitStructure.GPIO_Pin =GPIO_Pin_6;                                 
     GPIO_Init(GPIOA, &GPIO_InitStructure);         
@@ -281,6 +293,7 @@ void GpioSleep
 }
 
 
+#define PULSE_PERIOD 12000 //msec
 /*
 *|----------------------------------------------------------------------------
 *|  Routine: OpenValve
@@ -293,14 +306,42 @@ void OpenValve(uint8_t valveNbr)
     switch(valveNbr)
     {
         case 1:
-          S_VALVE1_OPEN;
-          S_PULSE1_ON;                    
-          TimerDelayUs(12000);
+          S_DRIVE1_ASSERT;S_PULSE1_ON;                    
+          TimerDelayUs(PULSE_PERIOD);
           S_PULSE1_OFF;                    
           break;
+        case 2:
+          S_DRIVE2_ASSERT;S_PULSE2_ON;                    
+          TimerDelayUs(PULSE_PERIOD);
+          S_PULSE2_OFF;                    
+          break;          
+        case 3:
+          S_DRIVE3_ASSERT;S_PULSE3_ON;                    
+          TimerDelayUs(PULSE_PERIOD);
+          S_PULSE3_OFF;                    
+          break; 
+        case 4:
+          S_DRIVE4_ASSERT;S_PULSE4_ON;                    
+          TimerDelayUs(PULSE_PERIOD);
+          S_PULSE4_OFF;                              
+          break;          
+        case 5:
+          S_DRIVE5_ASSERT;S_PULSE5_ON;                    
+          TimerDelayUs(PULSE_PERIOD);
+          S_PULSE5_OFF;                    
+          break;          
+        case 6:
+          S_DRIVE6_ASSERT;S_PULSE6_ON;                    
+          TimerDelayUs(PULSE_PERIOD);
+          S_PULSE6_OFF;                    
+          break;  
+        case 7:
+          S_DRIVE7_ASSERT;S_PULSE7_ON;                    
+          TimerDelayUs(PULSE_PERIOD);
+          S_PULSE7_OFF;                    
+          break;          
     }    
 }
-
 
 /*
 *|----------------------------------------------------------------------------
@@ -314,8 +355,79 @@ void CloseValve(uint8_t valveNbr)
     switch(valveNbr)
     {
         case 1:
-          S_VALVE1_CLOSE;
+          S_DRIVE1_NEGATE;
           break;
+        case 2:
+          S_DRIVE2_NEGATE;
+          break;          
+        case 3:
+          S_DRIVE3_NEGATE;
+          break;  
+        case 4:
+          S_DRIVE4_NEGATE;
+          break;  
+        case 5:
+          S_DRIVE5_NEGATE;
+          break;  
+        case 6:
+          S_DRIVE6_NEGATE;
+          break;  
+        case 7:
+          S_DRIVE7_NEGATE;
+          break;                    
+    }    
+}
+
+
+/*
+*|----------------------------------------------------------------------------
+*|  Routine: OpenReliefValve
+*|  Description:
+*|  Retval:
+*|----------------------------------------------------------------------------
+*/
+void OpenReliefValve(uint8_t valveNbr)
+{
+    switch(valveNbr)
+    {
+        case 1:
+          AC_DRIVE1_ASSERT;
+          break;
+        case 2:
+          AC_DRIVE2_ASSERT;
+          break;          
+        case 3:
+          AC_DRIVE3_ASSERT;
+          break;  
+        case 4:
+          AC_DRIVE4_ASSERT;
+          break;  
+    }    
+}
+
+/*
+*|----------------------------------------------------------------------------
+*|  Routine: CloseReliefValve
+*|  Description:
+*|  Retval:
+*|----------------------------------------------------------------------------
+*/
+void CloseReliefValve(uint8_t valveNbr)
+{
+    switch(valveNbr)
+    {
+        case 1:
+          AC_DRIVE1_NEGATE;
+          break;
+        case 2:
+          AC_DRIVE2_NEGATE;
+          break;          
+        case 3:
+          AC_DRIVE3_NEGATE;
+          break;  
+        case 4:
+          AC_DRIVE4_NEGATE;
+          break;  
     }    
 }
 

@@ -25,6 +25,8 @@
 #include "spiHi.h"
 #include "PressureTdrHi.h"
 
+#define NBR_TRANSDUCERS 8
+
 typedef struct
 {
   int8_t p11;
@@ -59,28 +61,37 @@ typedef struct
   float p6;
   float p5;  
   
-  double p4;
-  double p3;
+  float p4;
+  float p3;
 
-  double p2;
-  double p1;
+  float p2;
+  float p1;
   
-  double t3;
+  float t3;
   
-  double t2;
-  double t1;
+  float t2;
+  float t1;
   
 }press_temp_coeff_float_t;    
 
-press_temp_coeff_float_t PTCoeff;
+press_temp_coeff_float_t PTCoeff[NBR_TRANSDUCERS];
 
 
-float PressureValue[8];
-float TemperatureValue[8];
+//float PressureValue[8];
+//float TemperatureValue[8];
 
-BOOL PressureTdr_GetCoeff(UINT8 tdrNbr);
+//press_sensor_data_t PSensorData[8];
+
+UINT8 TdrPresent =0;
+
+BOOL PressureTdr_GetCoeff(UINT8 tdrNbr,press_temp_coeff_float_t *pCoeff);
 
 /** Functions *****************************************************************/
+
+
+
+// https://github.com/DFRobot/DFRobot_BMP388/blob/master/DFRobot_BMP388.cpp
+// https://github.com/DFRobot/DFRobot_BMP388
 
 
 /*
@@ -95,24 +106,27 @@ void PressureTdr_Init( void )
 {
     UINT8 regData =0;
     UINT8 chipId =0;
-       
-    regData =BMP3_NORMAL_MODE | BMP3_TEMP_EN | BMP3_PRESS_EN; //0x33; // press on,temp on,normal mode
+    
+    TdrPresent =0;
+    memset(&PTCoeff, 0x00, sizeof(PTCoeff));
+    
+    regData =BMP3_NORMAL_MODE | BMP3_TEMP_EN | BMP3_PRESS_EN; // press on,temp on,normal mode
     
     SpiInit(PRESS_TDR_SPI_PORT);
 
-    PressureTdr_Read(BMP3_CHIP_ID_ADDR,0, 1, &chipId);
-    PressureTdr_Read(BMP3_CHIP_ID_ADDR,7, 1, &chipId);
-    
-    PressureTdr_GetCoeff(0);
-    PressureTdr_GetCoeff(7);
-          
-    PressureTdr_Write(BMP3_PWR_CTRL_ADDR, 0, 1, &regData);
-    PressureTdr_Write(BMP3_PWR_CTRL_ADDR, 7, 1, &regData);
-    
-}
+    for(int tdr =0; tdr<NBR_TRANSDUCERS; tdr++)
+    {
+        PressureTdr_Read(BMP3_CHIP_ID_ADDR,tdr, 1, &chipId);
 
-// https://github.com/DFRobot/DFRobot_BMP388/blob/master/DFRobot_BMP388.cpp
-// https://github.com/DFRobot/DFRobot_BMP388
+        if( chipId ==BMP3_CHIP_ID )
+        {
+            PressureTdr_GetCoeff(tdr, &PTCoeff[tdr]);    
+            PressureTdr_Write(BMP3_PWR_CTRL_ADDR, tdr, 1, &regData);            
+            
+            TdrPresent |= (1<<tdr);
+        }
+    }
+}
 
 /*
 *|----------------------------------------------------------------------------
@@ -136,8 +150,6 @@ BOOL PressureTdr_Read(UINT8 addr, UINT8 tdrNbr, UINT8 nbrBytes, UINT8 *pDataBuf)
     
     SPI_TRANSFER_PTDR( addr |0x80 );    
     SPI_TRANSFER_PTDR( SPI_DUMMY_BYTE );
-    //SPI_TRANSFER_PTDR( SPI_DUMMY_BYTE );
-    //SPI_TRANSFER_PTDR( SPI_DUMMY_BYTE );
     
     /* read data */    
     for(byteCnt =0; byteCnt<nbrBytes; byteCnt++)
@@ -174,9 +186,6 @@ BOOL PressureTdr_Write(UINT8 addr, UINT8 tdrNbr, UINT8 nbrBytes, UINT8 *pDataBuf
     spiStart(device);
     
     SPI_TRANSFER_PTDR( addr );    
-    //SPI_TRANSFER_PTDR( SPI_DUMMY_BYTE );
-    //SPI_TRANSFER_PTDR( SPI_DUMMY_BYTE );
-    //SPI_TRANSFER_PTDR( SPI_DUMMY_BYTE );
     
     /* read data */    
     for(byteCnt =0; byteCnt<nbrBytes; byteCnt++)
@@ -200,20 +209,18 @@ BOOL PressureTdr_Write(UINT8 addr, UINT8 tdrNbr, UINT8 nbrBytes, UINT8 *pDataBuf
 *|  Retval:
 *|----------------------------------------------------------------------------
 */
-BOOL PressureTdr_GetCoeff(UINT8 tdrNbr)
+BOOL PressureTdr_GetCoeff(UINT8 tdrNbr, press_temp_coeff_float_t *pFloatCoeff)
 {
     UINT8 tempbuf[21];
     
     static press_temp_coeff_t ptcoeff;    
        
     PressureTdr_Read(BMP3_CALIB_DATA_ADDR,tdrNbr, 21, tempbuf);
-//    ptcoeff =(press_temp_coeff_t *)tempbuf;        
-    //memcpy(&ptc, tempbuf, 21);
     
     ptcoeff.t1 =tempbuf[1]<<8 | tempbuf[0];
     ptcoeff.t2 =tempbuf[3]<<8 | tempbuf[2];
     ptcoeff.t3 =tempbuf[4];
-#if 1
+
     ptcoeff.p1 =tempbuf[6]<<8 | tempbuf[5];
     ptcoeff.p2 =tempbuf[8]<<8 | tempbuf[7];
     
@@ -230,53 +237,54 @@ BOOL PressureTdr_GetCoeff(UINT8 tdrNbr)
     
     ptcoeff.p10 =tempbuf[19];
     ptcoeff.p11 =tempbuf[20];
-#endif
+
+    /* convert coefficients to floating point values */
     double tempvalue=0.0;
     
     tempvalue=0.00390625;
-    PTCoeff.t1 =((double)ptcoeff.t1/tempvalue);
+    pFloatCoeff->t1 =((float)ptcoeff.t1/tempvalue);
     
     tempvalue =1073741824;
-    PTCoeff.t2 =((double)ptcoeff.t2/tempvalue);
-    
+    pFloatCoeff->t2 =((float)ptcoeff.t2/tempvalue);
+   
     tempvalue =281474976710656;
-    PTCoeff.t3 =((double)ptcoeff.t3/tempvalue);
-    
+    pFloatCoeff->t3 =((float)ptcoeff.t3/tempvalue);
+
     tempvalue =1048576;    
-    PTCoeff.p1 =(((double)ptcoeff.p1-16384)/tempvalue);
+    pFloatCoeff->p1 =(((float)ptcoeff.p1-16384)/tempvalue);
     
     tempvalue =536870912;
-    PTCoeff.p2 =(((double)ptcoeff.p2-16384)/tempvalue);
+    pFloatCoeff->p2 =(((float)ptcoeff.p2-16384)/tempvalue);
     
     tempvalue =4294967296;
-    PTCoeff.p3 =((double)ptcoeff.p3/tempvalue);
+    pFloatCoeff->p3 =((float)ptcoeff.p3/tempvalue);
     
     tempvalue =137438953472;
-    PTCoeff.p4 =((double)ptcoeff.p4/tempvalue);
+    pFloatCoeff->p4 =((float)ptcoeff.p4/tempvalue);
 
     tempvalue =0.125;
-    PTCoeff.p5 =((double)ptcoeff.p5/tempvalue);
+    pFloatCoeff->p5 =((float)ptcoeff.p5/tempvalue);
 
     tempvalue =64;
-    PTCoeff.p6 =((double)ptcoeff.p6/tempvalue);    
+    pFloatCoeff->p6 =((float)ptcoeff.p6/tempvalue);    
     
     tempvalue =256;
-    PTCoeff.p7 =((double)ptcoeff.p7/tempvalue);
+    pFloatCoeff->p7 =((float)ptcoeff.p7/tempvalue);
 
     tempvalue =32768;
-    PTCoeff.p8 =((double)ptcoeff.p8/tempvalue);
+    pFloatCoeff->p8 =((float)ptcoeff.p8/tempvalue);
 
     tempvalue =281474976710656;
-    PTCoeff.p9 =((double)ptcoeff.p9/tempvalue);        
+    pFloatCoeff->p9 =((float)ptcoeff.p9/tempvalue);        
     
     tempvalue =281474976710656;
-    PTCoeff.p10 =((double)ptcoeff.p10/tempvalue);
+    pFloatCoeff->p10 =((float)ptcoeff.p10/tempvalue);
 
     tempvalue =4294967296;
-    PTCoeff.p11 =((double)ptcoeff.p11/tempvalue);        
+    pFloatCoeff->p11 =((float)ptcoeff.p11/tempvalue);        
     tempvalue =8589934592;
-    PTCoeff.p11 /=tempvalue;
-       
+    pFloatCoeff->p11 /=tempvalue;
+    
     return TRUE;
 }
  
@@ -293,50 +301,73 @@ BOOL PressureTdr_ReadPT(UINT8 tdrNbr, float *pPress, float *pTemp)
     UINT8 tempbuf[6];
     UINT32 utemp, upress;
     
+    double partialdata1, partialdata2;
+    double partialdata3, partialdata4;    
+    double out1, out2;
+    
     float temp;
     PressureTdr_Read(BMP3_PRESS_DATA_ADDR,tdrNbr, 6, tempbuf);
     
     upress =(tempbuf[2]<<16) | (tempbuf[1] <<8)| tempbuf[0];
-    utemp  =(tempbuf[5]<<16) | (tempbuf[4] <<8)| tempbuf[3];
-    
-    
-    PressureTdr_GetCoeff(tdrNbr);
-        
-    double partialdata1, partialdata2;
-    double partialdata3, partialdata4;
-    
-    double out1, out2;
+    utemp  =(tempbuf[5]<<16) | (tempbuf[4] <<8)| tempbuf[3];    
+   
+     /* get transducer coefficients */
+    //PressureTdr_GetCoeff(tdrNbr, &PtCoeff[tdrNbr]);
 
     /* compensate raw temperature */
-    partialdata1 =(double)(utemp-PTCoeff.t1);
-    partialdata2 =(double)(partialdata1*PTCoeff.t2);
+    partialdata1 =(double)(utemp-PTCoeff[tdrNbr].t1);
+    partialdata2 =(double)(partialdata1*PTCoeff[tdrNbr].t2);
     
-    temp =partialdata2 + partialdata1*partialdata1*PTCoeff.t3;      
-      
+    temp =partialdata2 + partialdata1*partialdata1*PTCoeff[tdrNbr].t3;      
+  
     /* compensate raw pressure */
-    partialdata1 =PTCoeff.p6 * temp;
-    partialdata2 =PTCoeff.p7 * temp*temp;
-    partialdata3 =PTCoeff.p8 * temp*temp*temp;
-    out1 =PTCoeff.p5 +partialdata1+partialdata2+partialdata3;
+    partialdata1 =PTCoeff[tdrNbr].p6 * temp;
+    partialdata2 =PTCoeff[tdrNbr].p7 * temp*temp;
+    partialdata3 =PTCoeff[tdrNbr].p8 * temp*temp*temp;
+    out1 =PTCoeff[tdrNbr].p5 +partialdata1+partialdata2+partialdata3;
     
-    partialdata1 =PTCoeff.p2 * temp;
-    partialdata2 =PTCoeff.p3 * temp*temp;
-    partialdata3 =PTCoeff.p4 * temp*temp*temp;
+    partialdata1 =PTCoeff[tdrNbr].p2 * temp;
+    partialdata2 =PTCoeff[tdrNbr].p3 * temp*temp;
+    partialdata3 =PTCoeff[tdrNbr].p4 * temp*temp*temp;
       
-    out2 =(float)upress*(PTCoeff.p1 +partialdata1+partialdata2+partialdata3);
+    out2 =(float)upress*(PTCoeff[tdrNbr].p1 +partialdata1+partialdata2+partialdata3);
 
     partialdata1 =(float)upress*(float)upress;
-    partialdata2 =PTCoeff.p9 + PTCoeff.p10*temp;
+    partialdata2 =PTCoeff[tdrNbr].p9 + PTCoeff[tdrNbr].p10*temp;
     partialdata3 =partialdata1*partialdata2;
-    partialdata4 =partialdata3 +(float)upress*(float)upress*(float)upress*PTCoeff.p11;
+    partialdata4 =partialdata3 +(float)upress*(float)upress*(float)upress*PTCoeff[tdrNbr].p11;
     
-    /* return kPa*/
+    /* return kPa */
     *pPress =(out1+out2+partialdata4)/1000.0;
-     
+
+    /* return DegC */
     *pTemp =temp;
         
     return TRUE;
 }
 
+UINT8 PressureTdr_GetTdrs(void)
+{
+    return TdrPresent;
+}
 
-
+void PressureTdr_ReadAll(void)
+{
+    UINT8 sensorPresent =0;
+    press_sensor_data_t pressSensorData[8];
+  
+    sensorPresent =PressureTdr_GetTdrs();
+            
+    for(int j=0; j<NBR_TRANSDUCERS; j++)
+    {
+        if( sensorPresent & (0x01<<j) )
+        {
+            PressureTdr_ReadPT(j, &pressSensorData[j].press, &pressSensorData[j].temp);
+        }
+        else
+        {
+            pressSensorData[j].press =-1;
+            pressSensorData[j].temp  =-1;
+        }       
+    }              
+}

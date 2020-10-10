@@ -24,6 +24,9 @@
 #include "FreeRTOS.h"
 #include "timers.h"
 
+#include "sysTimers.h"
+
+
 /** Functions *****************************************************************/
 
 
@@ -90,6 +93,7 @@ BOOL SciTxPacket
     
     for(byteCnt =0; byteCnt<nbrBytes; byteCnt++)
     {
+//TimerDelayUs(10000);
         SciSendByte(sciPort, *pPckt);   
         
         *pPckt ++;

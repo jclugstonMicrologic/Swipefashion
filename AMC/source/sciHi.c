@@ -171,7 +171,6 @@ void SciSerialPortInit(COMTypeDef sciPort, UINT32 baudRate, UINT8 parity)
     
             USART_ITConfig(USART2, USART_IT_RXNE, ENABLE);
             break;     
-#if 0            
         case USART_3:
             /* Enable the USARTx Interrupt */
             NVIC_InitStructure.NVIC_IRQChannel = USART3_IRQn ;
@@ -181,7 +180,7 @@ void SciSerialPortInit(COMTypeDef sciPort, UINT32 baudRate, UINT8 parity)
             NVIC_Init(&NVIC_InitStructure);
     
             USART_ITConfig(USART3, USART_IT_RXNE, ENABLE);
-            break;
+            break;   
         case UART_4:
             /* Enable the UARTx Interrupt */
             NVIC_InitStructure.NVIC_IRQChannel = UART4_IRQn ;
@@ -211,7 +210,8 @@ void SciSerialPortInit(COMTypeDef sciPort, UINT32 baudRate, UINT8 parity)
             NVIC_Init(&NVIC_InitStructure);
     
             USART_ITConfig(LPUART1, USART_IT_RXNE, ENABLE);
-            break;            
+            break;   
+#if 0            
         case USART_6:
             /* Enable the USARTx Interrupt */
             NVIC_InitStructure.NVIC_IRQChannel = USART6_IRQn;
@@ -477,7 +477,7 @@ void SciSendByte
  
 /*
 *|----------------------------------------------------------------------------
-*|  Routine: USART3_IRQHandler
+*|  Routine: USART1_IRQHandler
 *|  Description:
 *|  Retval:
 *|----------------------------------------------------------------------------
@@ -502,6 +502,32 @@ void USART1_IRQHandler(void)
     }           
 }
 
+/*
+*|----------------------------------------------------------------------------
+*|  Routine: UART4_IRQHandler
+*|  Description:
+*|  Retval:
+*|----------------------------------------------------------------------------
+*/
+void UART4_IRQHandler(void)  
+{
+    uint8_t rxByte;
+  
+    if (USART_GetITStatus(UART4, USART_IT_RXNE) == SET)
+    {
+        rxByte =(uint16_t)(UART4->RDR );
+        
+        SciQue(rxByte, &RxBuff[UART_4]);
+    }
+    else if( USART_GetFlagStatus(UART4, USART_FLAG_ORE) ==SET )
+    {         
+        UART4->ICR =USART_FLAG_ORE;
+        
+        rxByte =(uint16_t)(UART4->RDR &0x1ff);   
+    }     
+}
+
+#if 0
 /*
 *|----------------------------------------------------------------------------
 *|  Routine: USART2_IRQHandler
@@ -554,6 +580,7 @@ void USART2_IRQHandler(void)
     }  
 }
 
+
 /*
 *|----------------------------------------------------------------------------
 *|  Routine: USART3_IRQHandler
@@ -579,31 +606,6 @@ void USART3_IRQHandler(void)
     }       
 }
 
-
-/*
-*|----------------------------------------------------------------------------
-*|  Routine: UART4_IRQHandler
-*|  Description:
-*|  Retval:
-*|----------------------------------------------------------------------------
-*/
-void UART4_IRQHandler(void)  
-{
-    uint8_t rxByte;
-  
-    if (USART_GetITStatus(UART4, USART_IT_RXNE) == SET)
-    {
-        rxByte =(uint16_t)(UART4->RDR );
-        
-        SciQue(rxByte, &RxBuff[UART_4]);
-    }
-    else if( USART_GetFlagStatus(UART4, USART_FLAG_ORE) ==SET )
-    {         
-        UART4->ICR =USART_FLAG_ORE;
-        
-        rxByte =(uint16_t)(UART4->RDR &0x1ff);   
-    }     
-}
 
 /*
 *|----------------------------------------------------------------------------
@@ -655,7 +657,6 @@ void LPUART1_IRQHandler(void)
     }     
 }
 
-#if 0
 /*
 *|----------------------------------------------------------------------------
 *|  Routine: USART6_IRQHandler

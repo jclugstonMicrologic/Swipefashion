@@ -20,7 +20,7 @@
 
 #include "types.h"
 
-#define FW_VERSION "0.00 Sept 27, 2020" 
+#define FW_VERSION "0.00 " 
 
 BOOL MainControlTaskInit(void);
 

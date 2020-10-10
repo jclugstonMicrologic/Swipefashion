@@ -70,7 +70,7 @@ UINT16 CrcCalc16(UINT8 *pData, UINT16 nbrBytes)
 {     
     int i,j;
     int x;
-    unsigned int crc, feed;
+    UINT16 crc, feed;
   
     crc =0;
     

@@ -108,7 +108,7 @@ BOOL SciBinaryReceiverInit
          case SCI_PC_COM:
             pSerialData =&PcDataCom;
             pSerialData->pCheckSumFunction =CrcCalc16;
-            break;            ;                
+            break;
     }    
 
     pSerialData->pCmdFunction = pCallBack;
@@ -171,11 +171,11 @@ void SciPopulateHeader(sci_data_t *pSciHdr, char *pRxBuf )
     pSciHdr->command |= *pRxBuf;
     *pRxBuf ++;    
     
-    pSciHdr->rxPacketNbr =(*pRxBuf<<8);
-    *pRxBuf ++;
+    //pSciHdr->rxPacketNbr =(*pRxBuf<<8);
+    //*pRxBuf ++;
     
-    pSciHdr->rxPacketNbr |= *pRxBuf;
-    *pRxBuf ++;        
+    //pSciHdr->rxPacketNbr |= *pRxBuf;
+    //*pRxBuf ++;        
     
 }
 

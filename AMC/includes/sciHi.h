@@ -26,39 +26,23 @@
 
 #define UART_MAX_RX_QUE_SIZE (256)
 
-#define COMn    6
+#define COMn    2
 
 #define NBR_PORTS COMn
 
-#ifdef GATEWAY
 typedef enum 
 {
   USART_1 =0,
   UART_4 =1,  
-  
-  USART_2 = 2,
-  USART_3 = 3,
-  
-  UART_5 = 4,
-  
-  LPUART_1 =5,
-  
-  UART_7  =6,
-  UART_8  =7
-  
+    
+  USART_2,
+  USART_3,
+  UART_5,
+  USART_6,
+
+  LPUART_1
+
 } COMTypeDef;
-#else
-typedef enum 
-{
-  USART_3 = 0,
-  USART_6 = 1,
-  
-  USART_2 = 2,
-  USART_1 = 3,  
-  UART_8  = 4,  
-  
-} COMTypeDef;
-#endif
 
 /* typedef for tx and rx queue structures */
 typedef struct
@@ -75,15 +59,15 @@ typedef struct
  */ 
 #define SERIAL_COM1                        USART1
 #define SERIAL_COM1_CLK                    RCC_APB2Periph_USART1
-#define SERIAL_COM1_TX_PIN                 GPIO_Pin_9
-#define SERIAL_COM1_TX_GPIO_PORT           GPIOA
-#define SERIAL_COM1_TX_GPIO_CLK            RCC_AHB2Periph_GPIOA
-#define SERIAL_COM1_TX_SOURCE              GPIO_PinSource9
+#define SERIAL_COM1_TX_PIN                 GPIO_Pin_6
+#define SERIAL_COM1_TX_GPIO_PORT           GPIOB
+#define SERIAL_COM1_TX_GPIO_CLK            RCC_AHB2Periph_GPIOB
+#define SERIAL_COM1_TX_SOURCE              GPIO_PinSource6
 #define SERIAL_COM1_TX_AF                  GPIO_AF_USART1
-#define SERIAL_COM1_RX_PIN                 GPIO_Pin_10
-#define SERIAL_COM1_RX_GPIO_PORT           GPIOA
-#define SERIAL_COM1_RX_GPIO_CLK            RCC_AHB2Periph_GPIOA
-#define SERIAL_COM1_RX_SOURCE              GPIO_PinSource10
+#define SERIAL_COM1_RX_PIN                 GPIO_Pin_7
+#define SERIAL_COM1_RX_GPIO_PORT           GPIOB
+#define SERIAL_COM1_RX_GPIO_CLK            RCC_AHB2Periph_GPIOB
+#define SERIAL_COM1_RX_SOURCE              GPIO_PinSource7
 #define SERIAL_COM1_RX_AF                  GPIO_AF_USART1
 #define SERIAL_COM1_IRQn                   USART1_IRQn
 

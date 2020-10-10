@@ -33,6 +33,8 @@
 #include "dataFlashFd.h"
 #include "AmcConfig.h"
 #include "LogMachine.h"
+
+#include "PressureTdrHi.h"
 #include "MainControlTask.h"
 
 char SerialTxBuffer[256]; /* transmit buffer */   
@@ -79,17 +81,13 @@ void PCProcessCommands
 
     AMC_CONFIG_STRUCT amcConfig;
     AMC_SETUP_STRUCT amcSetup;
-      
-    adc_readings_t adcData;
-    
-    //GwLogsEnum logType =(GwLogsEnum)0; 
-    
-    //char txBuffer[256]; /* transmit buffer */   
-    
-    //UINT8 status =0;        
+       
+    press_sensor_data_t pressSensorData[8];
+
+    UINT8 sensorPresent =0;
     UINT8 valveNbr =0;
+    UINT8 boardId =0;
     UINT16 nbrTxBytes =0;
-    //UINT32 flashMemoryAddr =0;     
     
     //ErrorStatus errStatus =SUCCESS;
     
@@ -175,21 +173,54 @@ void PCProcessCommands
             memcpy(&amcSetup, pRxBuf, sizeof(amcSetup));                   
             break;
         case CMD_GW_GET_ANALOG:
-            AdcGetData(&adcData);
-                         
-            memcpy(SerialTxBuffer, &adcData, sizeof(adcData));
-            
-            nbrTxBytes =sizeof(adcData);            
             break;   
         case CMD_OPEN_VALUE:
-            valveNbr  =*pRxBuf++;            
-            OpenValve(valveNbr);
+            valveNbr  =*pRxBuf++;
+            
+            for(int j=0;j<8; j++)
+            {
+                if( valveNbr&(0x01<<j) )
+                    OpenValve(j+1);
+            }
             break;
         case CMD_CLOSE_VALUE:
             valveNbr  =*pRxBuf++;
-            CloseValve(valveNbr);
+
+            for(int j=0;j<8; j++)
+            {
+                if( valveNbr& (0x01<<j) )
+                    CloseValve(j+1);
+            }                       
             break;            
-        default:
+        case CMD_GET_PRESS:
+            sensorPresent =PressureTdr_GetTdrs();
+            
+            for(int j=0; j<8; j++)
+            {
+                if( sensorPresent & (0x01<<j) )
+                {
+                    PressureTdr_ReadPT(j, &pressSensorData[j].press, &pressSensorData[j].temp);
+                }
+                else
+                {
+                    pressSensorData[j].press =-1;
+                    pressSensorData[j].temp  =-1;
+                }       
+            }            
+             
+            memcpy(SerialTxBuffer, &pressSensorData, sizeof(pressSensorData));            
+            nbrTxBytes =sizeof(pressSensorData);     
+            
+            //memcpy(&SerialTxBuffer[nbrTxBytes], &TemperatureValue[0], sizeof(TemperatureValue[0]));
+            //nbrTxBytes +=sizeof(TemperatureValue[0]);     
+            break;
+        case CMD_GET_BRD_ID:
+            boardId =BOARD_ID;
+            boardId=2;
+            memcpy(SerialTxBuffer, &boardId, sizeof(boardId));            
+            nbrTxBytes =sizeof(boardId);                
+            break;
+        default:            
             cmd =0x7fff;
             break;
     }  

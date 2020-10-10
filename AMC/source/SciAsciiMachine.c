@@ -266,11 +266,16 @@ int SciAsciiRxMachine
     return status;   
 } 
 
-void SendString(char *pStr)
+
+/*
+*|----------------------------------------------------------------------------
+*|  Routine: SendString
+*|  Description:
+*|  Retval:
+*|----------------------------------------------------------------------------
+*/
+void SciAsciiSendString(UINT8 port, char *pBuf)
 {
-    for(int j=0; j<strlen(pStr); j++)
-    {
-        SciSendByte(SCI_PC_COM, pStr[j]);
-    }    
-      
+    SciTxPacket(port, strlen(pBuf), pBuf);      
 }
+
