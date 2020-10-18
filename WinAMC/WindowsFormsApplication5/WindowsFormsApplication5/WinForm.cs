@@ -7,13 +7,16 @@ using System.Threading;
 using STRUCTARRAY;
 using ERRORCHECK;
 using FileHandling;
-using TcpClientServer;
 using SerialCom;
 
-using Gigasoft.ProEssentials.Enums;
+//using Gigasoft.ProEssentials.Enums;
 
 using System.Runtime.InteropServices; // required for DllImport( string, entrypoint )
+//using System.Windows.Devices.Bluetooth;
 
+/* BTFramework libraries */
+using wclCommon;
+using wclBluetooth;
 
 namespace WindowsFormsApplication5
 {
@@ -38,10 +41,11 @@ namespace WindowsFormsApplication5
         CMD_GET_VERSION = 0x0200,
         CMD_OPEN_VALVE  =0x020d,
         CMD_CLOSE_VALVE =0x020e,
-        CMD_GET_PRESS  =0x020f,
+        CMD_GET_PRESS_TEMP  =0x020f,
         CMD_GET_BRD_ID =0x0210,
+        CMD_GET_PRESS = 0x0211,
 
-        CMD_SET_FTC_SETUP = 0x2001,
+        CMD_SET_AMC_SETUP = 0x2001,
         CMD_RESET = 0x200A,        
     }
 
@@ -96,14 +100,6 @@ namespace WindowsFormsApplication5
             public UInt16 crc;
         }
 
-        public struct ANALOGS
-        {
-            public UInt16 vBatt;
-            public UInt16 iBatt;
-            public UInt16 spareA2;
-            public UInt16 spareA3;
-        }
-
         public struct AMC_SETUP
         {
             public byte setPoint;
@@ -125,16 +121,9 @@ namespace WindowsFormsApplication5
             public UInt16 crc;
         }
 
-        public struct MOTOR_DATA
-        {
-            public float speed;
-            public float relativeAngle;
-        }
 
         public AMC_OP AmcOp = new AMC_OP();
-        public ANALOGS Analogs = new ANALOGS();
         public AMC_SETUP AmcSetup = new AMC_SETUP();
-        public MOTOR_DATA MotorData = new MOTOR_DATA();
                 
         public UInt16 Counter =0;
         public UInt16 DownloadStart = 0;
@@ -150,7 +139,91 @@ namespace WindowsFormsApplication5
         }
         public P_SENSOR_DATA[] PSensorData = new P_SENSOR_DATA[8];
 
+        public UInt16[] PressSensorPsi = new UInt16[8];
+
         int BoardId = 0;
+
+        private wclBluetoothManager Manager;
+        private wclGattClient Client;
+        private wclGattClient Client2;
+
+        private wclGattCharacteristic[] FCharacteristics;
+        private wclGattDescriptor[] FDescriptors;
+        private wclGattService[] FServices;
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            this.Width = 850;
+            this.Height = 700;
+
+            InitDataGrid();
+
+            InitDownloadGrid();
+
+            MainPanel.Top = 40;
+            MainPanel.Left = 10;
+            MainPanel.Width = 1000;
+            MainPanel.Height = 600;
+
+            DownloadPanel.Top = MainPanel.Top;
+            DownloadPanel.Left = MainPanel.Left;
+            DownloadPanel.Width = 700;
+            DownloadPanel.Height = 210;
+
+            CommSelectPnl.Top = 10;
+            CommSelectPnl.Left = 80;
+
+
+            Sw1TextBox.BackColor = System.Drawing.Color.LightGray;
+            Sw2TextBox.BackColor = System.Drawing.Color.LightGray;
+            Sw3TextBox.BackColor = System.Drawing.Color.LightGray;
+            Sw4TextBox.BackColor = System.Drawing.Color.LightGray;
+            CommTextBox.BackColor = System.Drawing.Color.LightGray;
+            EncTextBox.BackColor = System.Drawing.Color.LightGray;
+            SuTextBox.BackColor = System.Drawing.Color.LightGray;
+
+
+            InitProfileGrid();
+            InitControllerGrid();
+            //InitGenericPlot(GenericPlot, "1", "2", "3");
+
+            PanelSelect = (int)SET_COMMANDS.SET_COMMPORT;
+
+            PanelsFrm panelsForm = new PanelsFrm(this);
+            panelsForm.ShowDialog();
+
+            if (!panelsForm.GetCommStatus())
+            {
+                FtcStatusStrip.Items[0].Text = "Disconnected";
+            }
+
+            /* init BTFramework stuff */
+            Manager = new wclBluetoothManager();
+            Client = new wclGattClient();
+            Client2 = new wclGattClient();
+            /*
+            Manager.OnNumericComparison += new wclBluetoothNumericComparisonEvent(Manager_OnNumericComparison);
+            Manager.OnPasskeyNotification += new wclBluetoothPasskeyNotificationEvent(Manager_OnPasskeyNotification);
+            Manager.OnPasskeyRequest += new wclBluetoothPasskeyRequestEvent(Manager_OnPasskeyRequest);
+            Manager.OnPinRequest += new wclBluetoothPinRequestEvent(Manager_OnPinRequest);
+            */
+            Manager.OnDeviceFound += new wclBluetoothDeviceEvent(Manager_OnDeviceFound);
+            Manager.OnDiscoveringCompleted += new wclBluetoothResultEvent(Manager_OnDiscoveringCompleted);
+            Manager.OnDiscoveringStarted += new wclBluetoothEvent(Manager_OnDiscoveringStarted);
+
+            Client.OnCharacteristicChanged += new wclGattCharacteristicChangedEvent(Client_OnCharacteristicChanged);
+            Client.OnConnect += new wclCommunication.wclClientConnectionConnectEvent(Client_OnConnect);
+            Client.OnDisconnect += new wclCommunication.wclClientConnectionDisconnectEvent(Client_OnDisconnect);
+
+            Client2.OnCharacteristicChanged += new wclGattCharacteristicChangedEvent(Client_OnCharacteristicChanged);
+            Client2.OnConnect += new wclCommunication.wclClientConnectionConnectEvent(Client_OnConnect);
+            Client2.OnDisconnect += new wclCommunication.wclClientConnectionDisconnectEvent(Client_OnDisconnect);
+
+            // In real application you should always analize the result code.
+            // In this demo we assume that all is always OK.
+            Manager.Open();
+
+        }
 
         private void InitDataGrid()
         {
@@ -179,31 +252,22 @@ namespace WindowsFormsApplication5
             dataGridView.Columns[1].HeaderText = "Value";
 
             //dataGridView.Rows[0].HeaderCell.Value = "1";
-/*
-            dataGridView.Rows.Add("Initial cycles/time for motor activation", "", "", "");          
-◦ Number of rotations for retraction of linear drive device
-◦ Amperage/time thresholds for the major event characteristics of the retraction and
-extension and final seating of the linear drive device
-◦ Initial motor activation timing
-◦ Operating/running amperage threshold after intiation for retraction and extension
-revolutions required
-◦ Amperage threshold for the end of the extension phase to limit force exerted in a
-dead-end-stop position*/
+
         }
 
         private void InitProfileGrid()
         {
-            ProfileGridView.Width = 240;
+            ProfileGridView.Width = 300;
             ProfileGridView.Height = 180;
             ProfileGridView.Left = 10;
             ProfileGridView.Top = 20;
 
-            ProfileGridView.ColumnCount = 1;
+            ProfileGridView.ColumnCount = 2;
             ProfileGridView.ColumnHeadersVisible = true;
             ProfileGridView.RowHeadersVisible = true;
 
             ProfileGridView.Columns[0].Width = 80;
-            //ProfileGridView.Columns[1].Width = 80;
+            ProfileGridView.Columns[1].Width = 80;
 
             /* create the rows */
             for (int i = 1; i < 8; i++)
@@ -214,6 +278,7 @@ dead-end-stop position*/
             }
 
             ProfileGridView.Columns[0].HeaderText = "Press(psi)";
+            ProfileGridView.Columns[1].HeaderText = "Press(psi)";
             //ProfileGridView.Columns[1].HeaderText = "Value";
 
             ProfileGridView.Visible = true;
@@ -233,10 +298,10 @@ dead-end-stop position*/
             ControllerGridView.RowHeadersVisible = true;
             ControllerGridView.RowHeadersWidth = 60;
 
-            ControllerGridView.Columns[0].Width = 80;
-            ControllerGridView.Columns[1].Width = 80;
-            ControllerGridView.Columns[2].Width = 80;
-            ControllerGridView.Columns[3].Width = 80;
+            ControllerGridView.Columns[0].Width = 85;
+            ControllerGridView.Columns[1].Width = 85;
+            ControllerGridView.Columns[2].Width = 85;
+            ControllerGridView.Columns[3].Width = 90;
 
             /* create the rows */
             for (int i = 1; i < 9; i++)
@@ -253,7 +318,7 @@ dead-end-stop position*/
 
             ControllerGridView.Visible = true;
         }
-
+/*
         private void InitGenericPlot(Gigasoft.ProEssentials.Pesgo pePlot, string title_,          string xaxisLbl_,                    string yaxisLbl_            )
         {
             pePlot.PeFunction.Reset();
@@ -400,7 +465,7 @@ dead-end-stop position*/
             pePlot.PeFunction.ReinitializeResetImage();
             pePlot.Refresh();
         }
-        
+*/        
 
         private void InitDownloadGrid()
         {
@@ -425,11 +490,7 @@ dead-end-stop position*/
             downloadGridView.Columns[7].Width = 42;
             downloadGridView.Columns[8].Width = 42;
             downloadGridView.Columns[9].Width = 42;
-/*
-            // create the rows
-            downloadGridView.Rows.Add("11:00:00", "125", "150", "3.1", "1.1");
-            downloadGridView.Rows.Add("12:00:00", "100", "120", "3.0", "1.0");
-*/
+
             for (int row = 0; row < 120; row++)
             {
                 downloadGridView.Rows.Add("", "", "", "");
@@ -451,60 +512,6 @@ dead-end-stop position*/
             SetupTimeLbl.Text = "Setup Time: NA"; 
         }
 
-
-        private void Form1_Load(object sender, EventArgs e)
-        {
-            this.Width = 650;
-            this.Height = 700;
-
-            InitDataGrid();
-
-            InitDownloadGrid();
-
-            MainPanel.Top = 40;
-            MainPanel.Left = 10;
-            MainPanel.Width = 770;
-            MainPanel.Height = 600;
-
-            DiagnosticPnl.Top = MainPanel.Top;
-            DiagnosticPnl.Left = MainPanel.Left;
-            DiagnosticPnl.Width = 700;
-
-            DownloadPanel.Top = MainPanel.Top;
-            DownloadPanel.Left = MainPanel.Left;
-            DownloadPanel.Width = 700;
-            DownloadPanel.Height = 210;
-
-            listBox1.Items.Add("Serial Tx");
-            RxListBox.Items.Add("Serial Rx");
-
-            CommSelectPnl.Top = 10;
-            CommSelectPnl.Left =80;
-
-
-            Sw1TextBox.BackColor = System.Drawing.Color.LightGray;
-            Sw2TextBox.BackColor = System.Drawing.Color.LightGray;
-            Sw3TextBox.BackColor = System.Drawing.Color.LightGray;
-            Sw4TextBox.BackColor = System.Drawing.Color.LightGray;
-            CommTextBox.BackColor = System.Drawing.Color.LightGray;
-            EncTextBox.BackColor = System.Drawing.Color.LightGray;
-            SuTextBox.BackColor = System.Drawing.Color.LightGray;
-            
-
-            InitProfileGrid();
-            InitControllerGrid();
-            //InitGenericPlot(GenericPlot, "1", "2", "3");
-
-            PanelSelect = (int)SET_COMMANDS.SET_COMMPORT;
-
-            PanelsFrm panelsForm = new PanelsFrm(this);
-            panelsForm.ShowDialog();
-
-            if(!panelsForm.GetCommStatus())
-            {
-                FtcStatusStrip.Items[0].Text = "Disconnected";
-            }
-        }
 
         private void button2_Click(object sender, EventArgs e)
         {
@@ -528,77 +535,15 @@ dead-end-stop position*/
             }
             catch (EntryPointNotFoundException EpNotFoundEx)
             {
-               MessageBox.Show(EpNotFoundEx.ToString());
+                MessageBox.Show(EpNotFoundEx.ToString());
             }
         }
 
-        private void button3_Click(object sender, EventArgs e)
-        {
-            List<int> myInts = new List<int>();
-
-            myInts.Add(5);
-            myInts.Add(4);
-            myInts.Add(3);
-            myInts.Add(2);
-            myInts.Add(1);
-
-            myInts.Remove(2);
-            myInts.Insert(2, 10);
-
-            myInts.Sort();
-
-            if( myInts.Contains(7) )
-               myInts[myInts.IndexOf(7)] =22; // replace with 22
-            if( myInts.Contains(3) )
-               myInts[myInts.IndexOf(3)] =4;  // replace with 4 which is a duplicate
-
-            int x;
-            x =myInts.LastIndexOf(4);
-
-            x = myInts.Capacity;            
-            myInts.TrimExcess();
-            x = myInts.Capacity;
-
-            for (int i = 0; i < myInts.Count; i++)
-            {
-               MessageBox.Show("MyInts:\n" + myInts[i].ToString(),
-                               "List<int> Example",
-                               MessageBoxButtons.OK
-                              );
-            }
-
-            myInts.Clear();
-        }
-
-
-        private void button4_Click(object sender, EventArgs e)
-        {
-           button4.Enabled = false;           
-
-           Thread ctThread = new Thread(clientChat);            
-           ctThread.Start();
-        }
-        
+       
         private void clientChat()
         {
             while (true)
             {
-                if (cServer.serverData != null)
-                {
-                    listBox1.Items.Add(cServer.serverData);
-                    listBox1.SelectedIndex = listBox1.Items.Count - 1;
-
-                    cServer.serverData = null;
-                }
-
-                if (handleClient.dataFromClient != null)
-                {
-                    listBox1.Items.Add(handleClient.dataFromClient);
-                    listBox1.SelectedIndex = listBox1.Items.Count - 1;
-
-                    handleClient.dataFromClient = null;
-                }
-
                 Thread.Sleep(1);
             }
         }
@@ -609,14 +554,7 @@ dead-end-stop position*/
         {
            uint nbrBytesRx = 0;
            uint response = 0;
-           byte sw1State = 0;
-           byte sw2State = 0;
-           byte sw3State = 0;
-           byte sw4State = 0;
-           byte commState = 0;
-           byte encState = 0;
 
-           float vBatt, iBatt;
            float delatP = 0.0F;
 
            while (true)
@@ -635,7 +573,7 @@ dead-end-stop position*/
                    {                     
                         switch(response)
                         { 
-                            case (int)PACKET.CMD_GET_PRESS:                               
+                            case (int)PACKET.CMD_GET_PRESS_TEMP:                               
                                 ValveNbr =0;
 
                                 for (int j = 0; j < 8; j++)
@@ -668,7 +606,9 @@ dead-end-stop position*/
                                 if(ValveNbr !=0)
                                     BuildSerialMessage((int)PACKET.CMD_CLOSE_VALVE);
                                 break;
-                            case (int)PACKET.CMD_SET_FTC_SETUP:         
+                            case (int)PACKET.CMD_GET_PRESS:
+                                break;
+                            case (int)PACKET.CMD_SET_AMC_SETUP:         
                                break;
                            case (int)PACKET.CMD_GET_VERSION:
                                FwVersionLbl.Text = "AMC: " + System.Text.Encoding.ASCII.GetString(Payload);
@@ -689,7 +629,7 @@ dead-end-stop position*/
         {
             SerialMonitorTimer.Enabled = true;
 
-            if( !BuildSerialMessage((int)PACKET.CMD_GET_PRESS) )
+            if( !BuildSerialMessage((int)PACKET.CMD_GET_PRESS_TEMP) )
             {                
                 timer1.Enabled = false;
                 return;
@@ -698,9 +638,6 @@ dead-end-stop position*/
 
         }
 
-        private void button8_Click(object sender, EventArgs e)
-        {
-        }
 
         private void button9_Click(object sender, EventArgs e)
         {
@@ -716,36 +653,12 @@ dead-end-stop position*/
             }
         }
 
-      
-        private void button12_Click(object sender, EventArgs e)
-        {
-           serialFd.SendMessage(0, 1, (byte)'S');
-        }
-
-        private void MotorDirBtn_Click(object sender, EventArgs e)
-        {
-           serialFd.SendMessage(0, 1, (byte)'D');
-        }
-
-        private void numericUpDown1_ValueChanged(object sender, EventArgs e)
-        {
-           byte[] txBuffer =new byte[10];
-           int desiredSpeed;
-           desiredSpeed = Convert.ToInt16(numericUpDown1.Value); //textBox2.Text);
-
-           txBuffer[0] = (byte)'V';
-           txBuffer[1] = (byte)((desiredSpeed & 0xff00) >> 8);
-           txBuffer[2] = (byte)(desiredSpeed & 0x00ff);
-
-           serialFd.SendMessage(0, 3, txBuffer);
-        }
 
         private void diagnosticToolStripMenuItem1_Click(object sender, EventArgs e)
         {
             timer1.Enabled = true;
 
             MainPanel.Visible = false;
-            DiagnosticPnl.Visible = true;
             DownloadPanel.Visible =false;
         }
 
@@ -765,14 +678,6 @@ dead-end-stop position*/
 
         private void downloadToolStripMenuItem_Click(object sender, EventArgs e)
         {
-   //         MainPanel.Visible = false;
-     //       DiagnosticPnl.Visible = false;
-       //     DownloadPanel.Visible = true;
-        }
-
-        private void SendToFpcBtn_Click(object sender, EventArgs e)
-        {
-
         }
    
         public bool BuildSerialMessage(UInt16 command)
@@ -785,12 +690,8 @@ dead-end-stop position*/
 
             int calculatedCRC = 0;
 
-
             cErrorCheck errCheck = new cErrorCheck();
             Array.Clear(TxBuf, 0, TxBuf.Length);
-
-                // adjust the array size (ensure it is still max size)
-//                Array.Resize(ref Payload, 2000);
 
             // head
             TxBuf[0] = (byte)PACKET.DLE;
@@ -819,6 +720,7 @@ dead-end-stop position*/
 
                     TxBuf[nbrBytes++] = Payload[0];
                     break;
+                case (int)PACKET.CMD_GET_PRESS_TEMP:
                 case (int)PACKET.CMD_GET_PRESS:
                     // build the message here, then send
                     ConvetToBuffer16((int)command, out tempBuf);
@@ -837,7 +739,7 @@ dead-end-stop position*/
                     tempBuf.CopyTo(TxBuf, (int)PACKET.SIZEOF_HEADER);
                     nbrBytes = (int)PACKET.SIZEOF_HEADER + 2;
                     break;
-                case (int)PACKET.CMD_SET_FTC_SETUP:
+                case (int)PACKET.CMD_SET_AMC_SETUP:
                     // build the message here, then send
                     ConvetToBuffer16((int)command, out tempBuf);
                     tempBuf.CopyTo(TxBuf, (int)PACKET.SIZEOF_HEADER);
@@ -888,12 +790,7 @@ dead-end-stop position*/
 
             cErrorCheck errCheck = new cErrorCheck();
             int calculatedCRC = 0;
-            int logDoneCnt = 0;
 
-            string sw1State = "";
-            string sw2State = "";
-            string sw3State = "";
-            string sw4State = "";
 
             // check header
             if (rxBuffer[0] != 0x10 &&
@@ -943,10 +840,8 @@ dead-end-stop position*/
             // process response (could all be done in WinForm, where GUI stuff is done)
             switch (response)
             {
-                case (int)PACKET.CMD_GET_PRESS:
+                case (int)PACKET.CMD_GET_PRESS_TEMP:
                     //tempBuf = StructArray.SwapByteArray16(tempBuf);
-
-                    //AmcSetup = (AMC_SETUP)StructArray.ByteArrayToStruct(typeof(AMC_SETUP), tempBuf);
                     //Pressure    = System.BitConverter.ToSingle(tempBuf, 0);
                     //Temperature = System.BitConverter.ToSingle(tempBuf, 0);
                     for (int j = 0; j < PSensorData.Length; j++)
@@ -956,6 +851,18 @@ dead-end-stop position*/
                         PSensorData[j] = (P_SENSOR_DATA)StructArray.ByteArrayToStruct(typeof(P_SENSOR_DATA), tempBuf);
 
                         System.Array.Copy(tempBuf, sizeofData, tempBuf, 0, (PayloadSize - sizeofData));
+                    }
+                    break;
+                case (int)PACKET.CMD_GET_PRESS:
+                    //tempBuf = StructArray.SwapByteArray16(tempBuf);
+
+                    //Pressure    = System.BitConverter.ToSingle(tempBuf, 0);
+                    //Temperature = System.BitConverter.ToSingle(tempBuf, 0);
+                    for (int j = 0; j < 8; j++)
+                    {
+                        PressSensorPsi[j] =(UInt16)(tempBuf[1] << 8 | tempBuf[0]);
+
+                        System.Array.Copy(tempBuf, 2, tempBuf, 0, (PayloadSize - 2));
                     }
                     break;
                 case (int)PACKET.CMD_GET_VERSION:
@@ -977,19 +884,6 @@ dead-end-stop position*/
             txBufPtr[1] = (byte)((theValue & 0x00ff));
         }
 
-        private void fPCToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-        }
-
-        private void ClearFpcLogBtn_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void button12_Click_1(object sender, EventArgs e)
-        {
-
-        }
 
         private void SendToFpcBtn_Click_1(object sender, EventArgs e)
         {
@@ -1016,8 +910,6 @@ dead-end-stop position*/
                 theDiff = theDiff % 1000;
 
                 AmcSetup.crc = 0x5aa5;
-
-                BuildSerialMessage((int)PACKET.CMD_SET_FTC_SETUP);
             }
             catch (Exception)
             {
@@ -1031,15 +923,7 @@ dead-end-stop position*/
 
         private void button11_Click_2(object sender, EventArgs e)
         {
-            BuildSerialMessage((int)PACKET.CMD_GET_PRESS);
-        }
-
-        private void ClearFpcLogBtn_Click_1(object sender, EventArgs e)
-        {
-        }
-
-        private void button12_Click_2(object sender, EventArgs e)
-        {
+            BuildSerialMessage((int)PACKET.CMD_GET_PRESS_TEMP);
         }
 
         private void SerialMonitorTimer_Tick(object sender, EventArgs e)
@@ -1163,16 +1047,6 @@ dead-end-stop position*/
             FtcStatusStrip.Items[0].Text = aStr;
         }
        
-        private void button18_Click_1(object sender, EventArgs e)
-        {
-
-        }
-
-        private void button17_Click(object sender, EventArgs e)
-        {
-            ClearFpcLogBtn_Click_1(null, null);
-        }
-
         private void SaveLogBtn_Click(object sender, EventArgs e)
         {
             if (downloadGridView.RowCount == 1)
@@ -1339,7 +1213,7 @@ dead-end-stop position*/
             dataArray = encoding.GetBytes(theString);
             fhandle.Write(fs, dataArray.Length, dataArray);
 
-            theString = "Time,Spot1,";
+            theString = "B1,B2,";
             dataArray = encoding.GetBytes(theString);
             fhandle.Write(fs, dataArray.Length, dataArray);
 
@@ -1354,7 +1228,11 @@ dead-end-stop position*/
                     try
                     {
                         profileValue[i] = ProfileGridView[i, j].Value.ToString() + ",";
+                        dataArray = encoding.GetBytes(profileValue[i]);
 
+                        fhandle.Write(fs, dataArray.Length, dataArray);
+
+                        profileValue[i] = ProfileGridView[i+1, j].Value.ToString() + ",";
                         dataArray = encoding.GetBytes(profileValue[i]);
 
                         fhandle.Write(fs, dataArray.Length, dataArray);
@@ -1413,7 +1291,10 @@ dead-end-stop position*/
                             splitLine = textLine.Split(',');
 
                             if (rowCnt >= rowProfileStart)
-                                ProfileGridView[0, (rowCnt- rowProfileStart)].Value = splitLine[0];
+                            {
+                                ProfileGridView[0, (rowCnt - rowProfileStart)].Value = splitLine[0];
+                                ProfileGridView[1, (rowCnt - rowProfileStart)].Value = splitLine[1];
+                            }
                         }
 
                         rowCnt++;
@@ -1453,7 +1334,7 @@ dead-end-stop position*/
                 ControllerGridView[2, row].Value = ProfileGridView[0, row].Value;
             }
 
-            if (!BuildSerialMessage((int)PACKET.CMD_GET_PRESS))
+            if (!BuildSerialMessage((int)PACKET.CMD_GET_PRESS_TEMP))
             {
                 timer1.Enabled = false;
                 return;
@@ -1476,7 +1357,379 @@ dead-end-stop position*/
 
         private void GetPressBtn_Click(object sender, EventArgs e)
         {
+            //BuildSerialMessage((int)PACKET.CMD_GET_PRESS_TEMP);
             BuildSerialMessage((int)PACKET.CMD_GET_PRESS);
         }
+
+/*
+**************************************
+* BLE MODULE
+**************************************
+*/        
+        private void TraceEvent(Int64 Address, String Event, String Param, String Value)
+        {
+            String s = "";
+            if (Address != 0)
+                s = Address.ToString("X12");
+            //ListViewItem Item = lvEvents.Items.Add(s);
+            //Item.SubItems.Add(Event);
+            //Item.SubItems.Add(Param);
+            //Item.SubItems.Add(Value);
+        }
+
+        void Manager_OnDiscoveringStarted(object Sender, wclBluetoothRadio Radio)
+        {
+            lvDevices.Items.Clear();
+            TraceEvent(0, "Discovering started", "", "");
+        }
+
+        void Manager_OnDiscoveringCompleted(object Sender, wclBluetoothRadio Radio, int Error)
+        {
+            if (lvDevices.Items.Count == 0)
+                MessageBox.Show("No BLE devices were found.", "Discovering for BLE devices", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            else
+                // Here we can update found devices names.
+                for (Int32 i = 0; i < lvDevices.Items.Count; i++)
+                {
+                    ListViewItem Item = lvDevices.Items[i];
+
+                    Int64 Address = Convert.ToInt64(Item.Text, 16);
+                    String DevName;
+                    Int32 Res = Radio.GetRemoteName(Address, out DevName);
+                    if (Res != wclErrors.WCL_E_SUCCESS)
+                        Item.SubItems[1].Text = "Error: 0x" + Res.ToString("X8");
+                    else
+                        Item.SubItems[1].Text = DevName;
+
+                    if(DevName.Contains("RN4871")) //connect to our ble device
+                    {
+                        if (Client.State == 0)
+                        {
+                            Client.Address = Convert.ToInt64(Item.Text, 16);
+                            //Client.ConnectOnRead = cbConnectOnRead.Checked;
+                            Res = Client.Connect((wclBluetoothRadio)Item.Tag);
+                            if (Res != wclErrors.WCL_E_SUCCESS)
+                                MessageBox.Show("Error: 0x" + Res.ToString("X8"), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                    }
+                }
+
+            TraceEvent(0, "Discovering completed", "", "");
+        }
+
+        void Manager_OnDeviceFound(object Sender, wclBluetoothRadio Radio, long Address)
+        {
+            wclBluetoothDeviceType DevType = wclBluetoothDeviceType.dtMixed;
+            Int32 Res = Radio.GetRemoteDeviceType(Address, out DevType);
+
+            ListViewItem Item = lvDevices.Items.Add(Address.ToString("X12"));
+
+            Item.SubItems.Add(""); // We can not read a device's name here.
+            Item.Tag = Radio; // To use it later.
+
+            if (Res != wclErrors.WCL_E_SUCCESS)
+            {
+                Item.SubItems.Add("Error: 0x" + Res.ToString("X8"));
+            }
+            else
+                switch (DevType)
+                {
+                    case wclBluetoothDeviceType.dtClassic:
+                        Item.SubItems.Add("Classic");
+                        break;
+                    case wclBluetoothDeviceType.dtBle:
+                        Item.SubItems.Add("BLE");
+                        break;
+                    case wclBluetoothDeviceType.dtMixed:
+                        Item.SubItems.Add("Mixed");
+                        break;
+                    default:
+                        Item.SubItems.Add("Unknown");
+                        break;
+                }
+
+            TraceEvent(Address, "Device found", "", "");
+        }
+        void Client_OnDisconnect(object Sender, int Reason)
+        {
+            // Connection property is valid here.
+            TraceEvent(((wclGattClient)Sender).Address, "Disconnected", "Reason", "0x" + Reason.ToString("X8"));
+        }
+
+        void Client_OnConnect(object Sender, int Error)
+        {
+            // Connection property is valid here.
+            TraceEvent(((wclGattClient)Sender).Address, "Connected", "Error", "0x" + Error.ToString("X8"));
+
+            BleGetServices();
+
+            BleGetCharacteristics();
+        }
+
+        void Client_OnCharacteristicChanged(object Sender, ushort Handle, byte[] Value)
+        {
+            TraceEvent(((wclGattClient)Sender).Address, "ValueChanged", "Handle", Handle.ToString("X4"));
+            if (Value == null)
+                TraceEvent(0, "", "Value", "");
+            else
+                if (Value.Length == 0)
+                TraceEvent(0, "", "Value", "");
+            else
+            {
+                String Str = "";
+
+                for (Int32 i = 0; i < Value.Length; i++)
+                    Str = Str + Value[i].ToString("X2");
+
+                TraceEvent(0, "", "Value", Str);
+
+                RxTextBox.Text = Str;
+            }
+        }
+        private wclBluetoothRadio GetRadio()
+        {
+            // Look for first available radio.
+            for (Int32 i = 0; i < Manager.Count; i++)
+                if (Manager[i].Available)
+                    // Return first non MS.
+                    return Manager[i];
+
+            MessageBox.Show("No one Bluetooth Radio found.", "Error", MessageBoxButtons.OK,
+                MessageBoxIcon.Error);
+
+            return null;
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            wclBluetoothRadio Radio = GetRadio();
+            if (Radio != null)
+            {
+                Int32 Res = Radio.Discover(10, wclBluetoothDiscoverKind.dkBle);
+                if (Res != wclErrors.WCL_E_SUCCESS)
+                    MessageBox.Show("Error starting discovering: 0x" + Res.ToString("X8"),
+                        "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+        
+        private void BleConnectBtn_Click(object sender, EventArgs e)
+        {            
+            if (lvDevices.SelectedItems.Count == 0)
+                MessageBox.Show("Select device", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            else
+            {
+                ListViewItem Item = lvDevices.SelectedItems[0];
+                if (Client.State == 0)
+                {
+                    Client.Address = Convert.ToInt64(Item.Text, 16);
+                    //Client.ConnectOnRead = cbConnectOnRead.Checked;
+                    Int32 Res = Client.Connect((wclBluetoothRadio)Item.Tag);
+                    if (Res != wclErrors.WCL_E_SUCCESS)
+                        MessageBox.Show("Error: 0x" + Res.ToString("X8"), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                else
+                {
+                    Client2.Address = Convert.ToInt64(Item.Text, 16);
+                    //Client.ConnectOnRead = cbConnectOnRead.Checked;
+                    Int32 Res = Client2.Connect((wclBluetoothRadio)Item.Tag);
+                    if (Res != wclErrors.WCL_E_SUCCESS)
+                        MessageBox.Show("Error: 0x" + Res.ToString("X8"), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+
+            }
+        }
+
+        private void BleDisconnectBtn_Click(object sender, EventArgs e)
+        {
+            Int32 Res = Client.Disconnect();
+            if (Res != wclErrors.WCL_E_SUCCESS)
+                MessageBox.Show("Error: 0x" + Res.ToString("X8"), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
+        private void BleGetServices()
+        {
+            FServices = null;
+
+            Int32 Res = Client.ReadServices(wclGattOperationFlag.goNone, out FServices);
+
+            if (Res != wclErrors.WCL_E_SUCCESS)
+            {
+                MessageBox.Show("Error: 0x" + Res.ToString("X8"), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            if (FServices == null)
+                return;
+
+            foreach (wclGattService Service in FServices)
+            {
+                String s;
+                if (Service.Uuid.IsShortUuid)
+                    s = Service.Uuid.ShortUuid.ToString("X4");
+                else
+                    s = Service.Uuid.LongUuid.ToString();
+
+                //ListViewItem Item = lvServices.Items.Add(s);
+                //Item.SubItems.Add(Service.Uuid.IsShortUuid.ToString());
+                //Item.SubItems.Add(Service.Handle.ToString("X4"));
+            }
+        }
+
+        private void BleGetCharacteristics()
+        {
+            int servNbr = 0;
+            String s ="";
+
+            FCharacteristics = null;
+
+            for (servNbr = 0; servNbr < FServices.Length; servNbr++)
+            {
+                if (!FServices[servNbr].Uuid.IsShortUuid)
+                {
+                    s = FServices[servNbr].Uuid.LongUuid.ToString();
+
+                    if (s.Contains("fe7d"))
+                    {
+                        break;
+                    }
+                }
+            }
+
+            wclGattService Service = FServices[servNbr];// lvServices.SelectedItems[0].Index];
+            Int32 Res = Client.ReadCharacteristics(Service, wclGattOperationFlag.goNone, out FCharacteristics);
+            if (Res != wclErrors.WCL_E_SUCCESS)
+            {
+                MessageBox.Show("Error: 0x" + Res.ToString("X8"), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            if (FCharacteristics == null)
+                return;
+
+            foreach (wclGattCharacteristic Character in FCharacteristics)
+            {
+                //String s;
+                if (Character.Uuid.IsShortUuid)
+                    s = Character.Uuid.ShortUuid.ToString("X4");
+                else
+                {
+                    s = Character.Uuid.LongUuid.ToString();
+
+                    if (s.Contains("1e4d"))
+                    {
+                        break;
+                    }
+                }
+                /*
+                ListViewItem Item = lvCharacteristics.Items.Add(s);
+
+                Item.SubItems.Add(Character.Uuid.IsShortUuid.ToString());
+                Item.SubItems.Add(Character.ServiceHandle.ToString("X4"));
+                Item.SubItems.Add(Character.Handle.ToString("X4"));
+                Item.SubItems.Add(Character.ValueHandle.ToString("X4"));
+                Item.SubItems.Add(Character.IsBroadcastable.ToString());
+                Item.SubItems.Add(Character.IsReadable.ToString());
+                Item.SubItems.Add(Character.IsWritable.ToString());
+                Item.SubItems.Add(Character.IsWritableWithoutResponse.ToString());
+                Item.SubItems.Add(Character.IsSignedWritable.ToString());
+                Item.SubItems.Add(Character.IsNotifiable.ToString());
+                Item.SubItems.Add(Character.IsIndicatable.ToString());
+                Item.SubItems.Add(Character.HasExtendedProperties.ToString());
+                */
+            }
+
+            BleSubscribeCharacteristics();
+
+            BleWriteCcd();
+        }
+
+        private void BleSubscribeCharacteristics()
+        {
+            wclGattCharacteristic Characteristic = FCharacteristics[0];
+
+            // In case if characteristic has both Indication and Notification properties
+            // set to True we have to select one of them. Here we use Notifications but
+            // you can use other one.
+            if (Characteristic.IsNotifiable && Characteristic.IsIndicatable)
+                // Change the code line below to
+                // Characteristic.IsNotifiable = false;
+                // if you want to receive Indications instead of notifications.
+                Characteristic.IsIndicatable = false;
+            Int32 Res = Client.Subscribe(Characteristic);
+            if (Res != wclErrors.WCL_E_SUCCESS)
+                MessageBox.Show("Error: 0x" + Res.ToString("X8"), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
+        private void BleWriteCcd()        
+        {
+            wclGattCharacteristic Characteristic = FCharacteristics[0];
+
+            // In case if characteristic has both Indication and Notification properties
+            // set to True we have to select one of them. Here we use Notifications but
+            // you can use other one.
+            if (Characteristic.IsNotifiable && Characteristic.IsIndicatable)
+                // Change the code line below to
+                // Characteristic.IsNotifiable = false;
+                // if you want to receive Indications instead of notifications.
+                Characteristic.IsIndicatable = false;
+            Int32 Res = Client.WriteClientConfiguration(Characteristic, true, wclGattOperationFlag.goNone, wclGattProtectionLevel.plNone);
+            if (Res != wclErrors.WCL_E_SUCCESS)
+                MessageBox.Show("Error: 0x" + Res.ToString("X8"), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
+        private void BleSendData()
+        {
+            try
+            {
+                wclGattCharacteristic Characteristic = FCharacteristics[0];// lvCharacteristics.SelectedItems[0].Index];
+
+                String Str = edCharVal.Text;
+                if (Str.Length % 2 != 0)
+                    Str = "0" + Str;
+
+                Byte[] Val = new Byte[Str.Length / 2];
+                for (Int32 i = 0; i < Val.Length; i++)
+                {
+                    String b = Str.Substring(i * 2, 2);
+                    Val[i] = Convert.ToByte(b, 16);
+                }
+
+                Int32 Res = Client.WriteCharacteristicValue(Characteristic, Val, wclGattProtectionLevel.plNone);// Protection());
+                if (Res != wclErrors.WCL_E_SUCCESS)
+                    MessageBox.Show("Error: 0x" + Res.ToString("X8"), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            catch (Exception ex) { }
+
+        }
+
+        private void BleSendBtn_Click(object sender, EventArgs e)
+        {
+            BleSendData();
+        }
+
+        private void BleRssiBtn_Click(object sender, EventArgs e)
+        {
+            if (lvDevices.SelectedItems.Count == 0)
+                MessageBox.Show("Select device", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            else
+            {
+                ListViewItem Item = lvDevices.SelectedItems[0];
+                Int64 Address = Convert.ToInt64(Item.Text, 16);
+                wclBluetoothRadio Radio = (wclBluetoothRadio)Item.Tag;
+                SByte Rssi;
+                Int32 Res = Radio.GetRemoteRssi(Address, out Rssi);
+                if (Res != wclErrors.WCL_E_SUCCESS)
+                    MessageBox.Show("Error: 0x" + Res.ToString("X8"), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                else
+                    MessageBox.Show("RSSI: " + Rssi.ToString());
+            }
+        }
+
+
+        /*
+**************************************
+* BLE MODULE END
+**************************************
+*/
     }
 }
