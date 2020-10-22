@@ -9,6 +9,8 @@ using ERRORCHECK;
 using FileHandling;
 using SerialCom;
 
+using System.Drawing;
+
 //using Gigasoft.ProEssentials.Enums;
 
 using System.Runtime.InteropServices; // required for DllImport( string, entrypoint )
@@ -183,8 +185,23 @@ namespace WindowsFormsApplication5
             SuTextBox.BackColor = System.Drawing.Color.LightGray;
 
 
-            InitProfileGrid();
-            InitControllerGrid();
+            InitProfileGrid(ProfileGridView);
+
+            InitControllerGrid(ControllerGridView);
+            InitController2Grid(Controller2GridView);
+
+            FwBrd1VersionLbl.Top = 0;
+            FwBrd1VersionLbl.Left = 15;
+
+            FwBrd2VersionLbl.Top = 300;
+            FwBrd2VersionLbl.Left = 15;
+
+            StartFitBtn1.Top = 260;
+            StartFitBtn1.Left = 15;
+
+            StartFitBtn2.Top = 560;
+            StartFitBtn2.Left = StartFitBtn1.Left;
+
             //InitGenericPlot(GenericPlot, "1", "2", "3");
 
             PanelSelect = (int)SET_COMMANDS.SET_COMMPORT;
@@ -201,6 +218,9 @@ namespace WindowsFormsApplication5
             Manager = new wclBluetoothManager();
             Client = new wclGattClient();
             Client2 = new wclGattClient();
+
+            //wclGattClient[] ClientArr=new wclGattClient[4];
+
             /*
             Manager.OnNumericComparison += new wclBluetoothNumericComparisonEvent(Manager_OnNumericComparison);
             Manager.OnPasskeyNotification += new wclBluetoothPasskeyNotificationEvent(Manager_OnPasskeyNotification);
@@ -218,6 +238,10 @@ namespace WindowsFormsApplication5
             Client2.OnCharacteristicChanged += new wclGattCharacteristicChangedEvent(Client_OnCharacteristicChanged);
             Client2.OnConnect += new wclCommunication.wclClientConnectionConnectEvent(Client_OnConnect);
             Client2.OnDisconnect += new wclCommunication.wclClientConnectionDisconnectEvent(Client_OnDisconnect);
+
+            //ClientArr[0].OnCharacteristicChanged += new wclGattCharacteristicChangedEvent(Client_OnCharacteristicChanged);
+            //ClientArr[0].OnConnect += new wclCommunication.wclClientConnectionConnectEvent(Client_OnConnect);
+            //ClientArr[0].OnDisconnect += new wclCommunication.wclClientConnectionDisconnectEvent(Client_OnDisconnect);
 
             // In real application you should always analize the result code.
             // In this demo we assume that all is always OK.
@@ -255,217 +279,251 @@ namespace WindowsFormsApplication5
 
         }
 
-        private void InitProfileGrid()
+        private void InitProfileGrid(DataGridView gridView)
         {
-            ProfileGridView.Width = 300;
-            ProfileGridView.Height = 180;
-            ProfileGridView.Left = 10;
-            ProfileGridView.Top = 20;
+            gridView.Width = 300;
+            gridView.Height = 180;
+            gridView.Left = 10;
+            gridView.Top = 20;
 
-            ProfileGridView.ColumnCount = 2;
-            ProfileGridView.ColumnHeadersVisible = true;
-            ProfileGridView.RowHeadersVisible = true;
+            gridView.ColumnCount = 2;
+            gridView.ColumnHeadersVisible = true;
+            gridView.RowHeadersVisible = true;
 
-            ProfileGridView.Columns[0].Width = 80;
-            ProfileGridView.Columns[1].Width = 80;
+            gridView.Columns[0].Width = 80;
+            gridView.Columns[1].Width = 80;
 
             /* create the rows */
             for (int i = 1; i < 8; i++)
             {
-     //           ProfileGridView.Rows.Add("Parameter " + i.ToString(), "", "", "");
-                ProfileGridView.Rows.Add("","", "");
-                ProfileGridView.Rows[i-1].HeaderCell.Value = "Target P" + i.ToString();
+                //           ProfileGridView.Rows.Add("Parameter " + i.ToString(), "", "", "");
+                gridView.Rows.Add("","", "");
+                gridView.Rows[i-1].HeaderCell.Value = "Target P" + i.ToString();
             }
 
-            ProfileGridView.Columns[0].HeaderText = "Press(psi)";
-            ProfileGridView.Columns[1].HeaderText = "Press(psi)";
+            gridView.Columns[0].HeaderText = "Press(psi)";
+            gridView.Columns[1].HeaderText = "Press(psi)";
             //ProfileGridView.Columns[1].HeaderText = "Value";
 
-            ProfileGridView.Visible = true;
-            //dataGridView.Rows[0].HeaderCell.Value = "1";
+            foreach (DataGridViewColumn column in gridView.Columns)
+            {
+                column.SortMode = DataGridViewColumnSortMode.NotSortable;
+            }
 
+            gridView.Visible = true;            
         }
 
-        private void InitControllerGrid()
+        private void InitControllerGrid(DataGridView gridView)
         {
-            ControllerGridView.Width = 420;
-            ControllerGridView.Height = 240;
-            ControllerGridView.Left = 15;
-            ControllerGridView.Top = 20;
+            gridView.Width = 420;
+            gridView.Height = 240;
+            gridView.Left = 15;
+            gridView.Top = 20;
 
-            ControllerGridView.ColumnCount = 4;
-            ControllerGridView.ColumnHeadersVisible = true;
-            ControllerGridView.RowHeadersVisible = true;
-            ControllerGridView.RowHeadersWidth = 60;
+            gridView.ColumnCount = 4;
+            gridView.ColumnHeadersVisible = true;
+            gridView.RowHeadersVisible = true;
+            gridView.RowHeadersWidth = 60;
 
-            ControllerGridView.Columns[0].Width = 85;
-            ControllerGridView.Columns[1].Width = 85;
-            ControllerGridView.Columns[2].Width = 85;
-            ControllerGridView.Columns[3].Width = 90;
+            gridView.Columns[0].Width = 85;
+            gridView.Columns[1].Width = 85;
+            gridView.Columns[2].Width = 85;
+            gridView.Columns[3].Width = 90;
 
             /* create the rows */
             for (int i = 1; i < 9; i++)
             {
-                ControllerGridView.Rows.Add("", "", "");
-                ControllerGridView.Rows[i - 1].HeaderCell.Value = "S" + i.ToString();
+                gridView.Rows.Add("", "", "");
+                gridView.Rows[i - 1].HeaderCell.Value = "S" + i.ToString();
             }
 
-            ControllerGridView.Columns[0].HeaderText = "Press (psi)";
-            ControllerGridView.Columns[1].HeaderText = "Temp (DegC)";
-            ControllerGridView.Columns[2].HeaderText = "Target (psi)";
-            ControllerGridView.Columns[3].HeaderText = "Delta P (psi)";
+            gridView.Columns[0].HeaderText = "Press (psi)";
+            gridView.Columns[1].HeaderText = "Temp (DegC)";
+            gridView.Columns[2].HeaderText = "Target (psi)";
+            gridView.Columns[3].HeaderText = "Delta P (psi)";
 
-
-            ControllerGridView.Visible = true;
+            gridView.Visible = true;
         }
-/*
-        private void InitGenericPlot(Gigasoft.ProEssentials.Pesgo pePlot, string title_,          string xaxisLbl_,                    string yaxisLbl_            )
+
+        private void InitController2Grid(DataGridView gridView)
         {
-            pePlot.PeFunction.Reset();
+            gridView.Width = 420;
+            gridView.Height = 240;
+            gridView.Left = 15;
+            gridView.Top = 320;
 
-            //pePlot.PeGrid.GridBands = false;
+            gridView.ColumnCount = 4;
+            gridView.ColumnHeadersVisible = true;
+            gridView.RowHeadersVisible = true;
+            gridView.RowHeadersWidth = 60;
 
-            pePlot.PeConfigure.PrepareImages = true;
-            pePlot.Left = 620;// 20;
-            pePlot.Top = 25;// 490;
-            pePlot.Width = 610;// 600;
-            pePlot.Height = 375;
-            // PESGraph.BringToFront();
+            gridView.Columns[0].Width = 85;
+            gridView.Columns[1].Width = 85;
+            gridView.Columns[2].Width = 85;
+            gridView.Columns[3].Width = 90;
 
-            pePlot.PeData.Subsets = 2;
-            pePlot.PeData.Points = 1000;
-
-            pePlot.PeString.SubsetLabels[0] = "G Vol";// "Range";
-            pePlot.PeString.SubsetLabels[1] = "G Heel";
-            //        pePlot.PeString.SubsetLabels[2] = "";
-
-            pePlot.PeString.YAxisLabel = "Liters";
-            pePlot.PeGrid.Configure.ManualMinY = 0;
-            pePlot.PeGrid.Configure.ManualMaxY = 10000;
-
-            pePlot.PeLegend.SubsetColors[0] = System.Drawing.Color.DarkBlue;
-            pePlot.PeLegend.SubsetLineTypes[0] = LineType.MediumSolid;
-
-            pePlot.PeLegend.SubsetColors[1] = System.Drawing.Color.Red;
-            pePlot.PeLegend.SubsetLineTypes[1] = LineType.ThinSolid;
-
-            // Set Manual Y scale
-            //pePlot.PeGrid.Configure.ManualScaleControlY = ManualScaleControl.MinMax;
-
-            pePlot.PeLegend.SubsetColors[2] = System.Drawing.Color.Red;
-            pePlot.PeLegend.SubsetLineTypes[2] = LineType.ThickSolid;
-
-
-            pePlot.PeString.MainTitle = title_;
-            pePlot.PeString.SubTitle = "";
-
-            // Set Manual X scale
-            pePlot.PeGrid.Configure.ManualScaleControlX = ManualScaleControl.MinMax;
-            pePlot.PeGrid.Configure.ManualMinX = 0;// DateTime.Now.ToOADate();
-            pePlot.PeGrid.Configure.ManualMaxX = pePlot.PeData.Points;// FluidLevelStripChart.PeGrid.Configure.ManualMinX + 0.021;// 0.0035;
-
-            // Enable Bar Glass Effect 
-            //pePlot.PePlot.Option.BarGlassEffect = true;
-
-            // Set X scale label stuff bottom
-            // PESGraph.XAxisOnTop =false;
-            pePlot.PeAnnotation.Line.XAxisColor[0] = System.Drawing.Color.Red;
-            pePlot.PeString.XAxisLabel = "Data Point";
-
-            pePlot.PePlot.MarkDataPoints = false;
-            pePlot.Visible = true;
-
-            // enable double precision which is usually 
-            // required for date time handling 
-            // This means we pass x data to XDataII
-            pePlot.PeData.UsingXDataii = false;
-
-            pePlot.PeUserInterface.Cursor.PromptTracking = true;
-            pePlot.PeUserInterface.Cursor.PromptStyle = CursorPromptStyle.XYValues;
-            pePlot.PeUserInterface.Menu.MultiAxisStyle = MenuControl.Show;
-
-            pePlot.PeUserInterface.Allow.Zooming = AllowZooming.HorzAndVert;
-            pePlot.PeUserInterface.Allow.ZoomStyle = ZoomStyle.Ro2Not;
-
-            pePlot.PePlot.Option.GradientBars = 12;
-
-            pePlot.PeColor.BitmapGradientMode = false;
-            pePlot.PeColor.QuickStyle = QuickStyle.LightInset;
-            pePlot.PeLegend.Style = LegendStyle.OneLineTopOfAxis;
-            pePlot.PeUserInterface.Menu.ShowLegend = MenuControl.Show;
-            pePlot.PeUserInterface.Menu.LegendLocation = MenuControl.Show;
-
-            pePlot.PeFont.FontSize = FontSize.Large;
-
-            pePlot.PeLegend.SimplePoint = true;
-            pePlot.PeLegend.SimpleLine = true;
-            pePlot.PeLegend.Style = LegendStyle.OneLineInsideOverlap;
-
-            //    FuelLevelStripChart.PeColor.GraphForeground = Color.FromArgb(50, 0, 0, 0);
-            pePlot.PeGrid.LineControl = GridLineControl.Both;
-            pePlot.PeGrid.Style = GridStyle.Dot;
-            pePlot.PeConfigure.BorderTypes = TABorder.SingleLine;
-
-            pePlot.PeData.NullDataValueX = 0;
-
-            pePlot.PeUserInterface.HotSpot.Data = false;
-            pePlot.PeUserInterface.HotSpot.Size = HotSpotSize.Large;
-
-            // Improves Metafile Export 
-            pePlot.PeSpecial.DpiX = 600;
-            pePlot.PeSpecial.DpiY = 600;
-
-            pePlot.PeData.DateTimeMode = false;
-
-            for (int j = 0; j < 10; j++)
+            /* create the rows */
+            for (int i = 1; i < 9; i++)
             {
-                pePlot.PeData.X[0, j] = j;
-                pePlot.PeData.Y[0, j] = 0;
-
-                pePlot.PeData.X[1, j] = j;
-                pePlot.PeData.Y[1, j] = 0;
-
-                pePlot.PeData.X[1, j] = j;
-                pePlot.PeData.Y[1, j] = 0;
+                gridView.Rows.Add("", "", "");
+                gridView.Rows[i - 1].HeaderCell.Value = "S" + i.ToString();
             }
 
-            pePlot.PeColor.Desk = System.Drawing.Color.WhiteSmoke;
-            pePlot.PeColor.GraphBackground = System.Drawing.Color.White;
+            gridView.Columns[0].HeaderText = "Press (psi)";
+            gridView.Columns[1].HeaderText = "Temp (DegC)";
+            gridView.Columns[2].HeaderText = "Target (psi)";
+            gridView.Columns[3].HeaderText = "Delta P (psi)";
 
-            // Update image and force paint 
-            pePlot.PeFunction.ReinitializeResetImage();
-            pePlot.Refresh();
+            gridView.Visible = true;
         }
+        /*
+                private void InitGenericPlot(Gigasoft.ProEssentials.Pesgo pePlot, string title_,          string xaxisLbl_,                    string yaxisLbl_            )
+                {
+                    pePlot.PeFunction.Reset();
 
-        
-        private void UpdateGenericPlot(Gigasoft.ProEssentials.Pesgo pePlot, float fluidLvl, float fluidMass, float temperature)
-        {
-            float[] newY = new float[3];
-            float[] newX = new float[3];
+                    //pePlot.PeGrid.GridBands = false;
 
-            newY[0] = fluidLvl;
-            newY[1] = fluidMass;
-            newY[2] = temperature;
+                    pePlot.PeConfigure.PrepareImages = true;
+                    pePlot.Left = 620;// 20;
+                    pePlot.Top = 25;// 490;
+                    pePlot.Width = 610;// 600;
+                    pePlot.Height = 375;
+                    // PESGraph.BringToFront();
 
-            // New y value and x value
-            newX[0] = dataPt;// DateTime.Now.ToOADate();
-            newX[1] = newX[0];
-            newX[2] = newX[0];
+                    pePlot.PeData.Subsets = 2;
+                    pePlot.PeData.Points = 1000;
 
-            Gigasoft.ProEssentials.Api.PEvset(pePlot.PeSpecial.HObject, Gigasoft.ProEssentials.DllProperties.AppendYData, newY, 1);
-            Gigasoft.ProEssentials.Api.PEvset(pePlot.PeSpecial.HObject, Gigasoft.ProEssentials.DllProperties.AppendXData, newX, 1);
-            
-            dataPt++;
+                    pePlot.PeString.SubsetLabels[0] = "G Vol";// "Range";
+                    pePlot.PeString.SubsetLabels[1] = "G Heel";
+                    //        pePlot.PeString.SubsetLabels[2] = "";
 
-            if (dataPt == pePlot.PeData.Points)
-                pePlot.PeGrid.Configure.ManualScaleControlX = ManualScaleControl.None;
+                    pePlot.PeString.YAxisLabel = "Liters";
+                    pePlot.PeGrid.Configure.ManualMinY = 0;
+                    pePlot.PeGrid.Configure.ManualMaxY = 10000;
+
+                    pePlot.PeLegend.SubsetColors[0] = System.Drawing.Color.DarkBlue;
+                    pePlot.PeLegend.SubsetLineTypes[0] = LineType.MediumSolid;
+
+                    pePlot.PeLegend.SubsetColors[1] = System.Drawing.Color.Red;
+                    pePlot.PeLegend.SubsetLineTypes[1] = LineType.ThinSolid;
+
+                    // Set Manual Y scale
+                    //pePlot.PeGrid.Configure.ManualScaleControlY = ManualScaleControl.MinMax;
+
+                    pePlot.PeLegend.SubsetColors[2] = System.Drawing.Color.Red;
+                    pePlot.PeLegend.SubsetLineTypes[2] = LineType.ThickSolid;
 
 
-            // Update image and force paint 
-            pePlot.PeFunction.ReinitializeResetImage();
-            pePlot.Refresh();
-        }
-*/        
+                    pePlot.PeString.MainTitle = title_;
+                    pePlot.PeString.SubTitle = "";
+
+                    // Set Manual X scale
+                    pePlot.PeGrid.Configure.ManualScaleControlX = ManualScaleControl.MinMax;
+                    pePlot.PeGrid.Configure.ManualMinX = 0;// DateTime.Now.ToOADate();
+                    pePlot.PeGrid.Configure.ManualMaxX = pePlot.PeData.Points;// FluidLevelStripChart.PeGrid.Configure.ManualMinX + 0.021;// 0.0035;
+
+                    // Enable Bar Glass Effect 
+                    //pePlot.PePlot.Option.BarGlassEffect = true;
+
+                    // Set X scale label stuff bottom
+                    // PESGraph.XAxisOnTop =false;
+                    pePlot.PeAnnotation.Line.XAxisColor[0] = System.Drawing.Color.Red;
+                    pePlot.PeString.XAxisLabel = "Data Point";
+
+                    pePlot.PePlot.MarkDataPoints = false;
+                    pePlot.Visible = true;
+
+                    // enable double precision which is usually 
+                    // required for date time handling 
+                    // This means we pass x data to XDataII
+                    pePlot.PeData.UsingXDataii = false;
+
+                    pePlot.PeUserInterface.Cursor.PromptTracking = true;
+                    pePlot.PeUserInterface.Cursor.PromptStyle = CursorPromptStyle.XYValues;
+                    pePlot.PeUserInterface.Menu.MultiAxisStyle = MenuControl.Show;
+
+                    pePlot.PeUserInterface.Allow.Zooming = AllowZooming.HorzAndVert;
+                    pePlot.PeUserInterface.Allow.ZoomStyle = ZoomStyle.Ro2Not;
+
+                    pePlot.PePlot.Option.GradientBars = 12;
+
+                    pePlot.PeColor.BitmapGradientMode = false;
+                    pePlot.PeColor.QuickStyle = QuickStyle.LightInset;
+                    pePlot.PeLegend.Style = LegendStyle.OneLineTopOfAxis;
+                    pePlot.PeUserInterface.Menu.ShowLegend = MenuControl.Show;
+                    pePlot.PeUserInterface.Menu.LegendLocation = MenuControl.Show;
+
+                    pePlot.PeFont.FontSize = FontSize.Large;
+
+                    pePlot.PeLegend.SimplePoint = true;
+                    pePlot.PeLegend.SimpleLine = true;
+                    pePlot.PeLegend.Style = LegendStyle.OneLineInsideOverlap;
+
+                    //    FuelLevelStripChart.PeColor.GraphForeground = Color.FromArgb(50, 0, 0, 0);
+                    pePlot.PeGrid.LineControl = GridLineControl.Both;
+                    pePlot.PeGrid.Style = GridStyle.Dot;
+                    pePlot.PeConfigure.BorderTypes = TABorder.SingleLine;
+
+                    pePlot.PeData.NullDataValueX = 0;
+
+                    pePlot.PeUserInterface.HotSpot.Data = false;
+                    pePlot.PeUserInterface.HotSpot.Size = HotSpotSize.Large;
+
+                    // Improves Metafile Export 
+                    pePlot.PeSpecial.DpiX = 600;
+                    pePlot.PeSpecial.DpiY = 600;
+
+                    pePlot.PeData.DateTimeMode = false;
+
+                    for (int j = 0; j < 10; j++)
+                    {
+                        pePlot.PeData.X[0, j] = j;
+                        pePlot.PeData.Y[0, j] = 0;
+
+                        pePlot.PeData.X[1, j] = j;
+                        pePlot.PeData.Y[1, j] = 0;
+
+                        pePlot.PeData.X[1, j] = j;
+                        pePlot.PeData.Y[1, j] = 0;
+                    }
+
+                    pePlot.PeColor.Desk = System.Drawing.Color.WhiteSmoke;
+                    pePlot.PeColor.GraphBackground = System.Drawing.Color.White;
+
+                    // Update image and force paint 
+                    pePlot.PeFunction.ReinitializeResetImage();
+                    pePlot.Refresh();
+                }
+
+
+                private void UpdateGenericPlot(Gigasoft.ProEssentials.Pesgo pePlot, float fluidLvl, float fluidMass, float temperature)
+                {
+                    float[] newY = new float[3];
+                    float[] newX = new float[3];
+
+                    newY[0] = fluidLvl;
+                    newY[1] = fluidMass;
+                    newY[2] = temperature;
+
+                    // New y value and x value
+                    newX[0] = dataPt;// DateTime.Now.ToOADate();
+                    newX[1] = newX[0];
+                    newX[2] = newX[0];
+
+                    Gigasoft.ProEssentials.Api.PEvset(pePlot.PeSpecial.HObject, Gigasoft.ProEssentials.DllProperties.AppendYData, newY, 1);
+                    Gigasoft.ProEssentials.Api.PEvset(pePlot.PeSpecial.HObject, Gigasoft.ProEssentials.DllProperties.AppendXData, newX, 1);
+
+                    dataPt++;
+
+                    if (dataPt == pePlot.PeData.Points)
+                        pePlot.PeGrid.Configure.ManualScaleControlX = ManualScaleControl.None;
+
+
+                    // Update image and force paint 
+                    pePlot.PeFunction.ReinitializeResetImage();
+                    pePlot.Refresh();
+                }
+        */
 
         private void InitDownloadGrid()
         {
@@ -611,7 +669,7 @@ namespace WindowsFormsApplication5
                             case (int)PACKET.CMD_SET_AMC_SETUP:         
                                break;
                            case (int)PACKET.CMD_GET_VERSION:
-                               FwVersionLbl.Text = "AMC: " + System.Text.Encoding.ASCII.GetString(Payload);
+                               FwBrd1VersionLbl.Text = "AMC: " + System.Text.Encoding.ASCII.GetString(Payload);
                                break;
                            case (int)PACKET.CMD_GET_BRD_ID:
                                 BrdTypeLbl.Text ="Board Type: " + BoardId.ToString();
@@ -664,10 +722,7 @@ namespace WindowsFormsApplication5
 
         private void setupToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            MainPanel.Visible = true;
-            DiagPnl.Visible = false;
-            DownloadPanel.Visible = false;
-            BrdTypeLbl.Visible = true;
+            ProfileGroupBox.Visible = true;
         }
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
@@ -771,6 +826,19 @@ namespace WindowsFormsApplication5
             // tail 
             TxBuf[nbrBytes++] = (byte)((calculatedCRC & 0xff00) >> 8); //0x5a;  // CRC MSB
             TxBuf[nbrBytes++] = (byte)(calculatedCRC & 0x00ff);        //0xa5;  // CRC LSB
+
+            /*
+            send via bluetooth
+            try
+            {
+                wclGattCharacteristic Characteristic = FCharacteristics[0];// lvCharacteristics.SelectedItems[0].Index];
+
+                Int32 Res = Client.WriteCharacteristicValue(Characteristic, TxBuf, wclGattProtectionLevel.plNone);// Protection());
+                if (Res != wclErrors.WCL_E_SUCCESS)
+                    MessageBox.Show("Error: 0x" + Res.ToString("X8"), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            catch (Exception ex) { }
+            */
 
             if (serialFd.SendMessage(0, nbrBytes, TxBuf))
             {
@@ -1355,6 +1423,48 @@ namespace WindowsFormsApplication5
             Refresh();
         }
 
+        private void StartFitBtn2_Click(object sender, EventArgs e)
+        {
+            for (int row = 0; row < 7; row++)
+            {
+                if (ProfileGridView[1, row].Value == "")
+                {
+                    MessageBox.Show("No Profile Selected",
+                                    "Error",
+                                    MessageBoxButtons.OK,
+                                    MessageBoxIcon.Error
+                                   );
+                    return;
+                }
+                Controller2GridView[2, row].Value = ProfileGridView[1, row].Value;
+            }
+
+            if (!BuildSerialMessage((int)PACKET.CMD_GET_PRESS_TEMP))
+            {
+                timer1.Enabled = false;
+                return;
+            }
+
+            ValveNbr = 0x87;
+
+            if (!BuildSerialMessage((int)PACKET.CMD_OPEN_VALVE))
+            {
+                timer1.Enabled = false;
+                return;
+            }
+
+            Controller2GridView[2, 7].Value = "0";
+
+            timer1.Enabled = true;
+
+            Refresh();
+        }
+
+        private void CloseProfileBtn_Click(object sender, EventArgs e)
+        {
+            ProfileGroupBox.Visible = false;
+        }
+
         private void GetPressBtn_Click(object sender, EventArgs e)
         {
             //BuildSerialMessage((int)PACKET.CMD_GET_PRESS_TEMP);
@@ -1461,6 +1571,19 @@ namespace WindowsFormsApplication5
             // Connection property is valid here.
             TraceEvent(((wclGattClient)Sender).Address, "Connected", "Error", "0x" + Error.ToString("X8"));
 
+            for (int j = 0; j < lvDevices.Items.Count; j++)
+            {
+                /* find the row that has the matching address ((wclGattClient)Sender).Address */
+                if (lvDevices.Items[j].SubItems[1].Text.Contains("RN4871"))
+                {
+                    lvDevices.Items[0].UseItemStyleForSubItems = false;
+                    for (int k = 0; k < 3; k++)
+                    {
+                        lvDevices.Items[j].SubItems[k].BackColor = Color.LightGreen;
+                    }
+                }
+            }
+
             BleGetServices();
 
             BleGetCharacteristics();
@@ -1494,7 +1617,7 @@ namespace WindowsFormsApplication5
                     // Return first non MS.
                     return Manager[i];
 
-            MessageBox.Show("No one Bluetooth Radio found.", "Error", MessageBoxButtons.OK,
+            MessageBox.Show("No Bluetooth Radio found.", "Error", MessageBoxButtons.OK,
                 MessageBoxIcon.Error);
 
             return null;
@@ -1724,6 +1847,8 @@ namespace WindowsFormsApplication5
                     MessageBox.Show("RSSI: " + Rssi.ToString());
             }
         }
+
+
 
 
         /*
