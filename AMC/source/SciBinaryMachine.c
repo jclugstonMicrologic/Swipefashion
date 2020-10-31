@@ -49,6 +49,8 @@ typedef enum
 
 sci_data_t PcDataCom;
 
+sci_data_t BleDataCom;
+
 /** Local Function Prototypes *************************************************/
 void SciBinaryTaskComx(void * pvParameters);
 int SciBinaryRxMachine(sci_data_t *pSerialData,char sciPort);
@@ -141,6 +143,8 @@ void SciBinaryTaskComx(void * pvParameters)
     for( ;; )
     {        
         SciBinaryRxMachine(&PcDataCom, SCI_PC_COM);
+        
+        SciBinaryRxMachine(&BleDataCom, SCI_BLUETOOTH_COM);
             
         //SerialTxBuffer[0] ='H';
         //SciSendPacket(SCI_PC_COM, 1, 1, SerialTxBuffer);     
@@ -347,7 +351,7 @@ void SciSendPacket(UINT8 sciPort, UINT16 cmd, UINT16 nbrBytes, char *pPayload)
         
     for(j=0; j<(nbrBytes+SIZEOF_HEAD); j++)
     {
-        SciSendByte(SCI_PC_COM, txBuf[j]);
+        SciSendByte(sciPort, txBuf[j]);
     }    
         
     SciSendByte(sciPort, ((calculatedCrc&0xff00)>>8) );

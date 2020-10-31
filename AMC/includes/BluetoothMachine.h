@@ -19,10 +19,11 @@
 #define ZIGBEE_MACHINE_H
 
 #include "types.h"
-#include "SciAsciiMachine.h"
+//#include "SciAsciiMachine.h"
+#include "SciBinaryMachine.h"
 
-BOOL BluetoothMachine_Init(void);
-BOOL BluetoothMachine(void);
+BOOL Ble_MachineInit(void);
+BOOL Ble_Machine(void);
 
 #endif
 

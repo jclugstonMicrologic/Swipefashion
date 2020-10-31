@@ -56,8 +56,9 @@
 #define CMD_OPEN_VALUE                          0x020d
 #define CMD_CLOSE_VALUE                         0x020e
 
-#define CMD_GET_PRESS                           0x020f
+#define CMD_GET_PRESS_TEMP                      0x020f
 #define CMD_GET_BRD_ID                          0x0210
+#define CMD_GET_PRESS                           0x0211
 
 #define CMD_GW_LAST                             0x02ff
 

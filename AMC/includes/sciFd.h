@@ -61,7 +61,6 @@ typedef struct
 #define SCI_PC_BAUD_RATE        115200 //230400
 
    
-
 BOOL SciCheckTimeout(COMMON *pCommonData,UINT32 timeout);
 void SciStateProcess(COMMON *pCommonData,UINT8 nextState);
 BOOL SciTxPacket(UINT8 sciPort,UINT16 nbrBytes,char *pPckt);

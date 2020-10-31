@@ -63,6 +63,9 @@
 
 #define SPI_TRANSFER_PTDR(txByte)    SpiTransferSpi2(txByte)
 
+
+#define NBR_TRANSDUCERS 8
+
 typedef struct
 {
   float press;
@@ -78,9 +81,10 @@ BOOL PressureTdr_Write(UINT8 addr, UINT8 tdrNbr, UINT8 nbrBytes, UINT8 *pDataBuf
 
 BOOL PressureTdr_ReadPT(UINT8 tdrNbr, float *pPress, float *pTemp);
 
-void PressureTdr_ReadAll(void);
-
 UINT8 PressureTdr_GetTdrs(void);
+
+BOOL PressureTdr_CheckOverPres(void);
+void PressureTdr_GetPressTemp(press_sensor_data_t *pPr);
 #endif
 
 

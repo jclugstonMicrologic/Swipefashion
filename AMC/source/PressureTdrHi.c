@@ -22,10 +22,12 @@
 #include "timers.h"
 
 #include "math.h"
+
+#include "gpioHi.h"
 #include "spiHi.h"
 #include "PressureTdrHi.h"
 
-#define NBR_TRANSDUCERS 8
+#define BLADDER_OVER_PRESSURE ((float)20.67) //3psi
 
 typedef struct
 {
@@ -80,11 +82,13 @@ press_temp_coeff_float_t PTCoeff[NBR_TRANSDUCERS];
 //float PressureValue[8];
 //float TemperatureValue[8];
 
-//press_sensor_data_t PSensorData[8];
-
 UINT8 TdrPresent =0;
 
+press_sensor_data_t PSensorData[8];
+
+
 BOOL PressureTdr_GetCoeff(UINT8 tdrNbr,press_temp_coeff_float_t *pCoeff);
+void PressureTdr_StartPeriodicRead(void);
 
 /** Functions *****************************************************************/
 
@@ -126,6 +130,73 @@ void PressureTdr_Init( void )
             TdrPresent |= (1<<tdr);
         }
     }
+    
+    PressureTdr_StartPeriodicRead();
+}
+
+void PressureTdr_GetPressTemp(press_sensor_data_t *pData)
+{
+//    pPr =PSensorData;
+    memcpy(pData, PSensorData, sizeof(PSensorData));
+}
+
+BOOL PressureTdr_CheckOverPres(void)
+{
+    BOOL status =FALSE;
+    
+    for(int j=0; j<NBR_TRANSDUCERS; j++)
+    {
+        if( (PSensorData[j].press -PSensorData[7].press)>BLADDER_OVER_PRESSURE )
+        {
+            CloseValve(j+1);
+            status =TRUE;
+        }
+        else
+            status =FALSE;
+    }
+    
+     return status;
+}
+
+
+/*
+*|----------------------------------------------------------------------------
+*|  Routine: PressureTdr_Read_Timer_Callback
+*|  Description:
+*|  Retval:
+*|----------------------------------------------------------------------------
+*/
+static void PressureTdr_Read_Timer_Callback (void * pvParameter)
+{      
+    UINT8 sensorPresent =0;
+    sensorPresent =PressureTdr_GetTdrs();
+    
+    for(int sensor =0; sensor<NBR_TRANSDUCERS; sensor++)
+    {
+        if( sensorPresent & (0x01<<sensor) )
+            PressureTdr_ReadPT(sensor, &PSensorData[sensor].press, &PSensorData[sensor].temp);
+        else
+        {
+            PSensorData[sensor].press =-1;
+            PSensorData[sensor].temp  =-1;
+        }
+    }
+}
+
+/*
+*|----------------------------------------------------------------------------
+*|  Routine: PressureTdr_StartPeriodicRead
+*|  Description:
+*|  Retval:
+*|----------------------------------------------------------------------------
+*/
+void PressureTdr_StartPeriodicRead(void)
+{
+    #define TIMER_PERIOD      500          /**< Timer period (msec) */
+    /* Start timer for LED1 blinking */
+    TimerHandle_t read_timer_handle; 
+    read_timer_handle =xTimerCreate( "TdrRead", TIMER_PERIOD, pdTRUE, NULL, PressureTdr_Read_Timer_Callback);
+    xTimerStart(read_timer_handle, 0);
 }
 
 /*
@@ -349,25 +420,4 @@ BOOL PressureTdr_ReadPT(UINT8 tdrNbr, float *pPress, float *pTemp)
 UINT8 PressureTdr_GetTdrs(void)
 {
     return TdrPresent;
-}
-
-void PressureTdr_ReadAll(void)
-{
-    UINT8 sensorPresent =0;
-    press_sensor_data_t pressSensorData[8];
-  
-    sensorPresent =PressureTdr_GetTdrs();
-            
-    for(int j=0; j<NBR_TRANSDUCERS; j++)
-    {
-        if( sensorPresent & (0x01<<j) )
-        {
-            PressureTdr_ReadPT(j, &pressSensorData[j].press, &pressSensorData[j].temp);
-        }
-        else
-        {
-            pressSensorData[j].press =-1;
-            pressSensorData[j].temp  =-1;
-        }       
-    }              
 }

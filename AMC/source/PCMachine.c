@@ -27,7 +27,6 @@
 #include "adcFd.h"
 
 #include "rtcHi.h"
-
 #include "gpioHi.h"
 
 #include "dataFlashFd.h"
@@ -83,8 +82,9 @@ void PCProcessCommands
     AMC_SETUP_STRUCT amcSetup;
        
     press_sensor_data_t pressSensorData[8];
+    
+    UINT16 pressSensorPsi[8];
 
-    UINT8 sensorPresent =0;
     UINT8 valveNbr =0;
     UINT8 boardId =0;
     UINT16 nbrTxBytes =0;
@@ -192,31 +192,49 @@ void PCProcessCommands
                     CloseValve(j+1);
             }                       
             break;            
+        case CMD_GET_PRESS_TEMP:             
+            PressureTdr_GetPressTemp(pressSensorData);
+            
+            memcpy(SerialTxBuffer, &pressSensorData, sizeof(pressSensorData));            
+            nbrTxBytes =sizeof(pressSensorData);         
+            break;
         case CMD_GET_PRESS:
+#if 0          
             sensorPresent =PressureTdr_GetTdrs();
             
-            for(int j=0; j<8; j++)
+            for(int j=0; j<NBR_TRANSDUCERS; j++)
             {
                 if( sensorPresent & (0x01<<j) )
                 {
                     PressureTdr_ReadPT(j, &pressSensorData[j].press, &pressSensorData[j].temp);
+                    
+                    /* 16bit value to reduced data packet 
+                       also convert to psi, and three decimal
+                    */
+                    pressSensorPsi[j] =(UINT16)(pressSensorData[j].press/0.00689476);                    
                 }
                 else
                 {
                     pressSensorData[j].press =-1;
                     pressSensorData[j].temp  =-1;
-                }       
+                    
+                    pressSensorPsi[j] =-1;
+                }                      
             }            
-             
-            memcpy(SerialTxBuffer, &pressSensorData, sizeof(pressSensorData));            
-            nbrTxBytes =sizeof(pressSensorData);     
+#endif             
+            PressureTdr_GetPressTemp(pressSensorData);
+      
+            for(int j=0; j<NBR_TRANSDUCERS; j++)
+            {
+                pressSensorPsi[j] =(UINT16)(pressSensorData[j].press/0.00689476);
+            }
             
-            //memcpy(&SerialTxBuffer[nbrTxBytes], &TemperatureValue[0], sizeof(TemperatureValue[0]));
-            //nbrTxBytes +=sizeof(TemperatureValue[0]);     
-            break;
+            memcpy(SerialTxBuffer, &pressSensorPsi, sizeof(pressSensorPsi));            
+            nbrTxBytes =sizeof(pressSensorPsi);     
+            break;            
         case CMD_GET_BRD_ID:
             boardId =BOARD_ID;
-            boardId=2;
+
             memcpy(SerialTxBuffer, &boardId, sizeof(boardId));            
             nbrTxBytes =sizeof(boardId);                
             break;

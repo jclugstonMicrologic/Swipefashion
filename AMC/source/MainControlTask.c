@@ -207,8 +207,10 @@ press_sensor_data_t PSensorData[8];
         /* this delay allows lower priorty tasks to run */
         //vTaskDelay(1);
 
-        BluetoothMachine();
-
+        Ble_Machine();
+          
+        PressureTdr_CheckOverPres();
+        
         /* place this task in the blocked state until it is time to run again */
         vTaskDelayUntil( &xNextWakeTime, 1 );        
     }

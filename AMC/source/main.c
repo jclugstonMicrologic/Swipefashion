@@ -234,7 +234,7 @@ BOOL AmcTasksInit(void)
 #endif
       
     /* initialize bluetooth serial comm port */    
-    BluetoothMachine_Init();
+    Ble_MachineInit();
             
     /* initialize the main control task */
     MainControlTaskInit();  
@@ -243,7 +243,7 @@ BOOL AmcTasksInit(void)
     SciBinaryStartReceiver();
     
     /* start serial receiver task for ASCII serial comms (Bluetooth) */
-    SciAsciiStartReceiver();
+    //SciAsciiStartReceiver();
     
     /* Otherwise enters DFU mode to allow user programming his application */
     /* Init Device Library */
