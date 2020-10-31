@@ -214,6 +214,11 @@ namespace WindowsFormsApplication5
 
             this.theMainForm.serialFd.ClosePort((int)SERIAL_COMMS.PORT);
 
+            if (this.theMainForm.serialThread != null)
+            {
+                this.theMainForm.serialThread.Suspend();
+                this.theMainForm.serialThread = null;
+            }
             //aStr = ComportBox.Items[ComportBox.SelectedIndex].ToString();
             aStr = PortName[ComportBox.SelectedIndex].ToString();
             
@@ -242,30 +247,6 @@ namespace WindowsFormsApplication5
                                 MessageBoxIcon.Error
                                );
             }
-        }
-
-        private void button5_Click(object sender, EventArgs e)
-        {
-            try
-            {
-//                this.theMainForm.PulserSetup.p1 = Convert.ToUInt16(P1TextBox.Text);
-  //              this.theMainForm.PulserSetup.p2 = Convert.ToUInt16(P2TextBox.Text);
-    //            this.theMainForm.PulserSetup.p3 = Convert.ToUInt16(P3TextBox.Text);
-      //          this.theMainForm.PulserSetup.p4 = Convert.ToUInt16(P4TextBox.Text);
-         //       this.theMainForm.PulserSetup.p5 = Convert.ToUInt16(P5TextBox.Text);
-           //     this.theMainForm.PulserSetup.p6 = Convert.ToUInt16(P6TextBox.Text);
-
-                this.theMainForm.BuildSerialMessage((int)PACKET.CMD_SET_AMC_SETUP);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Table contains invalid entries",
-                                "Exception Error",
-                                MessageBoxButtons.OK,
-                                MessageBoxIcon.Error
-                               );
-            }
-
         }
 
         public bool GetCommStatus()

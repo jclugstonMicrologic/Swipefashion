@@ -20,6 +20,7 @@ using System.Runtime.InteropServices; // required for DllImport( string, entrypo
 using wclCommon;
 using wclBluetooth;
 
+
 namespace WindowsFormsApplication5
 {
     enum SERIAL_COMMS
@@ -56,22 +57,9 @@ namespace WindowsFormsApplication5
         SEED = 0xffff
     }
 
+
     public partial class TheMainForm : Form
     {
-        public TheMainForm()
-        {
-            InitializeComponent();
-            // Microsoft VC# does not allow accessing form objects from 
-            // a thread that the object was not created on
-            // the following code disables the exception error
-            // not sure if I should do that, but OK for now
-            Control.CheckForIllegalCrossThreadCalls = false;
-
-            AboutBox1 aboutBox = new AboutBox1();
-
-            this.Text = String.Format("WinAMC {0}", String.Format(" v{0}", aboutBox.AssemblyVersion));
-
-        }
 
         [DllImport("UsbComms.dll", EntryPoint = "OpenUsbPort")]
         public static extern bool OpenUsbPort();
@@ -86,7 +74,7 @@ namespace WindowsFormsApplication5
 
         public int PanelSelect = 0;
 
-        int dataPt = 0;
+        //int dataPt = 0;
 
         public struct AMC_OP
         {
@@ -122,15 +110,25 @@ namespace WindowsFormsApplication5
 
             public UInt16 crc;
         }
+                
+        //class CLIENT_INFO
+        public struct CLIENT_INFO
+        {
+            public String addr;            
+            public int character;
+            public int brdId;
 
+            //public wclGattCharacteristic[] FCharacteristics;
+            public wclGattCharacteristic FCharacteristics;
+        }
+
+        //List<int> Stuff = new List<int>();
+        List<CLIENT_INFO> ClientInfo = new List<CLIENT_INFO>();
+                
 
         public AMC_OP AmcOp = new AMC_OP();
         public AMC_SETUP AmcSetup = new AMC_SETUP();
                 
-        public UInt16 Counter =0;
-        public UInt16 DownloadStart = 0;
-        public UInt16 EraseCnt = 0;
-
         public byte ValveNbr = 0;
         public float Pressure = 0;
 
@@ -146,12 +144,30 @@ namespace WindowsFormsApplication5
         int BoardId = 0;
 
         private wclBluetoothManager Manager;
-        private wclGattClient Client;
-        private wclGattClient Client2;
+        //private wclGattClient Client;
+        
+        private wclGattClient[] TClient = new wclGattClient[4];
 
         private wclGattCharacteristic[] FCharacteristics;
-        private wclGattDescriptor[] FDescriptors;
+        //private wclGattDescriptor[] FDescriptors;
         private wclGattService[] FServices;
+
+        const string DeviceName = "RN4871";
+
+        public TheMainForm()
+        {
+            InitializeComponent();
+            // Microsoft VC# does not allow accessing form objects from 
+            // a thread that the object was not created on
+            // the following code disables the exception error
+            // not sure if I should do that, but OK for now
+            Control.CheckForIllegalCrossThreadCalls = false;
+
+            AboutBox1 aboutBox = new AboutBox1();
+
+            this.Text = String.Format("WinAMC {0}", String.Format(" v{0}", aboutBox.AssemblyVersion));
+
+        }
 
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -202,6 +218,12 @@ namespace WindowsFormsApplication5
             StartFitBtn2.Top = 560;
             StartFitBtn2.Left = StartFitBtn1.Left;
 
+            FwBrd1VersionLbl.Visible = false;
+            FwBrd2VersionLbl.Visible = false;
+            StartFitBtn1.Visible = false;
+            StartFitBtn2.Visible = false;
+            BrdTypeLbl.Visible = false;
+
             //InitGenericPlot(GenericPlot, "1", "2", "3");
 
             PanelSelect = (int)SET_COMMANDS.SET_COMMPORT;
@@ -213,13 +235,12 @@ namespace WindowsFormsApplication5
             {
                 FtcStatusStrip.Items[0].Text = "Disconnected";
             }
-
+           
             /* init BTFramework stuff */
             Manager = new wclBluetoothManager();
-            Client = new wclGattClient();
-            Client2 = new wclGattClient();
-
-            //wclGattClient[] ClientArr=new wclGattClient[4];
+            //Client = new wclGattClient();
+            /* lets make an arry of clients */
+            //wclGattClient[] TClient = new wclGattClient[4];
 
             /*
             Manager.OnNumericComparison += new wclBluetoothNumericComparisonEvent(Manager_OnNumericComparison);
@@ -231,21 +252,27 @@ namespace WindowsFormsApplication5
             Manager.OnDiscoveringCompleted += new wclBluetoothResultEvent(Manager_OnDiscoveringCompleted);
             Manager.OnDiscoveringStarted += new wclBluetoothEvent(Manager_OnDiscoveringStarted);
 
-            Client.OnCharacteristicChanged += new wclGattCharacteristicChangedEvent(Client_OnCharacteristicChanged);
-            Client.OnConnect += new wclCommunication.wclClientConnectionConnectEvent(Client_OnConnect);
-            Client.OnDisconnect += new wclCommunication.wclClientConnectionDisconnectEvent(Client_OnDisconnect);
+            //Client.OnCharacteristicChanged += new wclGattCharacteristicChangedEvent(Client_OnCharacteristicChanged);
+            //Client.OnConnect += new wclCommunication.wclClientConnectionConnectEvent(Client_OnConnect);
+            //Client.OnDisconnect += new wclCommunication.wclClientConnectionDisconnectEvent(Client_OnDisconnect);
 
-            Client2.OnCharacteristicChanged += new wclGattCharacteristicChangedEvent(Client_OnCharacteristicChanged);
-            Client2.OnConnect += new wclCommunication.wclClientConnectionConnectEvent(Client_OnConnect);
-            Client2.OnDisconnect += new wclCommunication.wclClientConnectionDisconnectEvent(Client_OnDisconnect);
+            for (int j = 0; j < TClient.Length; j++)
+            {
+                /* initialize the objects */
+                TClient[j] = new wclGattClient();
 
-            //ClientArr[0].OnCharacteristicChanged += new wclGattCharacteristicChangedEvent(Client_OnCharacteristicChanged);
-            //ClientArr[0].OnConnect += new wclCommunication.wclClientConnectionConnectEvent(Client_OnConnect);
-            //ClientArr[0].OnDisconnect += new wclCommunication.wclClientConnectionDisconnectEvent(Client_OnDisconnect);
+                TClient[j].OnCharacteristicChanged += new wclGattCharacteristicChangedEvent(Client_OnCharacteristicChanged);
+                TClient[j].OnConnect += new wclCommunication.wclClientConnectionConnectEvent(Client_OnConnect);
+                TClient[j].OnDisconnect += new wclCommunication.wclClientConnectionDisconnectEvent(Client_OnDisconnect);
+            }
+
 
             // In real application you should always analize the result code.
             // In this demo we assume that all is always OK.
-            Manager.Open();
+            Int32 Res =Manager.Open();
+
+            if (Res != wclErrors.WCL_E_SUCCESS)
+                MessageBox.Show("Error: 0x" + Res.ToString("X8"), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
         }
 
@@ -342,7 +369,7 @@ namespace WindowsFormsApplication5
             gridView.Columns[2].HeaderText = "Target (psi)";
             gridView.Columns[3].HeaderText = "Delta P (psi)";
 
-            gridView.Visible = true;
+            gridView.Visible = false;// true;
         }
 
         private void InitController2Grid(DataGridView gridView)
@@ -374,7 +401,7 @@ namespace WindowsFormsApplication5
             gridView.Columns[2].HeaderText = "Target (psi)";
             gridView.Columns[3].HeaderText = "Delta P (psi)";
 
-            gridView.Visible = true;
+            gridView.Visible = false;// true;
         }
         /*
                 private void InitGenericPlot(Gigasoft.ProEssentials.Pesgo pePlot, string title_,          string xaxisLbl_,                    string yaxisLbl_            )
@@ -650,7 +677,10 @@ namespace WindowsFormsApplication5
                                             if (delatP >= Convert.ToSingle(ControllerGridView[2, j].Value))
                                                 ValveNbr |= (byte)(0x01 << j);
                                         }
-                                        catch (Exception ex){ }
+                                        catch (Exception ex)
+                                        {
+                                            MessageBox.Show(ex.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                        }
                                     }
                                     else
                                     {
@@ -658,6 +688,11 @@ namespace WindowsFormsApplication5
                                         ControllerGridView[1, j].Value = "FAULT";
 
                                         ControllerGridView[3, j].Value = "FAULT";
+
+                                        ControllerGridView.Rows[j].Cells[0].Style.BackColor = Color.Orange;
+                                        ControllerGridView.Rows[j].Cells[1].Style.BackColor = Color.Orange;
+                                        ControllerGridView.Rows[j].Cells[2].Style.BackColor = Color.Orange;
+                                        ControllerGridView.Rows[j].Cells[3].Style.BackColor = Color.Orange;
                                     }
                                 }
 
@@ -886,7 +921,14 @@ namespace WindowsFormsApplication5
             response = (uint)((rxBuffer[(int)PACKET.SIZEOF_HEADER] << 8) | rxBuffer[(int)PACKET.SIZEOF_HEADER + 1]);
 
             // get received CRC
-            rxCrc = (UInt16)((UInt16)(rxBuffer[PayloadSize - 2] << 8) | (UInt16)rxBuffer[PayloadSize - 1]);
+            try
+            {
+                rxCrc = (UInt16)((UInt16)(rxBuffer[PayloadSize - 2] << 8) | (UInt16)rxBuffer[PayloadSize - 1]);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
 
             // calculate CRC of received data
             calculatedCRC = errCheck.CrcCalc16((int)(PayloadSize - 2), rxBuffer);
@@ -1324,7 +1366,7 @@ namespace WindowsFormsApplication5
 
         private void LoadProfileBtn_Click(object sender, EventArgs e)
         {
-            FileStream fs;
+            //FileStream fs;
             cFileHandle fhandle = new cFileHandle();
             byte[] dataArray = new byte[100];
             int rowCnt = 0;
@@ -1390,7 +1432,7 @@ namespace WindowsFormsApplication5
         {            
             for (int row = 0; row < 7; row++)
             {
-                if (ProfileGridView[0, row].Value == "")
+                if ((String)ProfileGridView[0, row].Value == "")
                 {
                     MessageBox.Show("No Profile Selected",
                                     "Error",
@@ -1427,7 +1469,7 @@ namespace WindowsFormsApplication5
         {
             for (int row = 0; row < 7; row++)
             {
-                if (ProfileGridView[1, row].Value == "")
+                if ((String)ProfileGridView[1, row].Value == "")
                 {
                     MessageBox.Show("No Profile Selected",
                                     "Error",
@@ -1471,11 +1513,93 @@ namespace WindowsFormsApplication5
             BuildSerialMessage((int)PACKET.CMD_GET_PRESS);
         }
 
-/*
-**************************************
-* BLE MODULE
-**************************************
-*/        
+
+        private void BleConnectBtn_Click(object sender, EventArgs e)
+        {
+            if (lvDevices.SelectedItems.Count == 0)
+                MessageBox.Show("Select device", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            else
+            {
+                ListViewItem Item = lvDevices.SelectedItems[0];
+
+                for (int j = 0; j < ClientInfo.Count; j++)
+                {
+                    if (ClientInfo[j].addr == Item.SubItems[0].Text)
+                    {
+                        break;
+                    }
+                }
+
+                if (TClient[0].State == 0)
+                {
+                    TClient[0].Address = Convert.ToInt64(Item.Text, 16);
+                    //Client.ConnectOnRead = cbConnectOnRead.Checked;
+                    Int32 Res = TClient[0].Connect((wclBluetoothRadio)Item.Tag);
+                    if (Res != wclErrors.WCL_E_SUCCESS)
+                        MessageBox.Show("Error: 0x" + Res.ToString("X8"), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                else
+                {
+                }
+            }
+        }
+
+        private void BleDisconnectBtn_Click(object sender, EventArgs e)
+        {
+            if (lvDevices.SelectedItems.Count == 0)
+                MessageBox.Show("Select device", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            else
+            {
+                ListViewItem Item = lvDevices.SelectedItems[0];
+
+                for (int j = 0; j < ClientInfo.Count; j++)
+                {
+                    if (ClientInfo[j].addr == Item.SubItems[0].Text)
+                    {
+                        break;
+                    }
+                }
+
+                Int32 Res = TClient[0].Disconnect();
+                if (Res != wclErrors.WCL_E_SUCCESS)
+                    MessageBox.Show("Error: 0x" + Res.ToString("X8"), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            wclBluetoothRadio Radio = GetRadio();
+            if (Radio != null)
+            {
+                Int32 Res = Radio.Discover(10, wclBluetoothDiscoverKind.dkBle);
+                if (Res != wclErrors.WCL_E_SUCCESS)
+                    MessageBox.Show("Error starting discovering: 0x" + Res.ToString("X8"),
+                        "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                else
+                {
+                    BleMsgTextBox.AppendText("Start Discovering...\r\n");
+                    BleMsgTextBox.ScrollToCaret();
+                }
+
+            }
+        }
+
+        int FindClientInfoAddr(String addrStr)
+        {
+            int j = 0;
+
+            for (j = 0; j < ClientInfo.Count; j++)
+            {
+                if (ClientInfo[j].addr == addrStr)
+                {
+                    break;
+                }
+            }
+
+            return j;
+        }
+
         private void TraceEvent(Int64 Address, String Event, String Param, String Value)
         {
             String s = "";
@@ -1487,6 +1611,11 @@ namespace WindowsFormsApplication5
             //Item.SubItems.Add(Value);
         }
 
+/*
+**************************************
+* BLE MODULE
+**************************************
+*/
         void Manager_OnDiscoveringStarted(object Sender, wclBluetoothRadio Radio)
         {
             lvDevices.Items.Clear();
@@ -1498,6 +1627,7 @@ namespace WindowsFormsApplication5
             if (lvDevices.Items.Count == 0)
                 MessageBox.Show("No BLE devices were found.", "Discovering for BLE devices", MessageBoxButtons.OK, MessageBoxIcon.Information);
             else
+            {
                 // Here we can update found devices names.
                 for (Int32 i = 0; i < lvDevices.Items.Count; i++)
                 {
@@ -1511,20 +1641,24 @@ namespace WindowsFormsApplication5
                     else
                         Item.SubItems[1].Text = DevName;
 
-                    if(DevName.Contains("RN4871")) //connect to our ble device
+                    if (DevName.Contains(DeviceName)) //connect to our ble device
                     {
-                        if (Client.State == 0)
+                        if (TClient[ClientInfo.Count].State == 0)
                         {
-                            Client.Address = Convert.ToInt64(Item.Text, 16);
+                            TClient[ClientInfo.Count].Address = Convert.ToInt64(Item.Text, 16);
                             //Client.ConnectOnRead = cbConnectOnRead.Checked;
-                            Res = Client.Connect((wclBluetoothRadio)Item.Tag);
+                            Res = TClient[ClientInfo.Count].Connect((wclBluetoothRadio)Item.Tag);
                             if (Res != wclErrors.WCL_E_SUCCESS)
                                 MessageBox.Show("Error: 0x" + Res.ToString("X8"), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
                     }
                 }
+            }
 
-            TraceEvent(0, "Discovering completed", "", "");
+            //TraceEvent(0, "Discovering completed", "", "");
+
+            BleMsgTextBox.AppendText("Discovering completed\r\n");
+            BleMsgTextBox.ScrollToCaret();
         }
 
         void Manager_OnDeviceFound(object Sender, wclBluetoothRadio Radio, long Address)
@@ -1563,7 +1697,37 @@ namespace WindowsFormsApplication5
         void Client_OnDisconnect(object Sender, int Reason)
         {
             // Connection property is valid here.
-            TraceEvent(((wclGattClient)Sender).Address, "Disconnected", "Reason", "0x" + Reason.ToString("X8"));
+            TraceEvent(((wclGattClient)Sender).Address, "Disconnected", "Reason", "0x" + Reason.ToString("X8"));          
+
+            String addrStr = ((wclGattClient)Sender).Address.ToString("X12");
+
+            for (int j = 0; j < lvDevices.Items.Count; j++)
+            {
+                /* find the row that has the matching address ((wclGattClient)Sender).Address */
+                //if (lvDevices.Items[j].SubItems[1].Text.Contains("RN4871"))
+                if (lvDevices.Items[j].SubItems[0].Text.Contains(addrStr))
+                {
+                    lvDevices.Items[0].UseItemStyleForSubItems = false;
+                    for (int k = 0; k < 3; k++)
+                    {
+                        lvDevices.Items[j].SubItems[k].BackColor = Color.White;
+                    }
+                }
+            }
+
+            int res =FindClientInfoAddr(addrStr);
+            ClientInfo.RemoveAt(res);
+
+            /*
+            for (int j = 0; j < ClientInfo.Count; j++)
+            {
+                if (ClientInfo[j].addr == addrStr)
+                {
+                    ClientInfo.RemoveAt(j);
+                    break;
+                }
+            }
+            */
         }
 
         void Client_OnConnect(object Sender, int Error)
@@ -1571,10 +1735,16 @@ namespace WindowsFormsApplication5
             // Connection property is valid here.
             TraceEvent(((wclGattClient)Sender).Address, "Connected", "Error", "0x" + Error.ToString("X8"));
 
+            BleMsgTextBox.AppendText("Connected\r\n");
+            BleMsgTextBox.ScrollToCaret();
+
+            String addrStr = ((wclGattClient)Sender).Address.ToString("X12");
+
             for (int j = 0; j < lvDevices.Items.Count; j++)
             {
                 /* find the row that has the matching address ((wclGattClient)Sender).Address */
-                if (lvDevices.Items[j].SubItems[1].Text.Contains("RN4871"))
+                //if (lvDevices.Items[j].SubItems[1].Text.Contains("RN4871"))
+                if (lvDevices.Items[j].SubItems[0].Text.Contains(addrStr))
                 {
                     lvDevices.Items[0].UseItemStyleForSubItems = false;
                     for (int k = 0; k < 3; k++)
@@ -1592,6 +1762,7 @@ namespace WindowsFormsApplication5
         void Client_OnCharacteristicChanged(object Sender, ushort Handle, byte[] Value)
         {
             TraceEvent(((wclGattClient)Sender).Address, "ValueChanged", "Handle", Handle.ToString("X4"));
+
             if (Value == null)
                 TraceEvent(0, "", "Value", "");
             else
@@ -1606,7 +1777,8 @@ namespace WindowsFormsApplication5
 
                 TraceEvent(0, "", "Value", Str);
 
-                RxTextBox.Text = Str;
+                //RxTextBox.Text = Str;
+                RxTextBox.Text = System.Text.Encoding.ASCII.GetString(Value);
             }
         }
         private wclBluetoothRadio GetRadio()
@@ -1622,58 +1794,16 @@ namespace WindowsFormsApplication5
 
             return null;
         }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            wclBluetoothRadio Radio = GetRadio();
-            if (Radio != null)
-            {
-                Int32 Res = Radio.Discover(10, wclBluetoothDiscoverKind.dkBle);
-                if (Res != wclErrors.WCL_E_SUCCESS)
-                    MessageBox.Show("Error starting discovering: 0x" + Res.ToString("X8"),
-                        "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-        
-        private void BleConnectBtn_Click(object sender, EventArgs e)
-        {            
-            if (lvDevices.SelectedItems.Count == 0)
-                MessageBox.Show("Select device", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            else
-            {
-                ListViewItem Item = lvDevices.SelectedItems[0];
-                if (Client.State == 0)
-                {
-                    Client.Address = Convert.ToInt64(Item.Text, 16);
-                    //Client.ConnectOnRead = cbConnectOnRead.Checked;
-                    Int32 Res = Client.Connect((wclBluetoothRadio)Item.Tag);
-                    if (Res != wclErrors.WCL_E_SUCCESS)
-                        MessageBox.Show("Error: 0x" + Res.ToString("X8"), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-                else
-                {
-                    Client2.Address = Convert.ToInt64(Item.Text, 16);
-                    //Client.ConnectOnRead = cbConnectOnRead.Checked;
-                    Int32 Res = Client2.Connect((wclBluetoothRadio)Item.Tag);
-                    if (Res != wclErrors.WCL_E_SUCCESS)
-                        MessageBox.Show("Error: 0x" + Res.ToString("X8"), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-
-            }
-        }
-
-        private void BleDisconnectBtn_Click(object sender, EventArgs e)
-        {
-            Int32 Res = Client.Disconnect();
-            if (Res != wclErrors.WCL_E_SUCCESS)
-                MessageBox.Show("Error: 0x" + Res.ToString("X8"), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        }
-
+ 
         private void BleGetServices()
         {
             FServices = null;
 
-            Int32 Res = Client.ReadServices(wclGattOperationFlag.goNone, out FServices);
+            BleMsgTextBox.AppendText("Get Services\r\n");
+            BleMsgTextBox.ScrollToCaret();
+
+            //Int32 Res = Client.ReadServices(wclGattOperationFlag.goNone, out FServices);
+            Int32 Res = TClient[ClientInfo.Count].ReadServices(wclGattOperationFlag.goNone, out FServices);
 
             if (Res != wclErrors.WCL_E_SUCCESS)
             {
@@ -1701,6 +1831,8 @@ namespace WindowsFormsApplication5
         private void BleGetCharacteristics()
         {
             int servNbr = 0;
+            int characterNbr = 0;
+            bool serviceFound = false;
             String s ="";
 
             FCharacteristics = null;
@@ -1711,15 +1843,41 @@ namespace WindowsFormsApplication5
                 {
                     s = FServices[servNbr].Uuid.LongUuid.ToString();
 
+                    /* 49535343-FE7D-4AE5-8FA9-9FAFD205E455.
+                     * The Transparent UART Service contains the following data characteristics:
+                     • Transparent UART Transmit(TX) Characteristic
+                     • Transparent UART Receive(RX) Characteristic
+                    */
                     if (s.Contains("fe7d"))
                     {
+                        /* find FE7D in service string */
+                        serviceFound = true;
+                        break;
+                    }
+
+                    // 6E400001-B5A3-F393-E0A9-E50E24DCCA9E
+                    if (s.Contains("6e400001"))
+                    {
+                        serviceFound = true;
                         break;
                     }
                 }
             }
 
-            wclGattService Service = FServices[servNbr];// lvServices.SelectedItems[0].Index];
-            Int32 Res = Client.ReadCharacteristics(Service, wclGattOperationFlag.goNone, out FCharacteristics);
+            if (!serviceFound)
+            {
+                BleMsgTextBox.AppendText("Our Service Not Found\r\n");
+                BleMsgTextBox.ScrollToCaret();
+                return;
+            }
+
+            BleMsgTextBox.AppendText("Get Characteristics\r\n");
+            BleMsgTextBox.ScrollToCaret();
+
+            wclGattService Service = FServices[servNbr];// lvServices.SelectedItems[0].Index];            
+            
+            /* read the characteristics for this service of interest */
+            Int32 Res = TClient[ClientInfo.Count].ReadCharacteristics(Service, wclGattOperationFlag.goNone, out FCharacteristics);
             if (Res != wclErrors.WCL_E_SUCCESS)
             {
                 MessageBox.Show("Error: 0x" + Res.ToString("X8"), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -1738,10 +1896,31 @@ namespace WindowsFormsApplication5
                 {
                     s = Character.Uuid.LongUuid.ToString();
 
+                    /* The Transparent UART TX Characteristic is used for data transmission 
+                     * by the Server or the Client, so lets find that characteristic
+                    */
                     if (s.Contains("1e4d"))
                     {
+                        /* Transparent UART TX 49535343-1E4D-4BD9-BA61-23C647249616,
+                         * find the 1E4D
+                        */
                         break;
                     }
+
+                    /* RX Characteristic UUID: 6E400002-B5A3-F393-E0A9-E50E24DCCA9E
+                     * TX Characteristic UUID: 6E400003-B5A3-F393-E0A9-E50E24DCCA9E
+                     * Nordic transparent UART (nRF52840)
+                    */
+                    if (s.Contains("6e400003"))
+                    {
+                        /* Transparent UART RX 6E400002-B5A3-F393-E0A9-E50E24DCCA9E
+                         * Transparent UART TX 6E400003-B5A3-F393-E0A9-E50E24DCCA9E
+                         * find the 6E400002
+                        */
+                        break;
+                    }
+
+                    characterNbr++;
                 }
                 /*
                 ListViewItem Item = lvCharacteristics.Items.Add(s);
@@ -1761,14 +1940,28 @@ namespace WindowsFormsApplication5
                 */
             }
 
-            BleSubscribeCharacteristics();
+            BleSubscribeCharacteristics(characterNbr);
 
-            BleWriteCcd();
+            BleWriteCcd(characterNbr);
+
+            CLIENT_INFO server = new CLIENT_INFO();
+            server.addr = TClient[ClientInfo.Count].Address.ToString("X12");
+            server.brdId = 1;
+            server.character = characterNbr;
+            //server.FCharacteristics = FCharacteristics;
+            server.FCharacteristics = FCharacteristics[characterNbr];
+
+            ClientInfo.Add(server);
+
         }
 
-        private void BleSubscribeCharacteristics()
+        private void BleSubscribeCharacteristics(int characterNbr)
         {
-            wclGattCharacteristic Characteristic = FCharacteristics[0];
+
+            BleMsgTextBox.AppendText("Subscribe\r\n");
+            BleMsgTextBox.ScrollToCaret();
+
+            wclGattCharacteristic Characteristic = FCharacteristics[characterNbr];
 
             // In case if characteristic has both Indication and Notification properties
             // set to True we have to select one of them. Here we use Notifications but
@@ -1778,14 +1971,18 @@ namespace WindowsFormsApplication5
                 // Characteristic.IsNotifiable = false;
                 // if you want to receive Indications instead of notifications.
                 Characteristic.IsIndicatable = false;
-            Int32 Res = Client.Subscribe(Characteristic);
+            //Int32 Res = Client.Subscribe(Characteristic);
+            Int32 Res = TClient[ClientInfo.Count].Subscribe(Characteristic);
             if (Res != wclErrors.WCL_E_SUCCESS)
                 MessageBox.Show("Error: 0x" + Res.ToString("X8"), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
-        private void BleWriteCcd()        
+        private void BleWriteCcd(int characterNbr)        
         {
-            wclGattCharacteristic Characteristic = FCharacteristics[0];
+            BleMsgTextBox.AppendText("Write CCCD Subscribe\r\n");
+            BleMsgTextBox.ScrollToCaret();
+
+            wclGattCharacteristic Characteristic = FCharacteristics[characterNbr];
 
             // In case if characteristic has both Indication and Notification properties
             // set to True we have to select one of them. Here we use Notifications but
@@ -1795,39 +1992,49 @@ namespace WindowsFormsApplication5
                 // Characteristic.IsNotifiable = false;
                 // if you want to receive Indications instead of notifications.
                 Characteristic.IsIndicatable = false;
-            Int32 Res = Client.WriteClientConfiguration(Characteristic, true, wclGattOperationFlag.goNone, wclGattProtectionLevel.plNone);
+            Int32 Res = TClient[ClientInfo.Count].WriteClientConfiguration(Characteristic, true, wclGattOperationFlag.goNone, wclGattProtectionLevel.plNone);
             if (Res != wclErrors.WCL_E_SUCCESS)
                 MessageBox.Show("Error: 0x" + Res.ToString("X8"), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
-        private void BleSendData()
+        private void BleSendData(int clientIndex)
         {
             try
             {
-                wclGattCharacteristic Characteristic = FCharacteristics[0];// lvCharacteristics.SelectedItems[0].Index];
+                //int writeChar = ClientInfo[clientIndex].character;
+                //wclGattCharacteristic Characteristic = ClientInfo[clientIndex].FCharacteristics[writeChar]; // FCharacteristics[ClientInfo[clientIndex].character];// lvCharacteristics.SelectedItems[0].Index];
+                wclGattCharacteristic Characteristic = ClientInfo[clientIndex].FCharacteristics; // FCharacteristics[ClientInfo[clientIndex].character];// lvCharacteristics.SelectedItems[0].Index];
 
                 String Str = edCharVal.Text;
+
+                System.Text.ASCIIEncoding encoding = new System.Text.ASCIIEncoding();
+                byte[] dataArray = new byte[32];
+                dataArray = encoding.GetBytes(Str);
+
                 if (Str.Length % 2 != 0)
                     Str = "0" + Str;
-
+/*
                 Byte[] Val = new Byte[Str.Length / 2];
                 for (Int32 i = 0; i < Val.Length; i++)
                 {
                     String b = Str.Substring(i * 2, 2);
                     Val[i] = Convert.ToByte(b, 16);
                 }
-
-                Int32 Res = Client.WriteCharacteristicValue(Characteristic, Val, wclGattProtectionLevel.plNone);// Protection());
+*/
+                Int32 Res = TClient[clientIndex].WriteCharacteristicValue(Characteristic, dataArray, wclGattProtectionLevel.plNone);// Protection());
                 if (Res != wclErrors.WCL_E_SUCCESS)
                     MessageBox.Show("Error: 0x" + Res.ToString("X8"), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            catch (Exception ex) { }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
 
         }
 
         private void BleSendBtn_Click(object sender, EventArgs e)
         {
-            BleSendData();
+            BleSendData(0);
         }
 
         private void BleRssiBtn_Click(object sender, EventArgs e)
@@ -1846,6 +2053,11 @@ namespace WindowsFormsApplication5
                 else
                     MessageBox.Show("RSSI: " + Rssi.ToString());
             }
+        }
+
+        private void BleMgsTextClear_Click(object sender, EventArgs e)
+        {
+            BleMsgTextBox.Clear();
         }
 
 

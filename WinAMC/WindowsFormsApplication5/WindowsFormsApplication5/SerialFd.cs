@@ -33,21 +33,22 @@ namespace SerialCom
 
       //* Structure for serial com port settings */             
 
-      //typedef struct
+      
       struct COM_SETTINGS
       {
-         public bool fullDuplex;    /* full or half duplex            */
-         public int physicalLayer;/* RS232 or RS485                   */
-         public int activity;     /* bitfields for TX, RX...          */
+      //   public bool fullDuplex;    /* full or half duplex            */
+         //public int physicalLayer;/* RS232 or RS485                   */
+         //public int activity;     /* bitfields for TX, RX...          */
       }
+      
 
       public struct TX_CONTEXT
       {
          public byte[] txBuf;
-         int SerialTxMachState;
+         //int SerialTxMachState;
       }
 
-      COM_SETTINGS[] ComSettings = new COM_SETTINGS[(int)SERIAL_DEF.PORTS];
+      //COM_SETTINGS[] ComSettings = new COM_SETTINGS[(int)SERIAL_DEF.PORTS];
       TX_CONTEXT[] TxContext = new TX_CONTEXT[(int)SERIAL_DEF.PORTS];
 
       bool[] fPortActive = new bool[ (int)SERIAL_DEF.PORTS];
@@ -152,7 +153,7 @@ namespace SerialCom
                sendBuff[0] = (Byte)aByte_;
                SerialComPort[ portIndex_ ].Write(sendBuff, 0 , 1);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                // transmission failed
                return false;
@@ -196,7 +197,7 @@ namespace SerialCom
                     return false;
                 }
             }
-            catch (Exception ex) { }
+            catch (Exception) { }
 
           TxContext[portIndex_].txBuf = new byte[1040];
 
@@ -232,7 +233,7 @@ namespace SerialCom
           {
               SerialComPort[portIndex_].Write(TxContext[portIndex_].txBuf, 0, (int)numBytes);
           }
-          catch (Exception ex) { }
+          catch (Exception) { }
 
 
           return true;
@@ -261,7 +262,7 @@ namespace SerialCom
                // NOTE: ReadByte is a blocking call!
                status = SerialComPort[ portIndex_ ].ReadByte();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                // Timed out
                rxBytePtr_ = 0;
@@ -391,52 +392,7 @@ namespace SerialCom
          L O C A L   D A T A
          ***********************
          */
-         int i;
-         int x;
-         int crc, feed;
-      //   byte *tempPtr;
-
-
-         /*
-         *************************
-          E R R O R   C H E C K S
-         *************************
-         */
-         /* Check for uninitialized pointers, out of bounds inputs, etc */
-
-  
-         /*
-         *************************
-          C O D E
-         *************************
-         */
-
-         crc = 0;
-/*
-   for ( tempPtr = dataBufPtr_;
-         tempPtr < (dataBufPtr_ + numBytes_);
-         tempPtr++
-       )
-   {
-      feed = (unsigned int)(*tempPtr);
-      for ( i=0; i<8; i++)
-      {
-         x = crc & 0x0001;
-         crc= crc>>1;
-         if ( feed & 0x0001 )
-         {
-            crc = crc | 0x8000;
-         }
-         feed = feed>>1;
-         if ( x )
-         {
-            crc = crc ^ 0x1021;
-         }
-      }
-   }
-*/
-
-         return crc;
+         return 1;
 
       }/* end CalcCrc() */
 

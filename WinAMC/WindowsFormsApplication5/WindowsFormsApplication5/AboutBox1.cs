@@ -21,7 +21,7 @@ namespace WindowsFormsApplication5
         {
             InitializeComponent();
 
-            SwVersion.version = "1.00 Oct 21, 2020";
+            SwVersion.version = "1.00 Oct 26, 2020";
 
             this.Text = String.Format("About {0}", AssemblyTitle);
             this.labelProductName.Text = AssemblyProduct;
@@ -37,7 +37,7 @@ namespace WindowsFormsApplication5
         {
             get
             {
-                return "Focus";
+                return "Fashion Swipe";
                 /*
                 object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyTitleAttribute), false);
                 if (attributes.Length > 0)

@@ -151,8 +151,7 @@
             this.button5.Size = new System.Drawing.Size(50, 23);
             this.button5.TabIndex = 33;
             this.button5.Text = "Send";
-            this.button5.UseVisualStyleBackColor = true;
-            this.button5.Click += new System.EventHandler(this.button5_Click);
+            this.button5.UseVisualStyleBackColor = true;            
             // 
             // FpcGroupBox
             // 
