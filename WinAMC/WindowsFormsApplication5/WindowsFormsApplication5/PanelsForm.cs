@@ -229,13 +229,13 @@ namespace WindowsFormsApplication5
                 this.theMainForm.serialThread = new Thread(this.theMainForm.rxDataThread);
                 this.theMainForm.serialThread.Start();
 
-                aStr = ComportBox.Text + ", 115200bps";
+                aStr = ComportBox.Text + ", 9600";// + (String)SERIAL_COMMS.BAUDRATE.ToString();
 
                 this.theMainForm.UpdateStatusStrip(aStr);
                 // get FPC fw version
-                this.theMainForm.BuildSerialMessage((int)PACKET.CMD_GET_VERSION);
+                //this.theMainForm.BuildSerialMessage((int)PACKET.CMD_GET_VERSION);
 
-                this.theMainForm.BuildSerialMessage((int)PACKET.CMD_GET_BRD_ID); 
+                //this.theMainForm.BuildSerialMessage((int)PACKET.CMD_GET_BRD_ID); 
             }
             else
             {

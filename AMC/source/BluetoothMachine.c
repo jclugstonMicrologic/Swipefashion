@@ -72,7 +72,7 @@ void Ble_SendString(char *pBuf);
 
 /*
 *|----------------------------------------------------------------------------
-*|  Routine: BluetoothMachine_Init
+*|  Routine: Ble_MachineInit
 *|  Description:
 *|  Retval:
 *|----------------------------------------------------------------------------
@@ -112,6 +112,7 @@ var -=1;
     length =strlen(data_array);
 #endif    
     
+    /* send pressure readings periodically */
     Ble_ProcessCommands(CMD_GET_PRESS, NULL_PTR);
 }
 
@@ -313,7 +314,7 @@ void Ble_ProcessCommands
 
 /*
 *|----------------------------------------------------------------------------
-*|  Routine: BluetoothMachine
+*|  Routine: Ble_Machine
 *|  Description:
 *|  Retval:
 *|----------------------------------------------------------------------------

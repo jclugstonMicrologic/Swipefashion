@@ -29,30 +29,29 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle52 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle53 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle54 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle46 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle47 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle48 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle49 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle50 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle51 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle55 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle56 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle57 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle58 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle59 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle60 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle73 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle74 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle75 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle76 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle77 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle78 = new System.Windows.Forms.DataGridViewCellStyle();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.button2 = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.button16 = new System.Windows.Forms.Button();
-            this.button17 = new System.Windows.Forms.Button();
-            this.SaveLogBtn = new System.Windows.Forms.Button();
-            this.textBox2 = new System.Windows.Forms.TextBox();
-            this.label20 = new System.Windows.Forms.Label();
             this.GetPressBtn = new System.Windows.Forms.Button();
+            this.StartPreviewBtn = new System.Windows.Forms.Button();
+            this.CaptureBtn = new System.Windows.Forms.Button();
+            this.StopCaptureBtn = new System.Windows.Forms.Button();
+            this.UploadFilesBtn = new System.Windows.Forms.Button();
+            this.OpCloseBtn = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
+            this.OpLooseFitBtn = new System.Windows.Forms.Button();
+            this.OpNormalFitBtn = new System.Windows.Forms.Button();
+            this.OpTightFitBtn = new System.Windows.Forms.Button();
+            this.FwdLimitInd = new System.Windows.Forms.Button();
+            this.RevLimitInd = new System.Windows.Forms.Button();
+            this.DirFwdInd = new System.Windows.Forms.Button();
+            this.DirRevInd = new System.Windows.Forms.Button();
             this.StartFitBtn1 = new System.Windows.Forms.Button();
             this.StartFitBtn2 = new System.Windows.Forms.Button();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
@@ -67,6 +66,7 @@
             this.setupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.diagnosticToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.logToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.motorDiagnosticToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.setToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.fPCParametersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.counterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -75,8 +75,78 @@
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.MainPanel = new System.Windows.Forms.Panel();
+            this.OperationPanel = new System.Windows.Forms.Panel();
+            this.FitGroupBox = new System.Windows.Forms.GroupBox();
+            this.label26 = new System.Windows.Forms.Label();
+            this.FitTypeLoadComboBox = new System.Windows.Forms.ComboBox();
+            this.SnLoadTextBox = new System.Windows.Forms.TextBox();
+            this.label24 = new System.Windows.Forms.Label();
+            this.StopBtn = new System.Windows.Forms.Button();
+            this.RevBtn = new System.Windows.Forms.Button();
+            this.FwdBtn = new System.Windows.Forms.Button();
+            this.ControlPanel = new System.Windows.Forms.Panel();
+            this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
+            this.label20 = new System.Windows.Forms.Label();
+            this.SpeedTextBox = new System.Windows.Forms.TextBox();
+            this.label19 = new System.Windows.Forms.Label();
+            this.label16 = new System.Windows.Forms.Label();
+            this.label15 = new System.Windows.Forms.Label();
+            this.label14 = new System.Windows.Forms.Label();
+            this.VoltageTextBox = new System.Windows.Forms.TextBox();
+            this.CurrentTextBox = new System.Windows.Forms.TextBox();
+            this.MotorSpeedUpDown = new System.Windows.Forms.NumericUpDown();
+            this.label10 = new System.Windows.Forms.Label();
+            this.CloseControlPanelBtn = new System.Windows.Forms.Button();
+            this.MotorReadTextBox = new System.Windows.Forms.TextBox();
+            this.MotorReadBtn = new System.Windows.Forms.Button();
+            this.MotorStopBtn = new System.Windows.Forms.Button();
+            this.MotorRevBtn = new System.Windows.Forms.Button();
+            this.MotorFwdBtn = new System.Windows.Forms.Button();
             this.FwBrd2VersionLbl = new System.Windows.Forms.Label();
             this.ProfileGroupBox = new System.Windows.Forms.GroupBox();
+            this.panel2 = new System.Windows.Forms.Panel();
+            this.FitTypeComboBox = new System.Windows.Forms.ComboBox();
+            this.label25 = new System.Windows.Forms.Label();
+            this.label21 = new System.Windows.Forms.Label();
+            this.label23 = new System.Windows.Forms.Label();
+            this.label27 = new System.Windows.Forms.Label();
+            this.label28 = new System.Windows.Forms.Label();
+            this.label30 = new System.Windows.Forms.Label();
+            this.label31 = new System.Windows.Forms.Label();
+            this.LeftLegUpDown = new System.Windows.Forms.NumericUpDown();
+            this.LeftButtockUpDown = new System.Windows.Forms.NumericUpDown();
+            this.LeftHipUpDown = new System.Windows.Forms.NumericUpDown();
+            this.LeftCalfUpDown = new System.Windows.Forms.NumericUpDown();
+            this.LeftBreastUpDown = new System.Windows.Forms.NumericUpDown();
+            this.LeftArmUpDown = new System.Windows.Forms.NumericUpDown();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.label18 = new System.Windows.Forms.Label();
+            this.label17 = new System.Windows.Forms.Label();
+            this.label13 = new System.Windows.Forms.Label();
+            this.label12 = new System.Windows.Forms.Label();
+            this.label29 = new System.Windows.Forms.Label();
+            this.label8 = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
+            this.RightLegUpDown = new System.Windows.Forms.NumericUpDown();
+            this.RightButtockUpDown = new System.Windows.Forms.NumericUpDown();
+            this.RightCalfUpDown = new System.Windows.Forms.NumericUpDown();
+            this.RightHipUpDown = new System.Windows.Forms.NumericUpDown();
+            this.BellyUpDown = new System.Windows.Forms.NumericUpDown();
+            this.RightBreastUpDown = new System.Windows.Forms.NumericUpDown();
+            this.RightArmUpDown = new System.Windows.Forms.NumericUpDown();
+            this.TorsoUpDown = new System.Windows.Forms.NumericUpDown();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.DateTextBox = new System.Windows.Forms.TextBox();
+            this.SizeTextBox = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.ModelTextBox = new System.Windows.Forms.TextBox();
+            this.SnTextBox = new System.Windows.Forms.TextBox();
+            this.NameTextBox = new System.Windows.Forms.TextBox();
             this.CloseProfileBtn = new System.Windows.Forms.Button();
             this.LoadProfileBtn = new System.Windows.Forms.Button();
             this.ProfileGridView = new System.Windows.Forms.DataGridView();
@@ -84,6 +154,7 @@
             this.textBox3 = new System.Windows.Forms.TextBox();
             this.Controller2GridView = new System.Windows.Forms.DataGridView();
             this.BleGroupBox = new System.Windows.Forms.GroupBox();
+            this.BleMgsTextClear = new System.Windows.Forms.Button();
             this.BleMsgTextBox = new System.Windows.Forms.RichTextBox();
             this.RxTextBox = new System.Windows.Forms.TextBox();
             this.BleDisconnectBtn = new System.Windows.Forms.Button();
@@ -98,20 +169,13 @@
             this.BleDiscoverBtn = new System.Windows.Forms.Button();
             this.ControllerGridView = new System.Windows.Forms.DataGridView();
             this.BrdTypeLbl = new System.Windows.Forms.Label();
-            this.DiagPnl = new System.Windows.Forms.Panel();
-            this.label19 = new System.Windows.Forms.Label();
-            this.SetupTimeLbl = new System.Windows.Forms.Label();
-            this.label10 = new System.Windows.Forms.Label();
-            this.downloadGridView = new System.Windows.Forms.DataGridView();
-            this.button15 = new System.Windows.Forms.Button();
             this.CommSelectPnl = new System.Windows.Forms.Panel();
             this.label22 = new System.Windows.Forms.Label();
             this.button14 = new System.Windows.Forms.Button();
             this.button13 = new System.Windows.Forms.Button();
             this.CommportComboBox = new System.Windows.Forms.ComboBox();
-            this.DownloadPanel = new System.Windows.Forms.Panel();
-            this.dataGridView = new System.Windows.Forms.DataGridView();
             this.FwBrd1VersionLbl = new System.Windows.Forms.Label();
+            this.TestBtn = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.radioButton3 = new System.Windows.Forms.RadioButton();
             this.radioButton2 = new System.Windows.Forms.RadioButton();
@@ -124,51 +188,50 @@
             this.TemperatureTextBox = new System.Windows.Forms.TextBox();
             this.PressureTextBox = new System.Windows.Forms.TextBox();
             this.label9 = new System.Windows.Forms.Label();
-            this.GeneralGroupBox = new System.Windows.Forms.GroupBox();
-            this.SuTextBox = new System.Windows.Forms.TextBox();
-            this.EncTextBox = new System.Windows.Forms.TextBox();
-            this.label16 = new System.Windows.Forms.Label();
-            this.label15 = new System.Windows.Forms.Label();
-            this.CommTextBox = new System.Windows.Forms.TextBox();
-            this.label14 = new System.Windows.Forms.Label();
-            this.Sw4TextBox = new System.Windows.Forms.TextBox();
-            this.label35 = new System.Windows.Forms.Label();
-            this.label34 = new System.Windows.Forms.Label();
-            this.label33 = new System.Windows.Forms.Label();
-            this.Adc9TextBox = new System.Windows.Forms.TextBox();
-            this.Adc8TextBox = new System.Windows.Forms.TextBox();
-            this.Adc7TextBox = new System.Windows.Forms.TextBox();
-            this.Adc6TextBox = new System.Windows.Forms.TextBox();
-            this.Adc5TextBox = new System.Windows.Forms.TextBox();
-            this.label24 = new System.Windows.Forms.Label();
-            this.label25 = new System.Windows.Forms.Label();
-            this.label26 = new System.Windows.Forms.Label();
-            this.Adc4TextBox = new System.Windows.Forms.TextBox();
-            this.Sw3TextBox = new System.Windows.Forms.TextBox();
-            this.Sw2TextBox = new System.Windows.Forms.TextBox();
-            this.Sw1TextBox = new System.Windows.Forms.TextBox();
             this.SerialMonitorTimer = new System.Windows.Forms.Timer(this.components);
-            this.timer2 = new System.Windows.Forms.Timer(this.components);
+            this.MotorCntrlTimer = new System.Windows.Forms.Timer(this.components);
             this.FtcStatusStrip = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
-            this.BleMgsTextClear = new System.Windows.Forms.Button();
+            this.FileSystemWatcher = new System.IO.FileSystemWatcher();
+            this.CameraGroupBox = new System.Windows.Forms.GroupBox();
+            this.MotorGroupBox = new System.Windows.Forms.GroupBox();
             this.menuStrip1.SuspendLayout();
             this.MainPanel.SuspendLayout();
+            this.OperationPanel.SuspendLayout();
+            this.FitGroupBox.SuspendLayout();
+            this.ControlPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.MotorSpeedUpDown)).BeginInit();
             this.ProfileGroupBox.SuspendLayout();
+            this.panel2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.LeftLegUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.LeftButtockUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.LeftHipUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.LeftCalfUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.LeftBreastUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.LeftArmUpDown)).BeginInit();
+            this.panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.RightLegUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.RightButtockUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.RightCalfUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.RightHipUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.BellyUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.RightBreastUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.RightArmUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.TorsoUpDown)).BeginInit();
+            this.groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ProfileGridView)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.Controller2GridView)).BeginInit();
             this.BleGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ControllerGridView)).BeginInit();
-            this.DiagPnl.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.downloadGridView)).BeginInit();
             this.CommSelectPnl.SuspendLayout();
-            this.DownloadPanel.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).BeginInit();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
-            this.GeneralGroupBox.SuspendLayout();
             this.FtcStatusStrip.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.FileSystemWatcher)).BeginInit();
+            this.CameraGroupBox.SuspendLayout();
+            this.MotorGroupBox.SuspendLayout();
             this.SuspendLayout();
             // 
             // openFileDialog1
@@ -186,57 +249,6 @@
             this.button2.Visible = false;
             this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
-            // button16
-            // 
-            this.button16.Location = new System.Drawing.Point(407, 20);
-            this.button16.Name = "button16";
-            this.button16.Size = new System.Drawing.Size(75, 23);
-            this.button16.TabIndex = 42;
-            this.button16.Text = "Download";
-            this.toolTip1.SetToolTip(this.button16, "Download FTC Log");
-            this.button16.UseVisualStyleBackColor = true;
-            this.button16.Click += new System.EventHandler(this.button16_Click_1);
-            // 
-            // button17
-            // 
-            this.button17.Location = new System.Drawing.Point(407, 55);
-            this.button17.Name = "button17";
-            this.button17.Size = new System.Drawing.Size(75, 23);
-            this.button17.TabIndex = 43;
-            this.button17.Text = "Clear Log";
-            this.toolTip1.SetToolTip(this.button17, "Clear FTC Log");
-            this.button17.UseVisualStyleBackColor = true;
-            // 
-            // SaveLogBtn
-            // 
-            this.SaveLogBtn.Location = new System.Drawing.Point(407, 90);
-            this.SaveLogBtn.Name = "SaveLogBtn";
-            this.SaveLogBtn.Size = new System.Drawing.Size(75, 23);
-            this.SaveLogBtn.TabIndex = 44;
-            this.SaveLogBtn.Text = "Save Log";
-            this.toolTip1.SetToolTip(this.SaveLogBtn, "Save Log to Disk File");
-            this.SaveLogBtn.UseVisualStyleBackColor = true;
-            this.SaveLogBtn.Click += new System.EventHandler(this.SaveLogBtn_Click);
-            // 
-            // textBox2
-            // 
-            this.textBox2.Location = new System.Drawing.Point(360, -3);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(40, 20);
-            this.textBox2.TabIndex = 47;
-            this.textBox2.Text = "0";
-            this.toolTip1.SetToolTip(this.textBox2, "Offset starttime in seconds");
-            // 
-            // label20
-            // 
-            this.label20.AutoSize = true;
-            this.label20.Location = new System.Drawing.Point(105, 78);
-            this.label20.Name = "label20";
-            this.label20.Size = new System.Drawing.Size(20, 13);
-            this.label20.TabIndex = 59;
-            this.label20.Text = "V7";
-            this.toolTip1.SetToolTip(this.label20, "Stuck upper switch");
-            // 
             // GetPressBtn
             // 
             this.GetPressBtn.Location = new System.Drawing.Point(326, 121);
@@ -249,26 +261,169 @@
             this.GetPressBtn.Visible = false;
             this.GetPressBtn.Click += new System.EventHandler(this.GetPressBtn_Click);
             // 
+            // StartPreviewBtn
+            // 
+            this.StartPreviewBtn.Location = new System.Drawing.Point(10, 25);
+            this.StartPreviewBtn.Name = "StartPreviewBtn";
+            this.StartPreviewBtn.Size = new System.Drawing.Size(82, 23);
+            this.StartPreviewBtn.TabIndex = 59;
+            this.StartPreviewBtn.Text = "Start Preview";
+            this.toolTip1.SetToolTip(this.StartPreviewBtn, "Start camera preveiw");
+            this.StartPreviewBtn.UseVisualStyleBackColor = true;
+            this.StartPreviewBtn.Click += new System.EventHandler(this.StartPreviewBtn_Click);
+            // 
+            // CaptureBtn
+            // 
+            this.CaptureBtn.BackColor = System.Drawing.Color.LightGreen;
+            this.CaptureBtn.Enabled = false;
+            this.CaptureBtn.Location = new System.Drawing.Point(105, 25);
+            this.CaptureBtn.Name = "CaptureBtn";
+            this.CaptureBtn.Size = new System.Drawing.Size(82, 23);
+            this.CaptureBtn.TabIndex = 60;
+            this.CaptureBtn.Text = "Capture";
+            this.toolTip1.SetToolTip(this.CaptureBtn, "Capture camera data");
+            this.CaptureBtn.UseVisualStyleBackColor = false;
+            this.CaptureBtn.Click += new System.EventHandler(this.CaptureBtn_Click);
+            // 
+            // StopCaptureBtn
+            // 
+            this.StopCaptureBtn.Location = new System.Drawing.Point(195, 25);
+            this.StopCaptureBtn.Name = "StopCaptureBtn";
+            this.StopCaptureBtn.Size = new System.Drawing.Size(82, 23);
+            this.StopCaptureBtn.TabIndex = 61;
+            this.StopCaptureBtn.Text = "Stop";
+            this.toolTip1.SetToolTip(this.StopCaptureBtn, "Stop camera");
+            this.StopCaptureBtn.UseVisualStyleBackColor = true;
+            this.StopCaptureBtn.Click += new System.EventHandler(this.StopCaptureBtn_Click);
+            // 
+            // UploadFilesBtn
+            // 
+            this.UploadFilesBtn.BackColor = System.Drawing.Color.SkyBlue;
+            this.UploadFilesBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.UploadFilesBtn.Location = new System.Drawing.Point(129, 315);
+            this.UploadFilesBtn.Name = "UploadFilesBtn";
+            this.UploadFilesBtn.Size = new System.Drawing.Size(82, 23);
+            this.UploadFilesBtn.TabIndex = 65;
+            this.UploadFilesBtn.Text = "Upload";
+            this.toolTip1.SetToolTip(this.UploadFilesBtn, "Upload video files to server");
+            this.UploadFilesBtn.UseVisualStyleBackColor = false;
+            this.UploadFilesBtn.Click += new System.EventHandler(this.UploadFilesBtn_Click);
+            // 
+            // OpCloseBtn
+            // 
+            this.OpCloseBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.OpCloseBtn.Location = new System.Drawing.Point(32, 315);
+            this.OpCloseBtn.Name = "OpCloseBtn";
+            this.OpCloseBtn.Size = new System.Drawing.Size(82, 23);
+            this.OpCloseBtn.TabIndex = 66;
+            this.OpCloseBtn.Text = "Close";
+            this.toolTip1.SetToolTip(this.OpCloseBtn, "Close screen");
+            this.OpCloseBtn.UseVisualStyleBackColor = true;
+            this.OpCloseBtn.Click += new System.EventHandler(this.button3_Click_1);
+            // 
+            // button1
+            // 
+            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button1.Location = new System.Drawing.Point(159, 53);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(82, 23);
+            this.button1.TabIndex = 70;
+            this.button1.Text = "Load";
+            this.toolTip1.SetToolTip(this.button1, "Stop camera");
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click_3);
+            // 
+            // OpLooseFitBtn
+            // 
+            this.OpLooseFitBtn.Enabled = false;
+            this.OpLooseFitBtn.Location = new System.Drawing.Point(10, 25);
+            this.OpLooseFitBtn.Name = "OpLooseFitBtn";
+            this.OpLooseFitBtn.Size = new System.Drawing.Size(82, 23);
+            this.OpLooseFitBtn.TabIndex = 73;
+            this.OpLooseFitBtn.Text = "Loose";
+            this.toolTip1.SetToolTip(this.OpLooseFitBtn, "Stop camera");
+            this.OpLooseFitBtn.UseVisualStyleBackColor = true;
+            this.OpLooseFitBtn.Click += new System.EventHandler(this.OpLooseFitBtn_Click);
+            // 
+            // OpNormalFitBtn
+            // 
+            this.OpNormalFitBtn.Enabled = false;
+            this.OpNormalFitBtn.Location = new System.Drawing.Point(105, 25);
+            this.OpNormalFitBtn.Name = "OpNormalFitBtn";
+            this.OpNormalFitBtn.Size = new System.Drawing.Size(82, 23);
+            this.OpNormalFitBtn.TabIndex = 74;
+            this.OpNormalFitBtn.Text = "Normal";
+            this.toolTip1.SetToolTip(this.OpNormalFitBtn, "Stop camera");
+            this.OpNormalFitBtn.UseVisualStyleBackColor = true;
+            this.OpNormalFitBtn.Click += new System.EventHandler(this.OpNormalFitBtn_Click);
+            // 
+            // OpTightFitBtn
+            // 
+            this.OpTightFitBtn.Enabled = false;
+            this.OpTightFitBtn.Location = new System.Drawing.Point(195, 25);
+            this.OpTightFitBtn.Name = "OpTightFitBtn";
+            this.OpTightFitBtn.Size = new System.Drawing.Size(82, 23);
+            this.OpTightFitBtn.TabIndex = 75;
+            this.OpTightFitBtn.Text = "Tight";
+            this.toolTip1.SetToolTip(this.OpTightFitBtn, "Stop camera");
+            this.OpTightFitBtn.UseVisualStyleBackColor = true;
+            this.OpTightFitBtn.Click += new System.EventHandler(this.OpTightFitBtn_Click);
+            // 
+            // FwdLimitInd
+            // 
+            this.FwdLimitInd.BackColor = System.Drawing.Color.LightGray;
+            this.FwdLimitInd.Location = new System.Drawing.Point(108, 180);
+            this.FwdLimitInd.Name = "FwdLimitInd";
+            this.FwdLimitInd.Size = new System.Drawing.Size(20, 20);
+            this.FwdLimitInd.TabIndex = 79;
+            this.FwdLimitInd.UseVisualStyleBackColor = false;
+            // 
+            // RevLimitInd
+            // 
+            this.RevLimitInd.BackColor = System.Drawing.Color.LightGray;
+            this.RevLimitInd.Location = new System.Drawing.Point(149, 180);
+            this.RevLimitInd.Name = "RevLimitInd";
+            this.RevLimitInd.Size = new System.Drawing.Size(20, 20);
+            this.RevLimitInd.TabIndex = 80;
+            this.RevLimitInd.UseVisualStyleBackColor = false;
+            // 
+            // DirFwdInd
+            // 
+            this.DirFwdInd.BackColor = System.Drawing.Color.LightGray;
+            this.DirFwdInd.Location = new System.Drawing.Point(108, 210);
+            this.DirFwdInd.Name = "DirFwdInd";
+            this.DirFwdInd.Size = new System.Drawing.Size(20, 20);
+            this.DirFwdInd.TabIndex = 84;
+            this.DirFwdInd.UseVisualStyleBackColor = false;
+            // 
+            // DirRevInd
+            // 
+            this.DirRevInd.BackColor = System.Drawing.Color.LightGray;
+            this.DirRevInd.Location = new System.Drawing.Point(149, 210);
+            this.DirRevInd.Name = "DirRevInd";
+            this.DirRevInd.Size = new System.Drawing.Size(20, 20);
+            this.DirRevInd.TabIndex = 85;
+            this.DirRevInd.UseVisualStyleBackColor = false;
+            this.DirRevInd.Visible = false;
+            // 
             // StartFitBtn1
             // 
-            this.StartFitBtn1.Location = new System.Drawing.Point(326, 53);
+            this.StartFitBtn1.Location = new System.Drawing.Point(326, 43);
             this.StartFitBtn1.Name = "StartFitBtn1";
             this.StartFitBtn1.Size = new System.Drawing.Size(82, 23);
             this.StartFitBtn1.TabIndex = 50;
             this.StartFitBtn1.Text = "Start Fit";
-            this.toolTip1.SetToolTip(this.StartFitBtn1, "Get Setup Information from FTC");
             this.StartFitBtn1.UseVisualStyleBackColor = true;
             this.StartFitBtn1.Click += new System.EventHandler(this.StartFitBtn_Click);
             // 
             // StartFitBtn2
             // 
             this.StartFitBtn2.Enabled = false;
-            this.StartFitBtn2.Location = new System.Drawing.Point(326, 82);
+            this.StartFitBtn2.Location = new System.Drawing.Point(268, 32);
             this.StartFitBtn2.Name = "StartFitBtn2";
             this.StartFitBtn2.Size = new System.Drawing.Size(82, 23);
             this.StartFitBtn2.TabIndex = 54;
             this.StartFitBtn2.Text = "Start Fit";
-            this.toolTip1.SetToolTip(this.StartFitBtn2, "Get Setup Information from FTC");
             this.StartFitBtn2.UseVisualStyleBackColor = true;
             this.StartFitBtn2.Click += new System.EventHandler(this.StartFitBtn2_Click);
             // 
@@ -289,7 +444,7 @@
             // 
             // OpenSerialPortBtn
             // 
-            this.OpenSerialPortBtn.Location = new System.Drawing.Point(1124, 250);
+            this.OpenSerialPortBtn.Location = new System.Drawing.Point(1153, 239);
             this.OpenSerialPortBtn.Name = "OpenSerialPortBtn";
             this.OpenSerialPortBtn.Size = new System.Drawing.Size(75, 23);
             this.OpenSerialPortBtn.TabIndex = 15;
@@ -339,7 +494,8 @@
             this.diagnosticToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.setupToolStripMenuItem,
             this.diagnosticToolStripMenuItem1,
-            this.logToolStripMenuItem});
+            this.logToolStripMenuItem,
+            this.motorDiagnosticToolStripMenuItem});
             this.diagnosticToolStripMenuItem.Name = "diagnosticToolStripMenuItem";
             this.diagnosticToolStripMenuItem.Size = new System.Drawing.Size(63, 20);
             this.diagnosticToolStripMenuItem.Text = "&Window";
@@ -347,14 +503,14 @@
             // setupToolStripMenuItem
             // 
             this.setupToolStripMenuItem.Name = "setupToolStripMenuItem";
-            this.setupToolStripMenuItem.Size = new System.Drawing.Size(140, 22);
+            this.setupToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
             this.setupToolStripMenuItem.Text = "Open Profile";
             this.setupToolStripMenuItem.Click += new System.EventHandler(this.setupToolStripMenuItem_Click);
             // 
             // diagnosticToolStripMenuItem1
             // 
             this.diagnosticToolStripMenuItem1.Name = "diagnosticToolStripMenuItem1";
-            this.diagnosticToolStripMenuItem1.Size = new System.Drawing.Size(140, 22);
+            this.diagnosticToolStripMenuItem1.Size = new System.Drawing.Size(166, 22);
             this.diagnosticToolStripMenuItem1.Text = "Diagnostic";
             this.diagnosticToolStripMenuItem1.Visible = false;
             this.diagnosticToolStripMenuItem1.Click += new System.EventHandler(this.diagnosticToolStripMenuItem1_Click);
@@ -362,10 +518,16 @@
             // logToolStripMenuItem
             // 
             this.logToolStripMenuItem.Name = "logToolStripMenuItem";
-            this.logToolStripMenuItem.Size = new System.Drawing.Size(140, 22);
+            this.logToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
             this.logToolStripMenuItem.Text = "Log";
             this.logToolStripMenuItem.Visible = false;
-            this.logToolStripMenuItem.Click += new System.EventHandler(this.logToolStripMenuItem_Click);
+            // 
+            // motorDiagnosticToolStripMenuItem
+            // 
+            this.motorDiagnosticToolStripMenuItem.Name = "motorDiagnosticToolStripMenuItem";
+            this.motorDiagnosticToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
+            this.motorDiagnosticToolStripMenuItem.Text = "Motor Diagnostic";
+            this.motorDiagnosticToolStripMenuItem.Click += new System.EventHandler(this.motorDiagnosticToolStripMenuItem_Click);
             // 
             // setToolStripMenuItem
             // 
@@ -424,6 +586,9 @@
             // 
             // MainPanel
             // 
+            this.MainPanel.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.MainPanel.Controls.Add(this.OperationPanel);
+            this.MainPanel.Controls.Add(this.ControlPanel);
             this.MainPanel.Controls.Add(this.FwBrd2VersionLbl);
             this.MainPanel.Controls.Add(this.ProfileGroupBox);
             this.MainPanel.Controls.Add(this.StartFitBtn2);
@@ -433,15 +598,332 @@
             this.MainPanel.Controls.Add(this.GetPressBtn);
             this.MainPanel.Controls.Add(this.ControllerGridView);
             this.MainPanel.Controls.Add(this.BrdTypeLbl);
-            this.MainPanel.Controls.Add(this.DiagPnl);
-            this.MainPanel.Controls.Add(this.button15);
             this.MainPanel.Controls.Add(this.CommSelectPnl);
-            this.MainPanel.Controls.Add(this.DownloadPanel);
             this.MainPanel.Controls.Add(this.FwBrd1VersionLbl);
+            this.MainPanel.Controls.Add(this.TestBtn);
             this.MainPanel.Location = new System.Drawing.Point(25, 40);
             this.MainPanel.Name = "MainPanel";
-            this.MainPanel.Size = new System.Drawing.Size(999, 650);
+            this.MainPanel.Size = new System.Drawing.Size(1086, 650);
             this.MainPanel.TabIndex = 22;
+            // 
+            // OperationPanel
+            // 
+            this.OperationPanel.BackColor = System.Drawing.Color.White;
+            this.OperationPanel.Controls.Add(this.MotorGroupBox);
+            this.OperationPanel.Controls.Add(this.CameraGroupBox);
+            this.OperationPanel.Controls.Add(this.FitGroupBox);
+            this.OperationPanel.Controls.Add(this.label26);
+            this.OperationPanel.Controls.Add(this.FitTypeLoadComboBox);
+            this.OperationPanel.Controls.Add(this.button1);
+            this.OperationPanel.Controls.Add(this.SnLoadTextBox);
+            this.OperationPanel.Controls.Add(this.label24);
+            this.OperationPanel.Controls.Add(this.OpCloseBtn);
+            this.OperationPanel.Controls.Add(this.UploadFilesBtn);
+            this.OperationPanel.Location = new System.Drawing.Point(825, 217);
+            this.OperationPanel.Name = "OperationPanel";
+            this.OperationPanel.Size = new System.Drawing.Size(246, 341);
+            this.OperationPanel.TabIndex = 62;
+            // 
+            // FitGroupBox
+            // 
+            this.FitGroupBox.Controls.Add(this.OpLooseFitBtn);
+            this.FitGroupBox.Controls.Add(this.OpNormalFitBtn);
+            this.FitGroupBox.Controls.Add(this.OpTightFitBtn);
+            this.FitGroupBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.FitGroupBox.Location = new System.Drawing.Point(15, 90);
+            this.FitGroupBox.Name = "FitGroupBox";
+            this.FitGroupBox.Size = new System.Drawing.Size(285, 80);
+            this.FitGroupBox.TabIndex = 77;
+            this.FitGroupBox.TabStop = false;
+            this.FitGroupBox.Text = "FIT";
+            // 
+            // label26
+            // 
+            this.label26.AutoSize = true;
+            this.label26.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label26.Location = new System.Drawing.Point(15, 55);
+            this.label26.Name = "label26";
+            this.label26.Size = new System.Drawing.Size(34, 16);
+            this.label26.TabIndex = 76;
+            this.label26.Text = "SN#";
+            // 
+            // FitTypeLoadComboBox
+            // 
+            this.FitTypeLoadComboBox.FormattingEnabled = true;
+            this.FitTypeLoadComboBox.Items.AddRange(new object[] {
+            "LOOSE",
+            "NORMAL",
+            "TIGHT"});
+            this.FitTypeLoadComboBox.Location = new System.Drawing.Point(183, 11);
+            this.FitTypeLoadComboBox.Name = "FitTypeLoadComboBox";
+            this.FitTypeLoadComboBox.Size = new System.Drawing.Size(80, 21);
+            this.FitTypeLoadComboBox.TabIndex = 72;
+            this.FitTypeLoadComboBox.Visible = false;
+            this.FitTypeLoadComboBox.SelectedIndexChanged += new System.EventHandler(this.FitTypeLoadComboBox_SelectedIndexChanged);
+            this.FitTypeLoadComboBox.SelectionChangeCommitted += new System.EventHandler(this.FitTypeLoadComboBox_SelectionChangeCommitted);
+            // 
+            // SnLoadTextBox
+            // 
+            this.SnLoadTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.SnLoadTextBox.Location = new System.Drawing.Point(54, 54);
+            this.SnLoadTextBox.Name = "SnLoadTextBox";
+            this.SnLoadTextBox.Size = new System.Drawing.Size(100, 22);
+            this.SnLoadTextBox.TabIndex = 71;
+            // 
+            // label24
+            // 
+            this.label24.AutoSize = true;
+            this.label24.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label24.Location = new System.Drawing.Point(15, 25);
+            this.label24.Name = "label24";
+            this.label24.Size = new System.Drawing.Size(42, 16);
+            this.label24.TabIndex = 69;
+            this.label24.Text = "Motor";
+            // 
+            // StopBtn
+            // 
+            this.StopBtn.Location = new System.Drawing.Point(195, 25);
+            this.StopBtn.Name = "StopBtn";
+            this.StopBtn.Size = new System.Drawing.Size(82, 23);
+            this.StopBtn.TabIndex = 64;
+            this.StopBtn.Text = "STOP";
+            this.StopBtn.UseVisualStyleBackColor = true;
+            this.StopBtn.Click += new System.EventHandler(this.StopBtn_Click);
+            // 
+            // RevBtn
+            // 
+            this.RevBtn.Location = new System.Drawing.Point(105, 25);
+            this.RevBtn.Name = "RevBtn";
+            this.RevBtn.Size = new System.Drawing.Size(82, 23);
+            this.RevBtn.TabIndex = 63;
+            this.RevBtn.Text = "REV";
+            this.RevBtn.UseVisualStyleBackColor = true;
+            this.RevBtn.Click += new System.EventHandler(this.RevBtn_Click);
+            // 
+            // FwdBtn
+            // 
+            this.FwdBtn.Location = new System.Drawing.Point(10, 25);
+            this.FwdBtn.Name = "FwdBtn";
+            this.FwdBtn.Size = new System.Drawing.Size(82, 23);
+            this.FwdBtn.TabIndex = 62;
+            this.FwdBtn.Text = "FWD";
+            this.FwdBtn.UseVisualStyleBackColor = true;
+            this.FwdBtn.Click += new System.EventHandler(this.button3_Click);
+            // 
+            // ControlPanel
+            // 
+            this.ControlPanel.BackColor = System.Drawing.Color.White;
+            this.ControlPanel.Controls.Add(this.numericUpDown1);
+            this.ControlPanel.Controls.Add(this.DirRevInd);
+            this.ControlPanel.Controls.Add(this.DirFwdInd);
+            this.ControlPanel.Controls.Add(this.label20);
+            this.ControlPanel.Controls.Add(this.SpeedTextBox);
+            this.ControlPanel.Controls.Add(this.label19);
+            this.ControlPanel.Controls.Add(this.RevLimitInd);
+            this.ControlPanel.Controls.Add(this.FwdLimitInd);
+            this.ControlPanel.Controls.Add(this.label16);
+            this.ControlPanel.Controls.Add(this.label15);
+            this.ControlPanel.Controls.Add(this.label14);
+            this.ControlPanel.Controls.Add(this.VoltageTextBox);
+            this.ControlPanel.Controls.Add(this.CurrentTextBox);
+            this.ControlPanel.Controls.Add(this.MotorSpeedUpDown);
+            this.ControlPanel.Controls.Add(this.label10);
+            this.ControlPanel.Controls.Add(this.CloseControlPanelBtn);
+            this.ControlPanel.Controls.Add(this.MotorReadTextBox);
+            this.ControlPanel.Controls.Add(this.MotorReadBtn);
+            this.ControlPanel.Controls.Add(this.MotorStopBtn);
+            this.ControlPanel.Controls.Add(this.MotorRevBtn);
+            this.ControlPanel.Controls.Add(this.MotorFwdBtn);
+            this.ControlPanel.Location = new System.Drawing.Point(822, 32);
+            this.ControlPanel.Name = "ControlPanel";
+            this.ControlPanel.Size = new System.Drawing.Size(264, 271);
+            this.ControlPanel.TabIndex = 61;
+            // 
+            // numericUpDown1
+            // 
+            this.numericUpDown1.Increment = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            this.numericUpDown1.Location = new System.Drawing.Point(182, 60);
+            this.numericUpDown1.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+            this.numericUpDown1.Name = "numericUpDown1";
+            this.numericUpDown1.Size = new System.Drawing.Size(60, 20);
+            this.numericUpDown1.TabIndex = 86;
+            this.numericUpDown1.Value = new decimal(new int[] {
+            250,
+            0,
+            0,
+            0});
+            // 
+            // label20
+            // 
+            this.label20.AutoSize = true;
+            this.label20.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label20.Location = new System.Drawing.Point(20, 150);
+            this.label20.Name = "label20";
+            this.label20.Size = new System.Drawing.Size(49, 16);
+            this.label20.TabIndex = 83;
+            this.label20.Text = "Speed";
+            // 
+            // SpeedTextBox
+            // 
+            this.SpeedTextBox.Enabled = false;
+            this.SpeedTextBox.Location = new System.Drawing.Point(109, 150);
+            this.SpeedTextBox.Name = "SpeedTextBox";
+            this.SpeedTextBox.Size = new System.Drawing.Size(60, 20);
+            this.SpeedTextBox.TabIndex = 82;
+            // 
+            // label19
+            // 
+            this.label19.AutoSize = true;
+            this.label19.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label19.Location = new System.Drawing.Point(20, 210);
+            this.label19.Name = "label19";
+            this.label19.Size = new System.Drawing.Size(28, 16);
+            this.label19.TabIndex = 81;
+            this.label19.Text = "Dir:";
+            // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label16.Location = new System.Drawing.Point(20, 180);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(35, 16);
+            this.label16.TabIndex = 78;
+            this.label16.Text = "Limit";
+            // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label15.Location = new System.Drawing.Point(20, 120);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(50, 16);
+            this.label15.TabIndex = 77;
+            this.label15.Text = "Current";
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label14.Location = new System.Drawing.Point(20, 90);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(55, 16);
+            this.label14.TabIndex = 76;
+            this.label14.Text = "Voltage";
+            // 
+            // VoltageTextBox
+            // 
+            this.VoltageTextBox.Enabled = false;
+            this.VoltageTextBox.Location = new System.Drawing.Point(109, 90);
+            this.VoltageTextBox.Name = "VoltageTextBox";
+            this.VoltageTextBox.Size = new System.Drawing.Size(60, 20);
+            this.VoltageTextBox.TabIndex = 74;
+            // 
+            // CurrentTextBox
+            // 
+            this.CurrentTextBox.Enabled = false;
+            this.CurrentTextBox.Location = new System.Drawing.Point(109, 120);
+            this.CurrentTextBox.Name = "CurrentTextBox";
+            this.CurrentTextBox.Size = new System.Drawing.Size(60, 20);
+            this.CurrentTextBox.TabIndex = 73;
+            // 
+            // MotorSpeedUpDown
+            // 
+            this.MotorSpeedUpDown.Increment = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            this.MotorSpeedUpDown.Location = new System.Drawing.Point(108, 60);
+            this.MotorSpeedUpDown.Maximum = new decimal(new int[] {
+            3200,
+            0,
+            0,
+            0});
+            this.MotorSpeedUpDown.Name = "MotorSpeedUpDown";
+            this.MotorSpeedUpDown.Size = new System.Drawing.Size(60, 20);
+            this.MotorSpeedUpDown.TabIndex = 72;
+            this.MotorSpeedUpDown.Value = new decimal(new int[] {
+            1600,
+            0,
+            0,
+            0});
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label10.Location = new System.Drawing.Point(20, 60);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(86, 16);
+            this.label10.TabIndex = 68;
+            this.label10.Text = "Motor Speed";
+            // 
+            // CloseControlPanelBtn
+            // 
+            this.CloseControlPanelBtn.Location = new System.Drawing.Point(23, 270);
+            this.CloseControlPanelBtn.Name = "CloseControlPanelBtn";
+            this.CloseControlPanelBtn.Size = new System.Drawing.Size(75, 23);
+            this.CloseControlPanelBtn.TabIndex = 66;
+            this.CloseControlPanelBtn.Text = "CLOSE";
+            this.CloseControlPanelBtn.UseVisualStyleBackColor = true;
+            this.CloseControlPanelBtn.Click += new System.EventHandler(this.CloseControlPanelBtn_Click);
+            // 
+            // MotorReadTextBox
+            // 
+            this.MotorReadTextBox.Enabled = false;
+            this.MotorReadTextBox.Location = new System.Drawing.Point(109, 240);
+            this.MotorReadTextBox.Name = "MotorReadTextBox";
+            this.MotorReadTextBox.Size = new System.Drawing.Size(60, 20);
+            this.MotorReadTextBox.TabIndex = 65;
+            // 
+            // MotorReadBtn
+            // 
+            this.MotorReadBtn.Location = new System.Drawing.Point(23, 240);
+            this.MotorReadBtn.Name = "MotorReadBtn";
+            this.MotorReadBtn.Size = new System.Drawing.Size(75, 23);
+            this.MotorReadBtn.TabIndex = 64;
+            this.MotorReadBtn.Text = "READ";
+            this.MotorReadBtn.UseVisualStyleBackColor = true;
+            this.MotorReadBtn.Click += new System.EventHandler(this.MotorReadBtn_Click);
+            // 
+            // MotorStopBtn
+            // 
+            this.MotorStopBtn.Location = new System.Drawing.Point(182, 19);
+            this.MotorStopBtn.Name = "MotorStopBtn";
+            this.MotorStopBtn.Size = new System.Drawing.Size(75, 23);
+            this.MotorStopBtn.TabIndex = 63;
+            this.MotorStopBtn.Text = "STOP";
+            this.MotorStopBtn.UseVisualStyleBackColor = true;
+            this.MotorStopBtn.Click += new System.EventHandler(this.MotorStopBtn_Click);
+            // 
+            // MotorRevBtn
+            // 
+            this.MotorRevBtn.Location = new System.Drawing.Point(101, 19);
+            this.MotorRevBtn.Name = "MotorRevBtn";
+            this.MotorRevBtn.Size = new System.Drawing.Size(75, 23);
+            this.MotorRevBtn.TabIndex = 62;
+            this.MotorRevBtn.Text = "REV";
+            this.MotorRevBtn.UseVisualStyleBackColor = true;
+            this.MotorRevBtn.Click += new System.EventHandler(this.MotorRevBtn_Click);
+            // 
+            // MotorFwdBtn
+            // 
+            this.MotorFwdBtn.Location = new System.Drawing.Point(20, 19);
+            this.MotorFwdBtn.Name = "MotorFwdBtn";
+            this.MotorFwdBtn.Size = new System.Drawing.Size(75, 23);
+            this.MotorFwdBtn.TabIndex = 61;
+            this.MotorFwdBtn.Text = "FWD";
+            this.MotorFwdBtn.UseVisualStyleBackColor = true;
+            this.MotorFwdBtn.Click += new System.EventHandler(this.MotorFwdBtn_Click);
             // 
             // FwBrd2VersionLbl
             // 
@@ -455,22 +937,522 @@
             // 
             // ProfileGroupBox
             // 
+            this.ProfileGroupBox.BackColor = System.Drawing.Color.White;
+            this.ProfileGroupBox.Controls.Add(this.panel2);
+            this.ProfileGroupBox.Controls.Add(this.panel1);
+            this.ProfileGroupBox.Controls.Add(this.groupBox3);
             this.ProfileGroupBox.Controls.Add(this.CloseProfileBtn);
             this.ProfileGroupBox.Controls.Add(this.LoadProfileBtn);
             this.ProfileGroupBox.Controls.Add(this.ProfileGridView);
             this.ProfileGroupBox.Controls.Add(this.SaveProfileBtn);
             this.ProfileGroupBox.Controls.Add(this.textBox3);
-            this.ProfileGroupBox.Location = new System.Drawing.Point(128, 262);
+            this.ProfileGroupBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ProfileGroupBox.Location = new System.Drawing.Point(45, 69);
             this.ProfileGroupBox.Name = "ProfileGroupBox";
-            this.ProfileGroupBox.Size = new System.Drawing.Size(301, 240);
+            this.ProfileGroupBox.Size = new System.Drawing.Size(590, 520);
             this.ProfileGroupBox.TabIndex = 47;
             this.ProfileGroupBox.TabStop = false;
             this.ProfileGroupBox.Text = "Profile";
             this.ProfileGroupBox.Visible = false;
             // 
+            // panel2
+            // 
+            this.panel2.Controls.Add(this.FitTypeComboBox);
+            this.panel2.Controls.Add(this.label25);
+            this.panel2.Controls.Add(this.label21);
+            this.panel2.Controls.Add(this.label23);
+            this.panel2.Controls.Add(this.label27);
+            this.panel2.Controls.Add(this.label28);
+            this.panel2.Controls.Add(this.label30);
+            this.panel2.Controls.Add(this.label31);
+            this.panel2.Controls.Add(this.LeftLegUpDown);
+            this.panel2.Controls.Add(this.LeftButtockUpDown);
+            this.panel2.Controls.Add(this.LeftHipUpDown);
+            this.panel2.Controls.Add(this.LeftCalfUpDown);
+            this.panel2.Controls.Add(this.LeftBreastUpDown);
+            this.panel2.Controls.Add(this.LeftArmUpDown);
+            this.panel2.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.panel2.Location = new System.Drawing.Point(335, 201);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(233, 252);
+            this.panel2.TabIndex = 73;
+            // 
+            // FitTypeComboBox
+            // 
+            this.FitTypeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.FitTypeComboBox.FormattingEnabled = true;
+            this.FitTypeComboBox.Items.AddRange(new object[] {
+            "LOOSE",
+            "NORMAL",
+            "TIGHT"});
+            this.FitTypeComboBox.Location = new System.Drawing.Point(125, 201);
+            this.FitTypeComboBox.Name = "FitTypeComboBox";
+            this.FitTypeComboBox.Size = new System.Drawing.Size(88, 26);
+            this.FitTypeComboBox.TabIndex = 19;
+            // 
+            // label25
+            // 
+            this.label25.AutoSize = true;
+            this.label25.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label25.Location = new System.Drawing.Point(15, 204);
+            this.label25.Name = "label25";
+            this.label25.Size = new System.Drawing.Size(60, 18);
+            this.label25.TabIndex = 85;
+            this.label25.Text = "Fit Type";
+            // 
+            // label21
+            // 
+            this.label21.AutoSize = true;
+            this.label21.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label21.Location = new System.Drawing.Point(15, 135);
+            this.label21.Name = "label21";
+            this.label21.Size = new System.Drawing.Size(60, 18);
+            this.label21.TabIndex = 84;
+            this.label21.Text = "Left Leg";
+            // 
+            // label23
+            // 
+            this.label23.AutoSize = true;
+            this.label23.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label23.Location = new System.Drawing.Point(15, 105);
+            this.label23.Name = "label23";
+            this.label23.Size = new System.Drawing.Size(87, 18);
+            this.label23.TabIndex = 83;
+            this.label23.Text = "Left Buttock";
+            // 
+            // label27
+            // 
+            this.label27.AutoSize = true;
+            this.label27.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label27.Location = new System.Drawing.Point(15, 75);
+            this.label27.Name = "label27";
+            this.label27.Size = new System.Drawing.Size(58, 18);
+            this.label27.TabIndex = 82;
+            this.label27.Text = "Left Hip";
+            // 
+            // label28
+            // 
+            this.label28.AutoSize = true;
+            this.label28.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label28.Location = new System.Drawing.Point(15, 165);
+            this.label28.Name = "label28";
+            this.label28.Size = new System.Drawing.Size(62, 18);
+            this.label28.TabIndex = 81;
+            this.label28.Text = "Left Calf";
+            // 
+            // label30
+            // 
+            this.label30.AutoSize = true;
+            this.label30.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label30.Location = new System.Drawing.Point(15, 45);
+            this.label30.Name = "label30";
+            this.label30.Size = new System.Drawing.Size(79, 18);
+            this.label30.TabIndex = 79;
+            this.label30.Text = "Left Breast";
+            // 
+            // label31
+            // 
+            this.label31.AutoSize = true;
+            this.label31.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label31.Location = new System.Drawing.Point(15, 15);
+            this.label31.Name = "label31";
+            this.label31.Size = new System.Drawing.Size(63, 18);
+            this.label31.TabIndex = 78;
+            this.label31.Text = "Left Arm";
+            // 
+            // LeftLegUpDown
+            // 
+            this.LeftLegUpDown.DecimalPlaces = 1;
+            this.LeftLegUpDown.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.LeftLegUpDown.Location = new System.Drawing.Point(125, 134);
+            this.LeftLegUpDown.Name = "LeftLegUpDown";
+            this.LeftLegUpDown.Size = new System.Drawing.Size(79, 24);
+            this.LeftLegUpDown.TabIndex = 17;
+            // 
+            // LeftButtockUpDown
+            // 
+            this.LeftButtockUpDown.DecimalPlaces = 1;
+            this.LeftButtockUpDown.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.LeftButtockUpDown.Location = new System.Drawing.Point(125, 104);
+            this.LeftButtockUpDown.Name = "LeftButtockUpDown";
+            this.LeftButtockUpDown.Size = new System.Drawing.Size(79, 24);
+            this.LeftButtockUpDown.TabIndex = 16;
+            // 
+            // LeftHipUpDown
+            // 
+            this.LeftHipUpDown.DecimalPlaces = 1;
+            this.LeftHipUpDown.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.LeftHipUpDown.Location = new System.Drawing.Point(125, 74);
+            this.LeftHipUpDown.Name = "LeftHipUpDown";
+            this.LeftHipUpDown.Size = new System.Drawing.Size(79, 24);
+            this.LeftHipUpDown.TabIndex = 15;
+            // 
+            // LeftCalfUpDown
+            // 
+            this.LeftCalfUpDown.DecimalPlaces = 1;
+            this.LeftCalfUpDown.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.LeftCalfUpDown.Location = new System.Drawing.Point(125, 164);
+            this.LeftCalfUpDown.Name = "LeftCalfUpDown";
+            this.LeftCalfUpDown.Size = new System.Drawing.Size(79, 24);
+            this.LeftCalfUpDown.TabIndex = 18;
+            // 
+            // LeftBreastUpDown
+            // 
+            this.LeftBreastUpDown.DecimalPlaces = 1;
+            this.LeftBreastUpDown.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.LeftBreastUpDown.Location = new System.Drawing.Point(125, 44);
+            this.LeftBreastUpDown.Name = "LeftBreastUpDown";
+            this.LeftBreastUpDown.Size = new System.Drawing.Size(79, 24);
+            this.LeftBreastUpDown.TabIndex = 14;
+            // 
+            // LeftArmUpDown
+            // 
+            this.LeftArmUpDown.DecimalPlaces = 1;
+            this.LeftArmUpDown.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.LeftArmUpDown.Location = new System.Drawing.Point(125, 14);
+            this.LeftArmUpDown.Name = "LeftArmUpDown";
+            this.LeftArmUpDown.Size = new System.Drawing.Size(79, 24);
+            this.LeftArmUpDown.TabIndex = 13;
+            // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.label18);
+            this.panel1.Controls.Add(this.label17);
+            this.panel1.Controls.Add(this.label13);
+            this.panel1.Controls.Add(this.label12);
+            this.panel1.Controls.Add(this.label29);
+            this.panel1.Controls.Add(this.label8);
+            this.panel1.Controls.Add(this.label7);
+            this.panel1.Controls.Add(this.label6);
+            this.panel1.Controls.Add(this.RightLegUpDown);
+            this.panel1.Controls.Add(this.RightButtockUpDown);
+            this.panel1.Controls.Add(this.RightCalfUpDown);
+            this.panel1.Controls.Add(this.RightHipUpDown);
+            this.panel1.Controls.Add(this.BellyUpDown);
+            this.panel1.Controls.Add(this.RightBreastUpDown);
+            this.panel1.Controls.Add(this.RightArmUpDown);
+            this.panel1.Controls.Add(this.TorsoUpDown);
+            this.panel1.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.panel1.Location = new System.Drawing.Point(32, 201);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(233, 256);
+            this.panel1.TabIndex = 72;
+            // 
+            // label18
+            // 
+            this.label18.AutoSize = true;
+            this.label18.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label18.Location = new System.Drawing.Point(15, 195);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(70, 18);
+            this.label18.TabIndex = 84;
+            this.label18.Text = "Rigth Leg";
+            // 
+            // label17
+            // 
+            this.label17.AutoSize = true;
+            this.label17.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label17.Location = new System.Drawing.Point(15, 165);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(97, 18);
+            this.label17.TabIndex = 83;
+            this.label17.Text = "Rigth Buttock";
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label13.Location = new System.Drawing.Point(15, 135);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(68, 18);
+            this.label13.TabIndex = 82;
+            this.label13.Text = "Right Hip";
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label12.Location = new System.Drawing.Point(15, 105);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(39, 18);
+            this.label12.TabIndex = 81;
+            this.label12.Text = "Belly";
+            // 
+            // label29
+            // 
+            this.label29.AutoSize = true;
+            this.label29.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label29.Location = new System.Drawing.Point(15, 225);
+            this.label29.Name = "label29";
+            this.label29.Size = new System.Drawing.Size(72, 18);
+            this.label29.TabIndex = 80;
+            this.label29.Text = "Right Calf";
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label8.Location = new System.Drawing.Point(15, 75);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(89, 18);
+            this.label8.TabIndex = 80;
+            this.label8.Text = "Right Breast";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label7.Location = new System.Drawing.Point(15, 45);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(73, 18);
+            this.label7.TabIndex = 79;
+            this.label7.Text = "Rigth Arm";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label6.Location = new System.Drawing.Point(15, 15);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(48, 18);
+            this.label6.TabIndex = 78;
+            this.label6.Text = "Torso";
+            // 
+            // RightLegUpDown
+            // 
+            this.RightLegUpDown.DecimalPlaces = 1;
+            this.RightLegUpDown.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.RightLegUpDown.Location = new System.Drawing.Point(125, 194);
+            this.RightLegUpDown.Name = "RightLegUpDown";
+            this.RightLegUpDown.Size = new System.Drawing.Size(65, 24);
+            this.RightLegUpDown.TabIndex = 11;
+            // 
+            // RightButtockUpDown
+            // 
+            this.RightButtockUpDown.DecimalPlaces = 1;
+            this.RightButtockUpDown.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.RightButtockUpDown.Location = new System.Drawing.Point(125, 164);
+            this.RightButtockUpDown.Name = "RightButtockUpDown";
+            this.RightButtockUpDown.Size = new System.Drawing.Size(65, 24);
+            this.RightButtockUpDown.TabIndex = 10;
+            // 
+            // RightCalfUpDown
+            // 
+            this.RightCalfUpDown.DecimalPlaces = 1;
+            this.RightCalfUpDown.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.RightCalfUpDown.Location = new System.Drawing.Point(125, 224);
+            this.RightCalfUpDown.Name = "RightCalfUpDown";
+            this.RightCalfUpDown.Size = new System.Drawing.Size(65, 24);
+            this.RightCalfUpDown.TabIndex = 12;
+            // 
+            // RightHipUpDown
+            // 
+            this.RightHipUpDown.DecimalPlaces = 1;
+            this.RightHipUpDown.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.RightHipUpDown.Location = new System.Drawing.Point(125, 134);
+            this.RightHipUpDown.Name = "RightHipUpDown";
+            this.RightHipUpDown.Size = new System.Drawing.Size(65, 24);
+            this.RightHipUpDown.TabIndex = 9;
+            // 
+            // BellyUpDown
+            // 
+            this.BellyUpDown.DecimalPlaces = 1;
+            this.BellyUpDown.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.BellyUpDown.Location = new System.Drawing.Point(125, 104);
+            this.BellyUpDown.Name = "BellyUpDown";
+            this.BellyUpDown.Size = new System.Drawing.Size(65, 24);
+            this.BellyUpDown.TabIndex = 8;
+            // 
+            // RightBreastUpDown
+            // 
+            this.RightBreastUpDown.DecimalPlaces = 1;
+            this.RightBreastUpDown.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.RightBreastUpDown.Location = new System.Drawing.Point(125, 74);
+            this.RightBreastUpDown.Name = "RightBreastUpDown";
+            this.RightBreastUpDown.Size = new System.Drawing.Size(65, 24);
+            this.RightBreastUpDown.TabIndex = 7;
+            // 
+            // RightArmUpDown
+            // 
+            this.RightArmUpDown.DecimalPlaces = 1;
+            this.RightArmUpDown.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.RightArmUpDown.Location = new System.Drawing.Point(125, 44);
+            this.RightArmUpDown.Name = "RightArmUpDown";
+            this.RightArmUpDown.Size = new System.Drawing.Size(65, 24);
+            this.RightArmUpDown.TabIndex = 6;
+            // 
+            // TorsoUpDown
+            // 
+            this.TorsoUpDown.DecimalPlaces = 1;
+            this.TorsoUpDown.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.TorsoUpDown.Location = new System.Drawing.Point(125, 14);
+            this.TorsoUpDown.Name = "TorsoUpDown";
+            this.TorsoUpDown.Size = new System.Drawing.Size(65, 24);
+            this.TorsoUpDown.TabIndex = 5;
+            // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.label4);
+            this.groupBox3.Controls.Add(this.label1);
+            this.groupBox3.Controls.Add(this.label3);
+            this.groupBox3.Controls.Add(this.label5);
+            this.groupBox3.Controls.Add(this.DateTextBox);
+            this.groupBox3.Controls.Add(this.SizeTextBox);
+            this.groupBox3.Controls.Add(this.label2);
+            this.groupBox3.Controls.Add(this.ModelTextBox);
+            this.groupBox3.Controls.Add(this.SnTextBox);
+            this.groupBox3.Controls.Add(this.NameTextBox);
+            this.groupBox3.Location = new System.Drawing.Point(32, 15);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(224, 180);
+            this.groupBox3.TabIndex = 69;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Set Up";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label4.Location = new System.Drawing.Point(15, 25);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(37, 16);
+            this.label4.TabIndex = 67;
+            this.label4.Text = "Date";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Location = new System.Drawing.Point(15, 145);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(45, 16);
+            this.label1.TabIndex = 60;
+            this.label1.Text = "Name";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label3.Location = new System.Drawing.Point(15, 115);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(27, 16);
+            this.label3.TabIndex = 64;
+            this.label3.Text = "SN";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label5.Location = new System.Drawing.Point(15, 85);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(34, 16);
+            this.label5.TabIndex = 68;
+            this.label5.Text = "Size";
+            // 
+            // DateTextBox
+            // 
+            this.DateTextBox.Location = new System.Drawing.Point(65, 24);
+            this.DateTextBox.Name = "DateTextBox";
+            this.DateTextBox.Size = new System.Drawing.Size(150, 22);
+            this.DateTextBox.TabIndex = 0;
+            // 
+            // SizeTextBox
+            // 
+            this.SizeTextBox.Location = new System.Drawing.Point(65, 84);
+            this.SizeTextBox.Name = "SizeTextBox";
+            this.SizeTextBox.Size = new System.Drawing.Size(130, 22);
+            this.SizeTextBox.TabIndex = 2;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.Location = new System.Drawing.Point(15, 55);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(46, 16);
+            this.label2.TabIndex = 63;
+            this.label2.Text = "Model";
+            // 
+            // ModelTextBox
+            // 
+            this.ModelTextBox.Location = new System.Drawing.Point(65, 54);
+            this.ModelTextBox.Name = "ModelTextBox";
+            this.ModelTextBox.Size = new System.Drawing.Size(130, 22);
+            this.ModelTextBox.TabIndex = 1;
+            // 
+            // SnTextBox
+            // 
+            this.SnTextBox.Location = new System.Drawing.Point(65, 114);
+            this.SnTextBox.Name = "SnTextBox";
+            this.SnTextBox.Size = new System.Drawing.Size(130, 22);
+            this.SnTextBox.TabIndex = 3;
+            // 
+            // NameTextBox
+            // 
+            this.NameTextBox.Location = new System.Drawing.Point(65, 144);
+            this.NameTextBox.Name = "NameTextBox";
+            this.NameTextBox.Size = new System.Drawing.Size(130, 22);
+            this.NameTextBox.TabIndex = 4;
+            // 
             // CloseProfileBtn
             // 
-            this.CloseProfileBtn.Location = new System.Drawing.Point(190, 210);
+            this.CloseProfileBtn.Location = new System.Drawing.Point(242, 480);
             this.CloseProfileBtn.Name = "CloseProfileBtn";
             this.CloseProfileBtn.Size = new System.Drawing.Size(82, 23);
             this.CloseProfileBtn.TabIndex = 47;
@@ -480,7 +1462,7 @@
             // 
             // LoadProfileBtn
             // 
-            this.LoadProfileBtn.Location = new System.Drawing.Point(100, 210);
+            this.LoadProfileBtn.Location = new System.Drawing.Point(140, 480);
             this.LoadProfileBtn.Name = "LoadProfileBtn";
             this.LoadProfileBtn.Size = new System.Drawing.Size(82, 23);
             this.LoadProfileBtn.TabIndex = 46;
@@ -494,42 +1476,18 @@
             this.ProfileGridView.AllowUserToDeleteRows = false;
             this.ProfileGridView.AllowUserToResizeColumns = false;
             this.ProfileGridView.AllowUserToResizeRows = false;
-            dataGridViewCellStyle52.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle52.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle52.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle52.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle52.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle52.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle52.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.ProfileGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle52;
             this.ProfileGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.ProfileGridView.Cursor = System.Windows.Forms.Cursors.Default;
-            dataGridViewCellStyle53.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle53.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle53.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle53.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle53.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle53.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle53.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.ProfileGridView.DefaultCellStyle = dataGridViewCellStyle53;
-            this.ProfileGridView.Location = new System.Drawing.Point(10, 23);
+            this.ProfileGridView.Location = new System.Drawing.Point(5, 229);
             this.ProfileGridView.Name = "ProfileGridView";
-            dataGridViewCellStyle54.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle54.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle54.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle54.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle54.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle54.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle54.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.ProfileGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle54;
             this.ProfileGridView.RowHeadersWidth = 120;
-            this.ProfileGridView.Size = new System.Drawing.Size(240, 75);
+            this.ProfileGridView.Size = new System.Drawing.Size(125, 75);
             this.ProfileGridView.TabIndex = 45;
             this.ProfileGridView.Visible = false;
             // 
             // SaveProfileBtn
             // 
-            this.SaveProfileBtn.Location = new System.Drawing.Point(10, 210);
+            this.SaveProfileBtn.Location = new System.Drawing.Point(32, 480);
             this.SaveProfileBtn.Name = "SaveProfileBtn";
             this.SaveProfileBtn.Size = new System.Drawing.Size(82, 23);
             this.SaveProfileBtn.TabIndex = 44;
@@ -541,7 +1499,7 @@
             // 
             this.textBox3.Location = new System.Drawing.Point(7075, 101);
             this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(70, 20);
+            this.textBox3.Size = new System.Drawing.Size(70, 22);
             this.textBox3.TabIndex = 33;
             // 
             // Controller2GridView
@@ -551,37 +1509,37 @@
             this.Controller2GridView.AllowUserToResizeColumns = false;
             this.Controller2GridView.AllowUserToResizeRows = false;
             this.Controller2GridView.BackgroundColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle46.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle46.BackColor = System.Drawing.SystemColors.Info;
-            dataGridViewCellStyle46.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle46.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle46.SelectionBackColor = System.Drawing.Color.LightGray;
-            dataGridViewCellStyle46.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle46.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.Controller2GridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle46;
+            dataGridViewCellStyle73.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle73.BackColor = System.Drawing.SystemColors.Info;
+            dataGridViewCellStyle73.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle73.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle73.SelectionBackColor = System.Drawing.Color.LightGray;
+            dataGridViewCellStyle73.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle73.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.Controller2GridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle73;
             this.Controller2GridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.Controller2GridView.Cursor = System.Windows.Forms.Cursors.Default;
-            dataGridViewCellStyle47.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle47.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle47.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle47.ForeColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle47.SelectionBackColor = System.Drawing.Color.White;
-            dataGridViewCellStyle47.SelectionForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle47.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.Controller2GridView.DefaultCellStyle = dataGridViewCellStyle47;
+            dataGridViewCellStyle74.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle74.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle74.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle74.ForeColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle74.SelectionBackColor = System.Drawing.Color.White;
+            dataGridViewCellStyle74.SelectionForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle74.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.Controller2GridView.DefaultCellStyle = dataGridViewCellStyle74;
             this.Controller2GridView.Enabled = false;
             this.Controller2GridView.EnableHeadersVisualStyles = false;
             this.Controller2GridView.Location = new System.Drawing.Point(18, 121);
             this.Controller2GridView.Name = "Controller2GridView";
             this.Controller2GridView.ReadOnly = true;
-            dataGridViewCellStyle48.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle48.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle48.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle48.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle48.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle48.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle48.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.Controller2GridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle48;
+            dataGridViewCellStyle75.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle75.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle75.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle75.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle75.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle75.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle75.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.Controller2GridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle75;
             this.Controller2GridView.RowHeadersWidth = 120;
             this.Controller2GridView.Size = new System.Drawing.Size(240, 75);
             this.Controller2GridView.TabIndex = 53;
@@ -589,6 +1547,7 @@
             // 
             // BleGroupBox
             // 
+            this.BleGroupBox.BackColor = System.Drawing.Color.WhiteSmoke;
             this.BleGroupBox.Controls.Add(this.BleMgsTextClear);
             this.BleGroupBox.Controls.Add(this.BleMsgTextBox);
             this.BleGroupBox.Controls.Add(this.RxTextBox);
@@ -605,6 +1564,16 @@
             this.BleGroupBox.TabIndex = 52;
             this.BleGroupBox.TabStop = false;
             this.BleGroupBox.Text = "BLE";
+            // 
+            // BleMgsTextClear
+            // 
+            this.BleMgsTextClear.Location = new System.Drawing.Point(233, 530);
+            this.BleMgsTextClear.Name = "BleMgsTextClear";
+            this.BleMgsTextClear.Size = new System.Drawing.Size(82, 23);
+            this.BleMgsTextClear.TabIndex = 60;
+            this.BleMgsTextClear.Text = "Clear";
+            this.BleMgsTextClear.UseVisualStyleBackColor = true;
+            this.BleMgsTextClear.Click += new System.EventHandler(this.BleMgsTextClear_Click);
             // 
             // BleMsgTextBox
             // 
@@ -706,12 +1675,15 @@
             // 
             // BleDiscoverBtn
             // 
+            this.BleDiscoverBtn.BackColor = System.Drawing.Color.SkyBlue;
+            this.BleDiscoverBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.BleDiscoverBtn.Location = new System.Drawing.Point(6, 23);
             this.BleDiscoverBtn.Name = "BleDiscoverBtn";
             this.BleDiscoverBtn.Size = new System.Drawing.Size(130, 25);
             this.BleDiscoverBtn.TabIndex = 51;
             this.BleDiscoverBtn.Text = "Discover";
-            this.BleDiscoverBtn.UseVisualStyleBackColor = true;
+            this.toolTip1.SetToolTip(this.BleDiscoverBtn, "Search for bluetooth devices");
+            this.BleDiscoverBtn.UseVisualStyleBackColor = false;
             this.BleDiscoverBtn.Click += new System.EventHandler(this.button1_Click);
             // 
             // ControllerGridView
@@ -721,37 +1693,37 @@
             this.ControllerGridView.AllowUserToResizeColumns = false;
             this.ControllerGridView.AllowUserToResizeRows = false;
             this.ControllerGridView.BackgroundColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle49.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle49.BackColor = System.Drawing.SystemColors.Info;
-            dataGridViewCellStyle49.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle49.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle49.SelectionBackColor = System.Drawing.Color.LightGray;
-            dataGridViewCellStyle49.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle49.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.ControllerGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle49;
+            dataGridViewCellStyle76.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle76.BackColor = System.Drawing.SystemColors.Info;
+            dataGridViewCellStyle76.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle76.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle76.SelectionBackColor = System.Drawing.Color.LightGray;
+            dataGridViewCellStyle76.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle76.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.ControllerGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle76;
             this.ControllerGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.ControllerGridView.Cursor = System.Windows.Forms.Cursors.Default;
-            dataGridViewCellStyle50.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle50.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle50.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle50.ForeColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle50.SelectionBackColor = System.Drawing.Color.White;
-            dataGridViewCellStyle50.SelectionForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle50.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.ControllerGridView.DefaultCellStyle = dataGridViewCellStyle50;
+            dataGridViewCellStyle77.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle77.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle77.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle77.ForeColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle77.SelectionBackColor = System.Drawing.Color.White;
+            dataGridViewCellStyle77.SelectionForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle77.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.ControllerGridView.DefaultCellStyle = dataGridViewCellStyle77;
             this.ControllerGridView.Enabled = false;
             this.ControllerGridView.EnableHeadersVisualStyles = false;
             this.ControllerGridView.Location = new System.Drawing.Point(18, 32);
             this.ControllerGridView.Name = "ControllerGridView";
             this.ControllerGridView.ReadOnly = true;
-            dataGridViewCellStyle51.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle51.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle51.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle51.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle51.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle51.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle51.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.ControllerGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle51;
+            dataGridViewCellStyle78.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle78.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle78.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle78.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle78.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle78.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle78.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.ControllerGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle78;
             this.ControllerGridView.RowHeadersWidth = 120;
             this.ControllerGridView.Size = new System.Drawing.Size(240, 75);
             this.ControllerGridView.TabIndex = 48;
@@ -767,93 +1739,6 @@
             this.BrdTypeLbl.TabIndex = 46;
             this.BrdTypeLbl.Text = "Board type NA";
             // 
-            // DiagPnl
-            // 
-            this.DiagPnl.Controls.Add(this.label19);
-            this.DiagPnl.Controls.Add(this.textBox2);
-            this.DiagPnl.Controls.Add(this.SetupTimeLbl);
-            this.DiagPnl.Controls.Add(this.label10);
-            this.DiagPnl.Controls.Add(this.SaveLogBtn);
-            this.DiagPnl.Controls.Add(this.button17);
-            this.DiagPnl.Controls.Add(this.button16);
-            this.DiagPnl.Controls.Add(this.downloadGridView);
-            this.DiagPnl.Location = new System.Drawing.Point(836, 25);
-            this.DiagPnl.Name = "DiagPnl";
-            this.DiagPnl.Size = new System.Drawing.Size(456, 167);
-            this.DiagPnl.TabIndex = 26;
-            this.DiagPnl.Visible = false;
-            // 
-            // label19
-            // 
-            this.label19.AutoSize = true;
-            this.label19.Location = new System.Drawing.Point(315, 0);
-            this.label19.Name = "label19";
-            this.label19.Size = new System.Drawing.Size(39, 13);
-            this.label19.TabIndex = 48;
-            this.label19.Text = "t offset";
-            // 
-            // SetupTimeLbl
-            // 
-            this.SetupTimeLbl.AutoSize = true;
-            this.SetupTimeLbl.Location = new System.Drawing.Point(150, 0);
-            this.SetupTimeLbl.Name = "SetupTimeLbl";
-            this.SetupTimeLbl.Size = new System.Drawing.Size(41, 13);
-            this.SetupTimeLbl.TabIndex = 46;
-            this.SetupTimeLbl.Text = "label19";
-            // 
-            // label10
-            // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(12, 0);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(41, 13);
-            this.label10.TabIndex = 45;
-            this.label10.Text = "label10";
-            // 
-            // downloadGridView
-            // 
-            dataGridViewCellStyle55.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle55.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle55.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle55.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle55.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle55.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle55.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.downloadGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle55;
-            this.downloadGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.downloadGridView.Cursor = System.Windows.Forms.Cursors.Default;
-            dataGridViewCellStyle56.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle56.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle56.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle56.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle56.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle56.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle56.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.downloadGridView.DefaultCellStyle = dataGridViewCellStyle56;
-            this.downloadGridView.Location = new System.Drawing.Point(8, 21);
-            this.downloadGridView.Name = "downloadGridView";
-            dataGridViewCellStyle57.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle57.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle57.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle57.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle57.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle57.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle57.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.downloadGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle57;
-            this.downloadGridView.Size = new System.Drawing.Size(240, 150);
-            this.downloadGridView.TabIndex = 5;
-            // 
-            // button15
-            // 
-            this.button15.Location = new System.Drawing.Point(860, 210);
-            this.button15.Name = "button15";
-            this.button15.Size = new System.Drawing.Size(75, 23);
-            this.button15.TabIndex = 40;
-            this.button15.Text = "Test Btn";
-            this.button15.UseVisualStyleBackColor = true;
-            this.button15.Visible = false;
-            this.button15.Click += new System.EventHandler(this.button15_Click);
-            // 
             // CommSelectPnl
             // 
             this.CommSelectPnl.BackColor = System.Drawing.SystemColors.ControlLight;
@@ -861,9 +1746,9 @@
             this.CommSelectPnl.Controls.Add(this.button14);
             this.CommSelectPnl.Controls.Add(this.button13);
             this.CommSelectPnl.Controls.Add(this.CommportComboBox);
-            this.CommSelectPnl.Location = new System.Drawing.Point(861, 262);
+            this.CommSelectPnl.Location = new System.Drawing.Point(1004, 502);
             this.CommSelectPnl.Name = "CommSelectPnl";
-            this.CommSelectPnl.Size = new System.Drawing.Size(156, 116);
+            this.CommSelectPnl.Size = new System.Drawing.Size(156, 70);
             this.CommSelectPnl.TabIndex = 37;
             this.CommSelectPnl.Visible = false;
             // 
@@ -905,49 +1790,6 @@
             this.CommportComboBox.Size = new System.Drawing.Size(75, 21);
             this.CommportComboBox.TabIndex = 37;
             // 
-            // DownloadPanel
-            // 
-            this.DownloadPanel.Controls.Add(this.dataGridView);
-            this.DownloadPanel.Location = new System.Drawing.Point(836, 384);
-            this.DownloadPanel.Name = "DownloadPanel";
-            this.DownloadPanel.Size = new System.Drawing.Size(304, 174);
-            this.DownloadPanel.TabIndex = 26;
-            this.DownloadPanel.Visible = false;
-            // 
-            // dataGridView
-            // 
-            dataGridViewCellStyle58.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle58.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle58.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle58.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle58.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle58.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle58.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle58;
-            this.dataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView.Cursor = System.Windows.Forms.Cursors.Default;
-            dataGridViewCellStyle59.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle59.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle59.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle59.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle59.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle59.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle59.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dataGridView.DefaultCellStyle = dataGridViewCellStyle59;
-            this.dataGridView.Location = new System.Drawing.Point(68, -15);
-            this.dataGridView.Name = "dataGridView";
-            dataGridViewCellStyle60.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle60.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle60.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle60.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle60.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle60.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle60.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle60;
-            this.dataGridView.Size = new System.Drawing.Size(240, 150);
-            this.dataGridView.TabIndex = 3;
-            this.dataGridView.Visible = false;
-            // 
             // FwBrd1VersionLbl
             // 
             this.FwBrd1VersionLbl.AutoSize = true;
@@ -958,6 +1800,16 @@
             this.FwBrd1VersionLbl.TabIndex = 28;
             this.FwBrd1VersionLbl.Text = "FW Version";
             // 
+            // TestBtn
+            // 
+            this.TestBtn.Location = new System.Drawing.Point(398, 32);
+            this.TestBtn.Name = "TestBtn";
+            this.TestBtn.Size = new System.Drawing.Size(75, 23);
+            this.TestBtn.TabIndex = 63;
+            this.TestBtn.Text = "button1";
+            this.TestBtn.UseVisualStyleBackColor = true;
+            this.TestBtn.Click += new System.EventHandler(this.button1_Click_2);
+            // 
             // groupBox2
             // 
             this.groupBox2.Controls.Add(this.radioButton3);
@@ -965,7 +1817,7 @@
             this.groupBox2.Controls.Add(this.V1RadioBtn);
             this.groupBox2.Controls.Add(this.button20);
             this.groupBox2.Controls.Add(this.button19);
-            this.groupBox2.Location = new System.Drawing.Point(1068, 331);
+            this.groupBox2.Location = new System.Drawing.Point(1162, 330);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(205, 110);
             this.groupBox2.TabIndex = 33;
@@ -1079,220 +1931,15 @@
             this.label9.TabIndex = 29;
             this.label9.Text = "Pressure (kPa)";
             // 
-            // GeneralGroupBox
-            // 
-            this.GeneralGroupBox.Controls.Add(this.label20);
-            this.GeneralGroupBox.Controls.Add(this.SuTextBox);
-            this.GeneralGroupBox.Controls.Add(this.EncTextBox);
-            this.GeneralGroupBox.Controls.Add(this.label16);
-            this.GeneralGroupBox.Controls.Add(this.label15);
-            this.GeneralGroupBox.Controls.Add(this.CommTextBox);
-            this.GeneralGroupBox.Controls.Add(this.label14);
-            this.GeneralGroupBox.Controls.Add(this.Sw4TextBox);
-            this.GeneralGroupBox.Controls.Add(this.label35);
-            this.GeneralGroupBox.Controls.Add(this.label34);
-            this.GeneralGroupBox.Controls.Add(this.label33);
-            this.GeneralGroupBox.Controls.Add(this.Adc9TextBox);
-            this.GeneralGroupBox.Controls.Add(this.Adc8TextBox);
-            this.GeneralGroupBox.Controls.Add(this.Adc7TextBox);
-            this.GeneralGroupBox.Controls.Add(this.Adc6TextBox);
-            this.GeneralGroupBox.Controls.Add(this.Adc5TextBox);
-            this.GeneralGroupBox.Controls.Add(this.label24);
-            this.GeneralGroupBox.Controls.Add(this.label25);
-            this.GeneralGroupBox.Controls.Add(this.label26);
-            this.GeneralGroupBox.Controls.Add(this.Adc4TextBox);
-            this.GeneralGroupBox.Controls.Add(this.Sw3TextBox);
-            this.GeneralGroupBox.Controls.Add(this.Sw2TextBox);
-            this.GeneralGroupBox.Controls.Add(this.Sw1TextBox);
-            this.GeneralGroupBox.Location = new System.Drawing.Point(1083, 465);
-            this.GeneralGroupBox.Name = "GeneralGroupBox";
-            this.GeneralGroupBox.Size = new System.Drawing.Size(205, 146);
-            this.GeneralGroupBox.TabIndex = 38;
-            this.GeneralGroupBox.TabStop = false;
-            this.GeneralGroupBox.Text = "I/O States";
-            this.GeneralGroupBox.Visible = false;
-            // 
-            // SuTextBox
-            // 
-            this.SuTextBox.Location = new System.Drawing.Point(147, 75);
-            this.SuTextBox.Name = "SuTextBox";
-            this.SuTextBox.Size = new System.Drawing.Size(25, 20);
-            this.SuTextBox.TabIndex = 57;
-            // 
-            // EncTextBox
-            // 
-            this.EncTextBox.Location = new System.Drawing.Point(147, 50);
-            this.EncTextBox.Name = "EncTextBox";
-            this.EncTextBox.Size = new System.Drawing.Size(25, 20);
-            this.EncTextBox.TabIndex = 56;
-            // 
-            // label16
-            // 
-            this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(105, 53);
-            this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(20, 13);
-            this.label16.TabIndex = 55;
-            this.label16.Text = "V6";
-            // 
-            // label15
-            // 
-            this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(105, 28);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(20, 13);
-            this.label15.TabIndex = 54;
-            this.label15.Text = "V5";
-            // 
-            // CommTextBox
-            // 
-            this.CommTextBox.Location = new System.Drawing.Point(147, 25);
-            this.CommTextBox.Name = "CommTextBox";
-            this.CommTextBox.Size = new System.Drawing.Size(25, 20);
-            this.CommTextBox.TabIndex = 53;
-            // 
-            // label14
-            // 
-            this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(18, 103);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(20, 13);
-            this.label14.TabIndex = 52;
-            this.label14.Text = "V4";
-            // 
-            // Sw4TextBox
-            // 
-            this.Sw4TextBox.Location = new System.Drawing.Point(60, 100);
-            this.Sw4TextBox.Name = "Sw4TextBox";
-            this.Sw4TextBox.Size = new System.Drawing.Size(25, 20);
-            this.Sw4TextBox.TabIndex = 51;
-            // 
-            // label35
-            // 
-            this.label35.AutoSize = true;
-            this.label35.Location = new System.Drawing.Point(282, 78);
-            this.label35.Name = "label35";
-            this.label35.Size = new System.Drawing.Size(48, 13);
-            this.label35.TabIndex = 50;
-            this.label35.Text = "SpareA1";
-            // 
-            // label34
-            // 
-            this.label34.AutoSize = true;
-            this.label34.Location = new System.Drawing.Point(282, 53);
-            this.label34.Name = "label34";
-            this.label34.Size = new System.Drawing.Size(20, 13);
-            this.label34.TabIndex = 49;
-            this.label34.Text = "Vb";
-            // 
-            // label33
-            // 
-            this.label33.AutoSize = true;
-            this.label33.Location = new System.Drawing.Point(282, 28);
-            this.label33.Name = "label33";
-            this.label33.Size = new System.Drawing.Size(56, 13);
-            this.label33.TabIndex = 48;
-            this.label33.Text = "Press CAL";
-            // 
-            // Adc9TextBox
-            // 
-            this.Adc9TextBox.Location = new System.Drawing.Point(340, 75);
-            this.Adc9TextBox.Name = "Adc9TextBox";
-            this.Adc9TextBox.Size = new System.Drawing.Size(50, 20);
-            this.Adc9TextBox.TabIndex = 47;
-            // 
-            // Adc8TextBox
-            // 
-            this.Adc8TextBox.Location = new System.Drawing.Point(340, 50);
-            this.Adc8TextBox.Name = "Adc8TextBox";
-            this.Adc8TextBox.Size = new System.Drawing.Size(50, 20);
-            this.Adc8TextBox.TabIndex = 46;
-            // 
-            // Adc7TextBox
-            // 
-            this.Adc7TextBox.Location = new System.Drawing.Point(340, 25);
-            this.Adc7TextBox.Name = "Adc7TextBox";
-            this.Adc7TextBox.Size = new System.Drawing.Size(50, 20);
-            this.Adc7TextBox.TabIndex = 45;
-            // 
-            // Adc6TextBox
-            // 
-            this.Adc6TextBox.Location = new System.Drawing.Point(210, 75);
-            this.Adc6TextBox.Name = "Adc6TextBox";
-            this.Adc6TextBox.Size = new System.Drawing.Size(50, 20);
-            this.Adc6TextBox.TabIndex = 44;
-            // 
-            // Adc5TextBox
-            // 
-            this.Adc5TextBox.Location = new System.Drawing.Point(210, 50);
-            this.Adc5TextBox.Name = "Adc5TextBox";
-            this.Adc5TextBox.Size = new System.Drawing.Size(50, 20);
-            this.Adc5TextBox.TabIndex = 43;
-            // 
-            // label24
-            // 
-            this.label24.AutoSize = true;
-            this.label24.Location = new System.Drawing.Point(18, 78);
-            this.label24.Name = "label24";
-            this.label24.Size = new System.Drawing.Size(20, 13);
-            this.label24.TabIndex = 39;
-            this.label24.Text = "V3";
-            // 
-            // label25
-            // 
-            this.label25.AutoSize = true;
-            this.label25.Location = new System.Drawing.Point(18, 53);
-            this.label25.Name = "label25";
-            this.label25.Size = new System.Drawing.Size(20, 13);
-            this.label25.TabIndex = 38;
-            this.label25.Text = "V2";
-            // 
-            // label26
-            // 
-            this.label26.AutoSize = true;
-            this.label26.Location = new System.Drawing.Point(18, 28);
-            this.label26.Name = "label26";
-            this.label26.Size = new System.Drawing.Size(20, 13);
-            this.label26.TabIndex = 37;
-            this.label26.Text = "V1";
-            // 
-            // Adc4TextBox
-            // 
-            this.Adc4TextBox.Location = new System.Drawing.Point(210, 25);
-            this.Adc4TextBox.Name = "Adc4TextBox";
-            this.Adc4TextBox.Size = new System.Drawing.Size(50, 20);
-            this.Adc4TextBox.TabIndex = 35;
-            // 
-            // Sw3TextBox
-            // 
-            this.Sw3TextBox.Location = new System.Drawing.Point(60, 75);
-            this.Sw3TextBox.Name = "Sw3TextBox";
-            this.Sw3TextBox.Size = new System.Drawing.Size(25, 20);
-            this.Sw3TextBox.TabIndex = 34;
-            // 
-            // Sw2TextBox
-            // 
-            this.Sw2TextBox.Location = new System.Drawing.Point(60, 50);
-            this.Sw2TextBox.Name = "Sw2TextBox";
-            this.Sw2TextBox.Size = new System.Drawing.Size(25, 20);
-            this.Sw2TextBox.TabIndex = 33;
-            // 
-            // Sw1TextBox
-            // 
-            this.Sw1TextBox.Location = new System.Drawing.Point(60, 25);
-            this.Sw1TextBox.Name = "Sw1TextBox";
-            this.Sw1TextBox.Size = new System.Drawing.Size(25, 20);
-            this.Sw1TextBox.TabIndex = 32;
-            // 
             // SerialMonitorTimer
             // 
             this.SerialMonitorTimer.Interval = 2000;
             this.SerialMonitorTimer.Tick += new System.EventHandler(this.SerialMonitorTimer_Tick);
             // 
-            // timer2
+            // MotorCntrlTimer
             // 
-            this.timer2.Interval = 1000;
-            this.timer2.Tick += new System.EventHandler(this.timer2_Tick);
+            this.MotorCntrlTimer.Interval = 1000;
+            this.MotorCntrlTimer.Tick += new System.EventHandler(this.MotorCntrlTimer_Tick);
             // 
             // FtcStatusStrip
             // 
@@ -1310,24 +1957,47 @@
             this.toolStripStatusLabel1.Size = new System.Drawing.Size(118, 17);
             this.toolStripStatusLabel1.Text = "toolStripStatusLabel1";
             // 
-            // BleMgsTextClear
+            // FileSystemWatcher
             // 
-            this.BleMgsTextClear.Location = new System.Drawing.Point(233, 530);
-            this.BleMgsTextClear.Name = "BleMgsTextClear";
-            this.BleMgsTextClear.Size = new System.Drawing.Size(82, 23);
-            this.BleMgsTextClear.TabIndex = 60;
-            this.BleMgsTextClear.Text = "Clear";
-            this.BleMgsTextClear.UseVisualStyleBackColor = true;
-            this.BleMgsTextClear.Click += new System.EventHandler(this.BleMgsTextClear_Click);
+            this.FileSystemWatcher.EnableRaisingEvents = true;
+            this.FileSystemWatcher.Filter = "\"*.h264\"";
+            this.FileSystemWatcher.SynchronizingObject = this;
+            this.FileSystemWatcher.Changed += new System.IO.FileSystemEventHandler(this.FileSystemWatcher_Changed);
+            // 
+            // CameraGroupBox
+            // 
+            this.CameraGroupBox.Controls.Add(this.StartPreviewBtn);
+            this.CameraGroupBox.Controls.Add(this.StopCaptureBtn);
+            this.CameraGroupBox.Controls.Add(this.CaptureBtn);
+            this.CameraGroupBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CameraGroupBox.Location = new System.Drawing.Point(15, 163);
+            this.CameraGroupBox.Name = "CameraGroupBox";
+            this.CameraGroupBox.Size = new System.Drawing.Size(285, 80);
+            this.CameraGroupBox.TabIndex = 79;
+            this.CameraGroupBox.TabStop = false;
+            this.CameraGroupBox.Text = "Camera Control";
+            // 
+            // MotorGroupBox
+            // 
+            this.MotorGroupBox.Controls.Add(this.FwdBtn);
+            this.MotorGroupBox.Controls.Add(this.RevBtn);
+            this.MotorGroupBox.Controls.Add(this.StopBtn);
+            this.MotorGroupBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.MotorGroupBox.Location = new System.Drawing.Point(15, 244);
+            this.MotorGroupBox.Name = "MotorGroupBox";
+            this.MotorGroupBox.Size = new System.Drawing.Size(285, 65);
+            this.MotorGroupBox.TabIndex = 80;
+            this.MotorGroupBox.TabStop = false;
+            this.MotorGroupBox.Text = "Motor Control";
             // 
             // TheMainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.Color.WhiteSmoke;
             this.ClientSize = new System.Drawing.Size(1211, 623);
             this.Controls.Add(this.FtcStatusStrip);
             this.Controls.Add(this.MainPanel);
-            this.Controls.Add(this.GeneralGroupBox);
             this.Controls.Add(this.OpenSerialPortBtn);
             this.Controls.Add(this.button8);
             this.Controls.Add(this.groupBox2);
@@ -1343,28 +2013,51 @@
             this.menuStrip1.PerformLayout();
             this.MainPanel.ResumeLayout(false);
             this.MainPanel.PerformLayout();
+            this.OperationPanel.ResumeLayout(false);
+            this.OperationPanel.PerformLayout();
+            this.FitGroupBox.ResumeLayout(false);
+            this.ControlPanel.ResumeLayout(false);
+            this.ControlPanel.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.MotorSpeedUpDown)).EndInit();
             this.ProfileGroupBox.ResumeLayout(false);
             this.ProfileGroupBox.PerformLayout();
+            this.panel2.ResumeLayout(false);
+            this.panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.LeftLegUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.LeftButtockUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.LeftHipUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.LeftCalfUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.LeftBreastUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.LeftArmUpDown)).EndInit();
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.RightLegUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.RightButtockUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.RightCalfUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.RightHipUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.BellyUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.RightBreastUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.RightArmUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.TorsoUpDown)).EndInit();
+            this.groupBox3.ResumeLayout(false);
+            this.groupBox3.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ProfileGridView)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.Controller2GridView)).EndInit();
             this.BleGroupBox.ResumeLayout(false);
             this.BleGroupBox.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ControllerGridView)).EndInit();
-            this.DiagPnl.ResumeLayout(false);
-            this.DiagPnl.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.downloadGridView)).EndInit();
             this.CommSelectPnl.ResumeLayout(false);
             this.CommSelectPnl.PerformLayout();
-            this.DownloadPanel.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).EndInit();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
-            this.GeneralGroupBox.ResumeLayout(false);
-            this.GeneralGroupBox.PerformLayout();
             this.FtcStatusStrip.ResumeLayout(false);
             this.FtcStatusStrip.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.FileSystemWatcher)).EndInit();
+            this.CameraGroupBox.ResumeLayout(false);
+            this.MotorGroupBox.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1384,10 +2077,8 @@
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem downloadToolStripMenuItem;
         private System.Windows.Forms.Panel MainPanel;
-        private System.Windows.Forms.DataGridView dataGridView;
         private System.Windows.Forms.ToolStripMenuItem setupToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
-        private System.Windows.Forms.Panel DownloadPanel;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
         private System.Windows.Forms.Label FwBrd1VersionLbl;
@@ -1407,48 +2098,14 @@
         private System.Windows.Forms.ToolStripMenuItem connectToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem setToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem fPCParametersToolStripMenuItem;
-        private System.Windows.Forms.GroupBox GeneralGroupBox;
-        private System.Windows.Forms.Label label24;
-        private System.Windows.Forms.Label label25;
-        private System.Windows.Forms.Label label26;
-        private System.Windows.Forms.TextBox Adc4TextBox;
-        private System.Windows.Forms.TextBox Sw3TextBox;
-        private System.Windows.Forms.TextBox Sw2TextBox;
-        private System.Windows.Forms.TextBox Sw1TextBox;
-        private System.Windows.Forms.TextBox Adc6TextBox;
-        private System.Windows.Forms.TextBox Adc5TextBox;
-        private System.Windows.Forms.Button button15;
-        private System.Windows.Forms.Timer timer2;
+        private System.Windows.Forms.Timer MotorCntrlTimer;
         private System.Windows.Forms.ToolStripMenuItem counterToolStripMenuItem;
-        private System.Windows.Forms.TextBox Adc9TextBox;
-        private System.Windows.Forms.TextBox Adc8TextBox;
-        private System.Windows.Forms.TextBox Adc7TextBox;
-        private System.Windows.Forms.Label label35;
-        private System.Windows.Forms.Label label34;
-        private System.Windows.Forms.Label label33;
         private System.Windows.Forms.ToolStripMenuItem logToolStripMenuItem;
-        private System.Windows.Forms.Panel DiagPnl;
-        private System.Windows.Forms.DataGridView downloadGridView;
         private System.Windows.Forms.StatusStrip FtcStatusStrip;
-        private System.Windows.Forms.Label label14;
-        private System.Windows.Forms.TextBox Sw4TextBox;
-        private System.Windows.Forms.Button button16;
-        private System.Windows.Forms.Button button17;
-        private System.Windows.Forms.TextBox EncTextBox;
-        private System.Windows.Forms.Label label16;
-        private System.Windows.Forms.Label label15;
-        private System.Windows.Forms.TextBox CommTextBox;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
-        private System.Windows.Forms.Button SaveLogBtn;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
         private System.Windows.Forms.Button button20;
         private System.Windows.Forms.Button button19;
-        private System.Windows.Forms.Label label10;
-        private System.Windows.Forms.Label SetupTimeLbl;
-        private System.Windows.Forms.TextBox textBox2;
-        private System.Windows.Forms.Label label19;
-        private System.Windows.Forms.Label label20;
-        private System.Windows.Forms.TextBox SuTextBox;
         private System.Windows.Forms.Label BrdTypeLbl;
         private System.Windows.Forms.RadioButton radioButton3;
         private System.Windows.Forms.RadioButton radioButton2;
@@ -1480,6 +2137,94 @@
         private System.Windows.Forms.Label FwBrd2VersionLbl;
         private System.Windows.Forms.RichTextBox BleMsgTextBox;
         private System.Windows.Forms.Button BleMgsTextClear;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.TextBox NameTextBox;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.TextBox SizeTextBox;
+        private System.Windows.Forms.TextBox DateTextBox;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.TextBox SnTextBox;
+        private System.Windows.Forms.TextBox ModelTextBox;
+        private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.NumericUpDown RightBreastUpDown;
+        private System.Windows.Forms.NumericUpDown RightArmUpDown;
+        private System.Windows.Forms.NumericUpDown TorsoUpDown;
+        private System.Windows.Forms.NumericUpDown RightLegUpDown;
+        private System.Windows.Forms.NumericUpDown RightButtockUpDown;
+        private System.Windows.Forms.NumericUpDown RightHipUpDown;
+        private System.Windows.Forms.NumericUpDown BellyUpDown;
+        private System.Windows.Forms.Label label18;
+        private System.Windows.Forms.Label label17;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.Label label21;
+        private System.Windows.Forms.Label label23;
+        private System.Windows.Forms.Label label27;
+        private System.Windows.Forms.Label label28;
+        private System.Windows.Forms.Label label30;
+        private System.Windows.Forms.Label label31;
+        private System.Windows.Forms.NumericUpDown LeftLegUpDown;
+        private System.Windows.Forms.NumericUpDown LeftButtockUpDown;
+        private System.Windows.Forms.NumericUpDown LeftHipUpDown;
+        private System.Windows.Forms.NumericUpDown LeftCalfUpDown;
+        private System.Windows.Forms.NumericUpDown LeftBreastUpDown;
+        private System.Windows.Forms.NumericUpDown LeftArmUpDown;
+        private System.Windows.Forms.Label label29;
+        private System.Windows.Forms.NumericUpDown RightCalfUpDown;
+        private System.IO.FileSystemWatcher FileSystemWatcher;
+        private System.Windows.Forms.Panel ControlPanel;
+        private System.Windows.Forms.Button MotorFwdBtn;
+        private System.Windows.Forms.Button MotorStopBtn;
+        private System.Windows.Forms.Button MotorRevBtn;
+        private System.Windows.Forms.TextBox MotorReadTextBox;
+        private System.Windows.Forms.Button MotorReadBtn;
+        private System.Windows.Forms.Button CloseControlPanelBtn;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.NumericUpDown MotorSpeedUpDown;
+        private System.Windows.Forms.TextBox VoltageTextBox;
+        private System.Windows.Forms.TextBox CurrentTextBox;
+        private System.Windows.Forms.Label label16;
+        private System.Windows.Forms.Label label15;
+        private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.Button RevLimitInd;
+        private System.Windows.Forms.Button FwdLimitInd;
+        private System.Windows.Forms.Label label19;
+        private System.Windows.Forms.Label label20;
+        private System.Windows.Forms.TextBox SpeedTextBox;
+        private System.Windows.Forms.Button DirFwdInd;
+        private System.Windows.Forms.Button DirRevInd;
+        private System.Windows.Forms.NumericUpDown numericUpDown1;
+        private System.Windows.Forms.ToolStripMenuItem motorDiagnosticToolStripMenuItem;
+        private System.Windows.Forms.Panel OperationPanel;
+        private System.Windows.Forms.Button StartPreviewBtn;
+        private System.Windows.Forms.Button TestBtn;
+        private System.Windows.Forms.Button CaptureBtn;
+        private System.Windows.Forms.Button StopCaptureBtn;
+        private System.Windows.Forms.Button StopBtn;
+        private System.Windows.Forms.Button RevBtn;
+        private System.Windows.Forms.Button FwdBtn;
+        private System.Windows.Forms.Button UploadFilesBtn;
+        private System.Windows.Forms.Button OpCloseBtn;
+        private System.Windows.Forms.Label label24;
+        private System.Windows.Forms.ComboBox FitTypeComboBox;
+        private System.Windows.Forms.Label label25;
+        private System.Windows.Forms.TextBox SnLoadTextBox;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.ComboBox FitTypeLoadComboBox;
+        private System.Windows.Forms.Button OpTightFitBtn;
+        private System.Windows.Forms.Button OpNormalFitBtn;
+        private System.Windows.Forms.Button OpLooseFitBtn;
+        private System.Windows.Forms.Label label26;
+        private System.Windows.Forms.GroupBox FitGroupBox;
+        private System.Windows.Forms.GroupBox CameraGroupBox;
+        private System.Windows.Forms.GroupBox MotorGroupBox;
         //private Gigasoft.ProEssentials.Pesgo GenericPlot;
     }
 }
