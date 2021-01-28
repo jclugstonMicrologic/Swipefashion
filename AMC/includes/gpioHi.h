@@ -73,7 +73,7 @@
 #define S_DRIVE6_PIN          GPIO_Pin_2
 #define S_DRIVE6_PORT         GPIOB
 
-#define S_DRIVE7_PIN          GPIO_Pin_3
+#define S_DRIVE7_PIN          GPIO_Pin_8
 #define S_DRIVE7_PORT         GPIOB
 
 /* solenoid pulse */

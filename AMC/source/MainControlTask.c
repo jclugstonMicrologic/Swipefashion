@@ -34,6 +34,8 @@
 //#include "AdcFd.h"
 #include "PressureTdrHi.h"
 #include "BluetoothMachine.h"
+
+#include "SciAsciiMachine.h"
    
 void MainControlTask(void * pvParameters);
 
@@ -72,6 +74,69 @@ BOOL MainControlTaskInit( void )
 
 /*
 *|----------------------------------------------------------------------------
+*|  Routine: Solenoid_Toggle_Timer_Callback
+*|  Description:
+*|  Retval:
+*|----------------------------------------------------------------------------
+*/
+static void Solenoid_Toggle_Timer_Callback (void * pvParameter)
+{        
+    static UINT8 solenoidState =0;
+    int j =0;
+    
+    if( solenoidState ==0 )
+    {
+        for(j=1; j<8; j++)
+        {
+            OpenValve(j);          
+            TimerDelayUs(1000);
+        }        
+        
+        for(j=1; j<5; j++)
+        {
+            OpenReliefValve(j);
+        }
+        
+        SciAsciiSendString(SCI_PC_COM, "OPEN\r\n");
+        
+        solenoidState =1;
+    }
+    else
+    {
+        for(j=1; j<8; j++)
+        {
+            CloseValve(j);          
+            TimerDelayUs(1000);
+        }   
+        for(j=1; j<5; j++)
+        {
+            CloseReliefValve(j);
+        }        
+        
+        SciAsciiSendString(SCI_PC_COM, "CLOSE\r\n");
+        
+        solenoidState =0;      
+    }
+}
+
+/*
+*|----------------------------------------------------------------------------
+*|  Routine: Solenoid_StartPeriodicToggle
+*|  Description:
+*|  Retval:
+*|----------------------------------------------------------------------------
+*/
+void Solenoid_StartPeriodicToggle(void)
+{
+    #define TIMER_PERIOD      2000          /**< Timer period (msec) */
+    /* Start timer for LED1 blinking */
+    TimerHandle_t read_timer_handle; 
+    read_timer_handle =xTimerCreate( "TdrRead", TIMER_PERIOD, pdTRUE, NULL, Solenoid_Toggle_Timer_Callback);
+    xTimerStart(read_timer_handle, 0);
+}
+
+/*
+*|----------------------------------------------------------------------------
 *|  Routine: MainControlTask
 *|  Description:
 *|  Arguments:
@@ -83,14 +148,18 @@ void MainControlTask(void * pvParameters)
     TickType_t xNextWakeTime;
     xNextWakeTime = xTaskGetTickCount();
     
+#define TERMINAL_ENABLED
 #ifdef TERMINAL_ENABLED
 UINT32 loopCnt =0;
 char aStr[32];
-UINT8 valveState =0;
 UINT8 sensorPresent =0;
-UINT8 debounceCnt =0;
 press_sensor_data_t PSensorData[8];
-    
+
+#ifdef DEV_BOARD
+UINT8 valveState =0;
+UINT8 debounceCnt =0;
+#endif
+
   //  TickType_t delayTime = xTaskGetTickCount();    
 
     /* !!! test !!! */
@@ -117,6 +186,10 @@ press_sensor_data_t PSensorData[8];
         SciAsciiSendString(SCI_PC_COM, aStr);
     }
 #endif    
+   
+    Solenoid_StartPeriodicToggle();
+
+    int sensor =0;
     
     for( ;; )
     {      
@@ -127,23 +200,61 @@ press_sensor_data_t PSensorData[8];
 #ifdef TERMINAL_ENABLED        
         if( (++loopCnt %100) ==0 )
         {
-            for(int sensor =0; sensor<8; sensor++)
+        #if 0
+            for(sensor =0; sensor<8; sensor++)
             {
-                PressureTdr_ReadPT(sensor, &PSensorData[sensor].press, &PSensorData[sensor].temp);
+                PressureTdr_ReadPT(sensor, &PSensorData[sensor].press, &PSensorData[sensor].temp);                    
             }            
+        #endif
+            PressureTdr_GetPressTemp(PSensorData);
             
             if( (loopCnt %1000) ==0 )
             {
-                memset(&aStr, 0x00,sizeof(aStr));
-                sprintf(aStr, "P1: %2.3fkPa T1: %2.1fdegC\r\n", PSensorData[0].press, PSensorData[0].temp);
-                SciAsciiSendString(SCI_PC_COM, aStr);
+                sensor =0;
                 
                 memset(&aStr, 0x00,sizeof(aStr));
-                sprintf(aStr, "P8: %2.3fkPa T8: %2.1fdegC\r\n\r\n", PSensorData[7].press, PSensorData[7].temp);
+                sprintf(aStr, "P1: %2.3fkPa T1: %2.1fdegC\r\n", PSensorData[sensor].press, PSensorData[sensor].temp);
                 SciAsciiSendString(SCI_PC_COM, aStr);
+                sensor++;
+                
+                memset(&aStr, 0x00,sizeof(aStr));
+                sprintf(aStr, "P2: %2.3fkPa T2: %2.1fdegC\r\n", PSensorData[sensor].press, PSensorData[sensor].temp);
+                SciAsciiSendString(SCI_PC_COM, aStr);                
+                sensor++;
+                
+                memset(&aStr, 0x00,sizeof(aStr));
+                sprintf(aStr, "P3: %2.3fkPa T3: %2.1fdegC\r\n", PSensorData[sensor].press, PSensorData[sensor].temp);
+                SciAsciiSendString(SCI_PC_COM, aStr);                                
+                sensor++;
+                
+                memset(&aStr, 0x00,sizeof(aStr));
+                sprintf(aStr, "P4: %2.3fkPa T4: %2.1fdegC\r\n", PSensorData[sensor].press, PSensorData[sensor].temp);
+                SciAsciiSendString(SCI_PC_COM, aStr);                                
+                sensor++;                
+                
+                memset(&aStr, 0x00,sizeof(aStr));
+                sprintf(aStr, "P5: %2.3fkPa T5: %2.1fdegC\r\n", PSensorData[sensor].press, PSensorData[sensor].temp);
+                SciAsciiSendString(SCI_PC_COM, aStr);                                
+                sensor++;                
+
+                memset(&aStr, 0x00,sizeof(aStr));
+                sprintf(aStr, "P6: %2.3fkPa T6: %2.1fdegC\r\n", PSensorData[sensor].press, PSensorData[sensor].temp);
+                SciAsciiSendString(SCI_PC_COM, aStr);                                
+                sensor++;                
+
+                memset(&aStr, 0x00,sizeof(aStr));
+                sprintf(aStr, "P7: %2.3fkPa T7: %2.1fdegC\r\n", PSensorData[sensor].press, PSensorData[sensor].temp);
+                SciAsciiSendString(SCI_PC_COM, aStr);                                
+                sensor++;                                
+                
+                memset(&aStr, 0x00,sizeof(aStr));
+                sprintf(aStr, "P8: %2.3fkPa T8: %2.1fdegC\r\n\r\n", PSensorData[sensor].press, PSensorData[sensor].temp);
+                SciAsciiSendString(SCI_PC_COM, aStr);
+                sensor++;
             }
         }
         
+    #ifdef DEV_BOARD
         if( valveState == 0)
         {
             debounceCnt =0;
@@ -202,6 +313,8 @@ press_sensor_data_t PSensorData[8];
                 TimerDelayUs(1000);
             }
         }               
+    #endif
+        
 #endif
         
         /* this delay allows lower priorty tasks to run */

@@ -11,7 +11,7 @@
 * REVISION LOG
 *
 *******************************************************************************
-* Copyright (c) 2020, MICROLOGIC
+* Copyright (c) 2021, MICROLOGIC
 * Calgary, Alberta, Canada, www.transrailinnovation.ca
 *******************************************************************************/
 
@@ -20,7 +20,7 @@
 
 #include "types.h"
 
-#define FW_VERSION "0.00 " 
+#define FW_VERSION "0.03 " 
 
 BOOL MainControlTaskInit(void);
 

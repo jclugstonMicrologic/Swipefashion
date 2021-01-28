@@ -65,7 +65,10 @@ void Gpio_Init
     GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
     GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
-   
+
+GPIO_InitStructure.GPIO_Pin =BRD_ID_BIT1_PIN;
+GPIO_Init(BRD_ID_BIT1_PORT, &GPIO_InitStructure);            
+
     GPIO_InitStructure.GPIO_Pin =GREEN_LED_PIN;
     GPIO_Init(GREEN_LED_PORT, &GPIO_InitStructure);          
     
@@ -136,14 +139,15 @@ void Gpio_Init
     GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_25MHz;  
 
-    GPIO_InitStructure.GPIO_Pin =USER_BTN_PIN;
-    GPIO_Init(USER_BTN_PORT, &GPIO_InitStructure);    
+    /* this is here for dev board only, shares press sensor cs7 */
+    //GPIO_InitStructure.GPIO_Pin =USER_BTN_PIN;
+    //GPIO_Init(USER_BTN_PORT, &GPIO_InitStructure);    
     
     GPIO_InitStructure.GPIO_Pin =BRD_ID_BIT0_PIN;
     GPIO_Init(BRD_ID_BIT0_PORT, &GPIO_InitStructure);        
     
-    GPIO_InitStructure.GPIO_Pin =BRD_ID_BIT1_PIN;
-    GPIO_Init(BRD_ID_BIT1_PORT, &GPIO_InitStructure);            
+    //GPIO_InitStructure.GPIO_Pin =BRD_ID_BIT1_PIN;
+    //GPIO_Init(BRD_ID_BIT1_PORT, &GPIO_InitStructure);            
     
 #if 0
     GPIO_InitStructure.GPIO_Pin =GPIO_Pin_12;

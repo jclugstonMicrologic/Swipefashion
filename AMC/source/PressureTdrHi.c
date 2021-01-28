@@ -140,6 +140,14 @@ void PressureTdr_GetPressTemp(press_sensor_data_t *pData)
     memcpy(pData, PSensorData, sizeof(PSensorData));
 }
 
+
+/*
+*|----------------------------------------------------------------------------
+*|  Routine: PressureTdr_CheckOverPres
+*|  Description:
+*|  Retval:
+*|----------------------------------------------------------------------------
+*/
 BOOL PressureTdr_CheckOverPres(void)
 {
     BOOL status =FALSE;
@@ -153,6 +161,8 @@ BOOL PressureTdr_CheckOverPres(void)
         }
         else
             status =FALSE;
+        
+        //TimerDelayUs(10000);
     }
     
      return status;

@@ -34,13 +34,16 @@
 #include "MainControlTask.h"
 #include "BluetoothMachine.h"
 
+#include "sysTimers.h"
+
 /** Local Constants and Types *************************************************/
 //#define TERMINAL_DEBUG_ENABLE
 
 typedef enum
 {
     BLUETOOTH_INIT_STATE =0,
-    
+
+    BLUETOOTH_WAIT_RESPONSE_STATE,
     BLUETOOTH_IDLE_STATE,
     BLUETOOTH_START_NOTIFY_STATE,
     BLUETOOTH_WAIT_FOR_CLIENT_STATE,
@@ -49,13 +52,17 @@ typedef enum
       
 }BluetoothStatesTypeEnum;
 
+
 typedef struct
 {
     BluetoothStatesTypeEnum machState;
-    
-    UINT32 sleepTimer;
+    BluetoothStatesTypeEnum prevMachState;
+        
+    UINT32 timer;
+    UINT32 sleepTimer;    
           
 }ble_t;
+
 
 
 /** Local Variable Declarations ***********************************************/
@@ -87,7 +94,7 @@ BOOL Ble_MachineInit(void)
     }         
      
     memset( &BleData, 0x00, sizeof(BleData) );
-    
+
     return TRUE;
 }
 
@@ -101,19 +108,21 @@ BOOL Ble_MachineInit(void)
 */
 static void Ble_Notify_Timer_Callback (void * pvParameter)
 { 
-#if 0  
-    uint16_t length =0;
+#if 1  
+    //uint16_t length =0;
     char data_array[16];
 
 static uint16_t var=300;
 var -=1;
 
-    sprintf(data_array, "Range: %d", var);
-    length =strlen(data_array);
-#endif    
+    sprintf(data_array, "count: %d", var);
+    //length =strlen(data_array);
     
+    Ble_SendString(data_array); 
+#else      
     /* send pressure readings periodically */
     Ble_ProcessCommands(CMD_GET_PRESS, NULL_PTR);
+#endif
 }
 
 /*
@@ -321,19 +330,52 @@ void Ble_ProcessCommands
 */
 BOOL Ble_Machine(void)
 {  
+    TickType_t xTicks=xTaskGetTickCount();
+    
+    static UINT8 msgNbr =0;
+    
     switch( BleData.machState )
     {
         case BLUETOOTH_INIT_STATE:
-            BleData.machState =BLUETOOTH_IDLE_STATE;
+            //GPIO_ResetBits(BRD_ID_BIT1_PORT, BRD_ID_BIT1_PIN);
+            TimerDelayUs(500000);
+            GPIO_SetBits(BRD_ID_BIT1_PORT, BRD_ID_BIT1_PIN);
+            
+            msgNbr =0;
+                                    
+            BleData.timer =xTicks;            
+            BleData.machState =BLUETOOTH_WAIT_RESPONSE_STATE;
+            break;
+        case BLUETOOTH_WAIT_RESPONSE_STATE:
+            if( (xTicks -BleData.timer ) >1000 )
+            {
+                msgNbr ++;
+                
+                if( msgNbr ==1 )
+                    Ble_SendString("$$$");  //enter command mode
+                else if( msgNbr ==2 )
+                    Ble_SendString("SS,C0\r\n"); // enable device information and UART transparent service
+                else if( msgNbr ==3 )
+                    Ble_SendString("S-,SF\r\n"); // enable device information and UART transparent service                
+                else if(msgNbr ==4 )
+                {
+                    Ble_SendString("R,1\r\n"); // reboot the module                  
+                    
+                    /* done */
+                    BleData.machState =BLUETOOTH_IDLE_STATE;
+                }
+                
+                BleData.timer =xTicks;       
+            }
             break;
         case BLUETOOTH_IDLE_STATE:
-          Ble_SendString("$$$");  //enter command mode
+//            Ble_SendString("$$$");  //enter command mode
 #if 0
-Ble_SendString("+\r\n"); //echo on
+//Ble_SendString("+\r\n"); //echo on
 Ble_SendString("SS,C0\r\n"); // enable device information and UART transparent service
 
 Ble_SendString("R,1\r\n"); // reboot the module
-Ble_SendString("D\r\n"); // display settings (ensure service is no C0)
+//Ble_SendString("D\r\n"); // display settings (ensure service is no C0)
 
 //Ble_SendString("F\r\n"); // initiate scan
 //Ble_SendString("C,<0,1><MAC address>\r\n"); 
