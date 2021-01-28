@@ -229,7 +229,9 @@ namespace WindowsFormsApplication5
                 this.theMainForm.serialThread = new Thread(this.theMainForm.rxDataThread);
                 this.theMainForm.serialThread.Start();
 
-                aStr = ComportBox.Text + ", 9600";// + (String)SERIAL_COMMS.BAUDRATE.ToString();
+                //aStr = ComportBox.Text + ", 9600";// + (String)SERIAL_COMMS.BAUDRATE.ToString();
+
+                aStr = ComportBox.Text + ", 115200";// + (String)SERIAL_COMMS.BAUDRATE.ToString();
 
                 this.theMainForm.UpdateStatusStrip(aStr);
                 // get FPC fw version

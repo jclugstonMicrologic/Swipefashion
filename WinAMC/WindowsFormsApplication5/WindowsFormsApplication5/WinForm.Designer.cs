@@ -29,12 +29,12 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle73 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle74 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle75 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle76 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle77 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle78 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle11 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle12 = new System.Windows.Forms.DataGridViewCellStyle();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.button2 = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
@@ -44,10 +44,11 @@
             this.StopCaptureBtn = new System.Windows.Forms.Button();
             this.UploadFilesBtn = new System.Windows.Forms.Button();
             this.OpCloseBtn = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
+            this.OpLoadBtn = new System.Windows.Forms.Button();
             this.OpLooseFitBtn = new System.Windows.Forms.Button();
             this.OpNormalFitBtn = new System.Windows.Forms.Button();
             this.OpTightFitBtn = new System.Windows.Forms.Button();
+            this.BleDiscoverBtn = new System.Windows.Forms.Button();
             this.FwdLimitInd = new System.Windows.Forms.Button();
             this.RevLimitInd = new System.Windows.Forms.Button();
             this.DirFwdInd = new System.Windows.Forms.Button();
@@ -75,30 +76,35 @@
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.MainPanel = new System.Windows.Forms.Panel();
+            this.button1 = new System.Windows.Forms.Button();
             this.OperationPanel = new System.Windows.Forms.Panel();
+            this.CameraPortLbl = new System.Windows.Forms.Label();
+            this.CameraStatusLbl = new System.Windows.Forms.Label();
+            this.MotorGroupBox = new System.Windows.Forms.GroupBox();
+            this.MotorStatusLbl = new System.Windows.Forms.Label();
+            this.FwdBtn = new System.Windows.Forms.Button();
+            this.RevBtn = new System.Windows.Forms.Button();
+            this.StopBtn = new System.Windows.Forms.Button();
+            this.CameraGroupBox = new System.Windows.Forms.GroupBox();
+            this.CameraOperationLbl = new System.Windows.Forms.Label();
             this.FitGroupBox = new System.Windows.Forms.GroupBox();
             this.label26 = new System.Windows.Forms.Label();
             this.FitTypeLoadComboBox = new System.Windows.Forms.ComboBox();
             this.SnLoadTextBox = new System.Windows.Forms.TextBox();
-            this.label24 = new System.Windows.Forms.Label();
-            this.StopBtn = new System.Windows.Forms.Button();
-            this.RevBtn = new System.Windows.Forms.Button();
-            this.FwdBtn = new System.Windows.Forms.Button();
+            this.MotorDetectLbl = new System.Windows.Forms.Label();
             this.ControlPanel = new System.Windows.Forms.Panel();
             this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
-            this.label20 = new System.Windows.Forms.Label();
+            this.SpeedLbl = new System.Windows.Forms.Label();
             this.SpeedTextBox = new System.Windows.Forms.TextBox();
             this.label19 = new System.Windows.Forms.Label();
-            this.label16 = new System.Windows.Forms.Label();
-            this.label15 = new System.Windows.Forms.Label();
-            this.label14 = new System.Windows.Forms.Label();
+            this.LimitLbl = new System.Windows.Forms.Label();
+            this.CurrentLbl = new System.Windows.Forms.Label();
+            this.VoltageLbl = new System.Windows.Forms.Label();
             this.VoltageTextBox = new System.Windows.Forms.TextBox();
             this.CurrentTextBox = new System.Windows.Forms.TextBox();
             this.MotorSpeedUpDown = new System.Windows.Forms.NumericUpDown();
             this.label10 = new System.Windows.Forms.Label();
             this.CloseControlPanelBtn = new System.Windows.Forms.Button();
-            this.MotorReadTextBox = new System.Windows.Forms.TextBox();
-            this.MotorReadBtn = new System.Windows.Forms.Button();
             this.MotorStopBtn = new System.Windows.Forms.Button();
             this.MotorRevBtn = new System.Windows.Forms.Button();
             this.MotorFwdBtn = new System.Windows.Forms.Button();
@@ -166,7 +172,6 @@
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.BleConnectBtn = new System.Windows.Forms.Button();
-            this.BleDiscoverBtn = new System.Windows.Forms.Button();
             this.ControllerGridView = new System.Windows.Forms.DataGridView();
             this.BrdTypeLbl = new System.Windows.Forms.Label();
             this.CommSelectPnl = new System.Windows.Forms.Panel();
@@ -194,11 +199,12 @@
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.FileSystemWatcher = new System.IO.FileSystemWatcher();
-            this.CameraGroupBox = new System.Windows.Forms.GroupBox();
-            this.MotorGroupBox = new System.Windows.Forms.GroupBox();
+            this.FileMonitorTimer = new System.Windows.Forms.Timer(this.components);
             this.menuStrip1.SuspendLayout();
             this.MainPanel.SuspendLayout();
             this.OperationPanel.SuspendLayout();
+            this.MotorGroupBox.SuspendLayout();
+            this.CameraGroupBox.SuspendLayout();
             this.FitGroupBox.SuspendLayout();
             this.ControlPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
@@ -230,8 +236,6 @@
             this.groupBox1.SuspendLayout();
             this.FtcStatusStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.FileSystemWatcher)).BeginInit();
-            this.CameraGroupBox.SuspendLayout();
-            this.MotorGroupBox.SuspendLayout();
             this.SuspendLayout();
             // 
             // openFileDialog1
@@ -321,17 +325,17 @@
             this.OpCloseBtn.UseVisualStyleBackColor = true;
             this.OpCloseBtn.Click += new System.EventHandler(this.button3_Click_1);
             // 
-            // button1
+            // OpLoadBtn
             // 
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button1.Location = new System.Drawing.Point(159, 53);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(82, 23);
-            this.button1.TabIndex = 70;
-            this.button1.Text = "Load";
-            this.toolTip1.SetToolTip(this.button1, "Stop camera");
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click_3);
+            this.OpLoadBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.OpLoadBtn.Location = new System.Drawing.Point(159, 78);
+            this.OpLoadBtn.Name = "OpLoadBtn";
+            this.OpLoadBtn.Size = new System.Drawing.Size(82, 23);
+            this.OpLoadBtn.TabIndex = 70;
+            this.OpLoadBtn.Text = "Load";
+            this.toolTip1.SetToolTip(this.OpLoadBtn, "Stop camera");
+            this.OpLoadBtn.UseVisualStyleBackColor = true;
+            this.OpLoadBtn.Click += new System.EventHandler(this.OpLoadBtn_Click);
             // 
             // OpLooseFitBtn
             // 
@@ -369,10 +373,23 @@
             this.OpTightFitBtn.UseVisualStyleBackColor = true;
             this.OpTightFitBtn.Click += new System.EventHandler(this.OpTightFitBtn_Click);
             // 
+            // BleDiscoverBtn
+            // 
+            this.BleDiscoverBtn.BackColor = System.Drawing.Color.SkyBlue;
+            this.BleDiscoverBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.BleDiscoverBtn.Location = new System.Drawing.Point(6, 23);
+            this.BleDiscoverBtn.Name = "BleDiscoverBtn";
+            this.BleDiscoverBtn.Size = new System.Drawing.Size(130, 25);
+            this.BleDiscoverBtn.TabIndex = 51;
+            this.BleDiscoverBtn.Text = "Discover";
+            this.toolTip1.SetToolTip(this.BleDiscoverBtn, "Search for bluetooth devices");
+            this.BleDiscoverBtn.UseVisualStyleBackColor = false;
+            this.BleDiscoverBtn.Click += new System.EventHandler(this.button1_Click);
+            // 
             // FwdLimitInd
             // 
             this.FwdLimitInd.BackColor = System.Drawing.Color.LightGray;
-            this.FwdLimitInd.Location = new System.Drawing.Point(108, 180);
+            this.FwdLimitInd.Location = new System.Drawing.Point(130, 210);
             this.FwdLimitInd.Name = "FwdLimitInd";
             this.FwdLimitInd.Size = new System.Drawing.Size(20, 20);
             this.FwdLimitInd.TabIndex = 79;
@@ -381,7 +398,7 @@
             // RevLimitInd
             // 
             this.RevLimitInd.BackColor = System.Drawing.Color.LightGray;
-            this.RevLimitInd.Location = new System.Drawing.Point(149, 180);
+            this.RevLimitInd.Location = new System.Drawing.Point(160, 210);
             this.RevLimitInd.Name = "RevLimitInd";
             this.RevLimitInd.Size = new System.Drawing.Size(20, 20);
             this.RevLimitInd.TabIndex = 80;
@@ -390,7 +407,7 @@
             // DirFwdInd
             // 
             this.DirFwdInd.BackColor = System.Drawing.Color.LightGray;
-            this.DirFwdInd.Location = new System.Drawing.Point(108, 210);
+            this.DirFwdInd.Location = new System.Drawing.Point(130, 180);
             this.DirFwdInd.Name = "DirFwdInd";
             this.DirFwdInd.Size = new System.Drawing.Size(20, 20);
             this.DirFwdInd.TabIndex = 84;
@@ -399,7 +416,7 @@
             // DirRevInd
             // 
             this.DirRevInd.BackColor = System.Drawing.Color.LightGray;
-            this.DirRevInd.Location = new System.Drawing.Point(149, 210);
+            this.DirRevInd.Location = new System.Drawing.Point(160, 180);
             this.DirRevInd.Name = "DirRevInd";
             this.DirRevInd.Size = new System.Drawing.Size(20, 20);
             this.DirRevInd.TabIndex = 85;
@@ -462,7 +479,7 @@
             this.helpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1211, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(1248, 24);
             this.menuStrip1.TabIndex = 21;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -587,6 +604,7 @@
             // MainPanel
             // 
             this.MainPanel.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.MainPanel.Controls.Add(this.button1);
             this.MainPanel.Controls.Add(this.OperationPanel);
             this.MainPanel.Controls.Add(this.ControlPanel);
             this.MainPanel.Controls.Add(this.FwBrd2VersionLbl);
@@ -606,23 +624,135 @@
             this.MainPanel.Size = new System.Drawing.Size(1086, 650);
             this.MainPanel.TabIndex = 22;
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(333, 11);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 64;
+            this.button1.Text = "button1";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Visible = false;
+            this.button1.Click += new System.EventHandler(this.button1_Click_3);
+            // 
             // OperationPanel
             // 
             this.OperationPanel.BackColor = System.Drawing.Color.White;
+            this.OperationPanel.Controls.Add(this.CameraPortLbl);
+            this.OperationPanel.Controls.Add(this.CameraStatusLbl);
             this.OperationPanel.Controls.Add(this.MotorGroupBox);
             this.OperationPanel.Controls.Add(this.CameraGroupBox);
             this.OperationPanel.Controls.Add(this.FitGroupBox);
             this.OperationPanel.Controls.Add(this.label26);
             this.OperationPanel.Controls.Add(this.FitTypeLoadComboBox);
-            this.OperationPanel.Controls.Add(this.button1);
+            this.OperationPanel.Controls.Add(this.OpLoadBtn);
             this.OperationPanel.Controls.Add(this.SnLoadTextBox);
-            this.OperationPanel.Controls.Add(this.label24);
+            this.OperationPanel.Controls.Add(this.MotorDetectLbl);
             this.OperationPanel.Controls.Add(this.OpCloseBtn);
             this.OperationPanel.Controls.Add(this.UploadFilesBtn);
-            this.OperationPanel.Location = new System.Drawing.Point(825, 217);
+            this.OperationPanel.Location = new System.Drawing.Point(807, 217);
             this.OperationPanel.Name = "OperationPanel";
             this.OperationPanel.Size = new System.Drawing.Size(246, 341);
             this.OperationPanel.TabIndex = 62;
+            this.OperationPanel.Visible = false;
+            // 
+            // CameraPortLbl
+            // 
+            this.CameraPortLbl.AutoSize = true;
+            this.CameraPortLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CameraPortLbl.Location = new System.Drawing.Point(220, 40);
+            this.CameraPortLbl.Name = "CameraPortLbl";
+            this.CameraPortLbl.Size = new System.Drawing.Size(32, 16);
+            this.CameraPortLbl.TabIndex = 82;
+            this.CameraPortLbl.Text = "Port";
+            // 
+            // CameraStatusLbl
+            // 
+            this.CameraStatusLbl.AutoSize = true;
+            this.CameraStatusLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CameraStatusLbl.Location = new System.Drawing.Point(15, 40);
+            this.CameraStatusLbl.Name = "CameraStatusLbl";
+            this.CameraStatusLbl.Size = new System.Drawing.Size(56, 16);
+            this.CameraStatusLbl.TabIndex = 81;
+            this.CameraStatusLbl.Text = "Camera";
+            // 
+            // MotorGroupBox
+            // 
+            this.MotorGroupBox.Controls.Add(this.MotorStatusLbl);
+            this.MotorGroupBox.Controls.Add(this.FwdBtn);
+            this.MotorGroupBox.Controls.Add(this.RevBtn);
+            this.MotorGroupBox.Controls.Add(this.StopBtn);
+            this.MotorGroupBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.MotorGroupBox.Location = new System.Drawing.Point(15, 244);
+            this.MotorGroupBox.Name = "MotorGroupBox";
+            this.MotorGroupBox.Size = new System.Drawing.Size(285, 80);
+            this.MotorGroupBox.TabIndex = 80;
+            this.MotorGroupBox.TabStop = false;
+            this.MotorGroupBox.Text = "Motor Control";
+            // 
+            // MotorStatusLbl
+            // 
+            this.MotorStatusLbl.AutoSize = true;
+            this.MotorStatusLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.MotorStatusLbl.Location = new System.Drawing.Point(13, 55);
+            this.MotorStatusLbl.Name = "MotorStatusLbl";
+            this.MotorStatusLbl.Size = new System.Drawing.Size(43, 16);
+            this.MotorStatusLbl.TabIndex = 71;
+            this.MotorStatusLbl.Text = "status";
+            // 
+            // FwdBtn
+            // 
+            this.FwdBtn.Location = new System.Drawing.Point(10, 25);
+            this.FwdBtn.Name = "FwdBtn";
+            this.FwdBtn.Size = new System.Drawing.Size(82, 23);
+            this.FwdBtn.TabIndex = 62;
+            this.FwdBtn.Text = "FWD";
+            this.FwdBtn.UseVisualStyleBackColor = true;
+            this.FwdBtn.Click += new System.EventHandler(this.button3_Click);
+            // 
+            // RevBtn
+            // 
+            this.RevBtn.Location = new System.Drawing.Point(105, 25);
+            this.RevBtn.Name = "RevBtn";
+            this.RevBtn.Size = new System.Drawing.Size(82, 23);
+            this.RevBtn.TabIndex = 63;
+            this.RevBtn.Text = "REV";
+            this.RevBtn.UseVisualStyleBackColor = true;
+            this.RevBtn.Click += new System.EventHandler(this.RevBtn_Click);
+            // 
+            // StopBtn
+            // 
+            this.StopBtn.Location = new System.Drawing.Point(195, 25);
+            this.StopBtn.Name = "StopBtn";
+            this.StopBtn.Size = new System.Drawing.Size(82, 23);
+            this.StopBtn.TabIndex = 64;
+            this.StopBtn.Text = "STOP";
+            this.StopBtn.UseVisualStyleBackColor = true;
+            this.StopBtn.Click += new System.EventHandler(this.StopBtn_Click);
+            // 
+            // CameraGroupBox
+            // 
+            this.CameraGroupBox.Controls.Add(this.CameraOperationLbl);
+            this.CameraGroupBox.Controls.Add(this.StartPreviewBtn);
+            this.CameraGroupBox.Controls.Add(this.StopCaptureBtn);
+            this.CameraGroupBox.Controls.Add(this.CaptureBtn);
+            this.CameraGroupBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CameraGroupBox.Location = new System.Drawing.Point(15, 163);
+            this.CameraGroupBox.Name = "CameraGroupBox";
+            this.CameraGroupBox.Size = new System.Drawing.Size(285, 80);
+            this.CameraGroupBox.TabIndex = 79;
+            this.CameraGroupBox.TabStop = false;
+            this.CameraGroupBox.Text = "Camera Control";
+            // 
+            // CameraOperationLbl
+            // 
+            this.CameraOperationLbl.AutoSize = true;
+            this.CameraOperationLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CameraOperationLbl.Location = new System.Drawing.Point(13, 55);
+            this.CameraOperationLbl.Name = "CameraOperationLbl";
+            this.CameraOperationLbl.Size = new System.Drawing.Size(43, 16);
+            this.CameraOperationLbl.TabIndex = 70;
+            this.CameraOperationLbl.Text = "status";
             // 
             // FitGroupBox
             // 
@@ -630,7 +760,7 @@
             this.FitGroupBox.Controls.Add(this.OpNormalFitBtn);
             this.FitGroupBox.Controls.Add(this.OpTightFitBtn);
             this.FitGroupBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.FitGroupBox.Location = new System.Drawing.Point(15, 90);
+            this.FitGroupBox.Location = new System.Drawing.Point(15, 100);
             this.FitGroupBox.Name = "FitGroupBox";
             this.FitGroupBox.Size = new System.Drawing.Size(285, 80);
             this.FitGroupBox.TabIndex = 77;
@@ -641,7 +771,7 @@
             // 
             this.label26.AutoSize = true;
             this.label26.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label26.Location = new System.Drawing.Point(15, 55);
+            this.label26.Location = new System.Drawing.Point(15, 80);
             this.label26.Name = "label26";
             this.label26.Size = new System.Drawing.Size(34, 16);
             this.label26.TabIndex = 76;
@@ -665,50 +795,20 @@
             // SnLoadTextBox
             // 
             this.SnLoadTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.SnLoadTextBox.Location = new System.Drawing.Point(54, 54);
+            this.SnLoadTextBox.Location = new System.Drawing.Point(54, 79);
             this.SnLoadTextBox.Name = "SnLoadTextBox";
             this.SnLoadTextBox.Size = new System.Drawing.Size(100, 22);
             this.SnLoadTextBox.TabIndex = 71;
             // 
-            // label24
+            // MotorDetectLbl
             // 
-            this.label24.AutoSize = true;
-            this.label24.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label24.Location = new System.Drawing.Point(15, 25);
-            this.label24.Name = "label24";
-            this.label24.Size = new System.Drawing.Size(42, 16);
-            this.label24.TabIndex = 69;
-            this.label24.Text = "Motor";
-            // 
-            // StopBtn
-            // 
-            this.StopBtn.Location = new System.Drawing.Point(195, 25);
-            this.StopBtn.Name = "StopBtn";
-            this.StopBtn.Size = new System.Drawing.Size(82, 23);
-            this.StopBtn.TabIndex = 64;
-            this.StopBtn.Text = "STOP";
-            this.StopBtn.UseVisualStyleBackColor = true;
-            this.StopBtn.Click += new System.EventHandler(this.StopBtn_Click);
-            // 
-            // RevBtn
-            // 
-            this.RevBtn.Location = new System.Drawing.Point(105, 25);
-            this.RevBtn.Name = "RevBtn";
-            this.RevBtn.Size = new System.Drawing.Size(82, 23);
-            this.RevBtn.TabIndex = 63;
-            this.RevBtn.Text = "REV";
-            this.RevBtn.UseVisualStyleBackColor = true;
-            this.RevBtn.Click += new System.EventHandler(this.RevBtn_Click);
-            // 
-            // FwdBtn
-            // 
-            this.FwdBtn.Location = new System.Drawing.Point(10, 25);
-            this.FwdBtn.Name = "FwdBtn";
-            this.FwdBtn.Size = new System.Drawing.Size(82, 23);
-            this.FwdBtn.TabIndex = 62;
-            this.FwdBtn.Text = "FWD";
-            this.FwdBtn.UseVisualStyleBackColor = true;
-            this.FwdBtn.Click += new System.EventHandler(this.button3_Click);
+            this.MotorDetectLbl.AutoSize = true;
+            this.MotorDetectLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.MotorDetectLbl.Location = new System.Drawing.Point(15, 15);
+            this.MotorDetectLbl.Name = "MotorDetectLbl";
+            this.MotorDetectLbl.Size = new System.Drawing.Size(42, 16);
+            this.MotorDetectLbl.TabIndex = 69;
+            this.MotorDetectLbl.Text = "Motor";
             // 
             // ControlPanel
             // 
@@ -716,44 +816,44 @@
             this.ControlPanel.Controls.Add(this.numericUpDown1);
             this.ControlPanel.Controls.Add(this.DirRevInd);
             this.ControlPanel.Controls.Add(this.DirFwdInd);
-            this.ControlPanel.Controls.Add(this.label20);
+            this.ControlPanel.Controls.Add(this.SpeedLbl);
             this.ControlPanel.Controls.Add(this.SpeedTextBox);
             this.ControlPanel.Controls.Add(this.label19);
             this.ControlPanel.Controls.Add(this.RevLimitInd);
             this.ControlPanel.Controls.Add(this.FwdLimitInd);
-            this.ControlPanel.Controls.Add(this.label16);
-            this.ControlPanel.Controls.Add(this.label15);
-            this.ControlPanel.Controls.Add(this.label14);
+            this.ControlPanel.Controls.Add(this.LimitLbl);
+            this.ControlPanel.Controls.Add(this.CurrentLbl);
+            this.ControlPanel.Controls.Add(this.VoltageLbl);
             this.ControlPanel.Controls.Add(this.VoltageTextBox);
             this.ControlPanel.Controls.Add(this.CurrentTextBox);
             this.ControlPanel.Controls.Add(this.MotorSpeedUpDown);
             this.ControlPanel.Controls.Add(this.label10);
             this.ControlPanel.Controls.Add(this.CloseControlPanelBtn);
-            this.ControlPanel.Controls.Add(this.MotorReadTextBox);
-            this.ControlPanel.Controls.Add(this.MotorReadBtn);
             this.ControlPanel.Controls.Add(this.MotorStopBtn);
             this.ControlPanel.Controls.Add(this.MotorRevBtn);
             this.ControlPanel.Controls.Add(this.MotorFwdBtn);
             this.ControlPanel.Location = new System.Drawing.Point(822, 32);
             this.ControlPanel.Name = "ControlPanel";
-            this.ControlPanel.Size = new System.Drawing.Size(264, 271);
+            this.ControlPanel.Size = new System.Drawing.Size(264, 232);
             this.ControlPanel.TabIndex = 61;
+            this.ControlPanel.Visible = false;
             // 
             // numericUpDown1
             // 
+            this.numericUpDown1.Font = new System.Drawing.Font("Courier New", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.numericUpDown1.Increment = new decimal(new int[] {
             100,
             0,
             0,
             0});
-            this.numericUpDown1.Location = new System.Drawing.Point(182, 60);
+            this.numericUpDown1.Location = new System.Drawing.Point(200, 60);
             this.numericUpDown1.Maximum = new decimal(new int[] {
             1000,
             0,
             0,
             0});
             this.numericUpDown1.Name = "numericUpDown1";
-            this.numericUpDown1.Size = new System.Drawing.Size(60, 20);
+            this.numericUpDown1.Size = new System.Drawing.Size(60, 21);
             this.numericUpDown1.TabIndex = 86;
             this.numericUpDown1.Value = new decimal(new int[] {
             250,
@@ -761,95 +861,99 @@
             0,
             0});
             // 
-            // label20
+            // SpeedLbl
             // 
-            this.label20.AutoSize = true;
-            this.label20.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label20.Location = new System.Drawing.Point(20, 150);
-            this.label20.Name = "label20";
-            this.label20.Size = new System.Drawing.Size(49, 16);
-            this.label20.TabIndex = 83;
-            this.label20.Text = "Speed";
+            this.SpeedLbl.AutoSize = true;
+            this.SpeedLbl.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.SpeedLbl.Location = new System.Drawing.Point(20, 150);
+            this.SpeedLbl.Name = "SpeedLbl";
+            this.SpeedLbl.Size = new System.Drawing.Size(80, 16);
+            this.SpeedLbl.TabIndex = 83;
+            this.SpeedLbl.Text = "Speed: NA";
             // 
             // SpeedTextBox
             // 
             this.SpeedTextBox.Enabled = false;
-            this.SpeedTextBox.Location = new System.Drawing.Point(109, 150);
+            this.SpeedTextBox.Location = new System.Drawing.Point(208, 146);
             this.SpeedTextBox.Name = "SpeedTextBox";
             this.SpeedTextBox.Size = new System.Drawing.Size(60, 20);
             this.SpeedTextBox.TabIndex = 82;
+            this.SpeedTextBox.Visible = false;
             // 
             // label19
             // 
             this.label19.AutoSize = true;
-            this.label19.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label19.Location = new System.Drawing.Point(20, 210);
+            this.label19.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label19.Location = new System.Drawing.Point(20, 180);
             this.label19.Name = "label19";
-            this.label19.Size = new System.Drawing.Size(28, 16);
+            this.label19.Size = new System.Drawing.Size(40, 16);
             this.label19.TabIndex = 81;
             this.label19.Text = "Dir:";
             // 
-            // label16
+            // LimitLbl
             // 
-            this.label16.AutoSize = true;
-            this.label16.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label16.Location = new System.Drawing.Point(20, 180);
-            this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(35, 16);
-            this.label16.TabIndex = 78;
-            this.label16.Text = "Limit";
+            this.LimitLbl.AutoSize = true;
+            this.LimitLbl.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.LimitLbl.Location = new System.Drawing.Point(20, 210);
+            this.LimitLbl.Name = "LimitLbl";
+            this.LimitLbl.Size = new System.Drawing.Size(48, 16);
+            this.LimitLbl.TabIndex = 78;
+            this.LimitLbl.Text = "Limit";
             // 
-            // label15
+            // CurrentLbl
             // 
-            this.label15.AutoSize = true;
-            this.label15.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label15.Location = new System.Drawing.Point(20, 120);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(50, 16);
-            this.label15.TabIndex = 77;
-            this.label15.Text = "Current";
+            this.CurrentLbl.AutoSize = true;
+            this.CurrentLbl.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CurrentLbl.Location = new System.Drawing.Point(20, 120);
+            this.CurrentLbl.Name = "CurrentLbl";
+            this.CurrentLbl.Size = new System.Drawing.Size(96, 16);
+            this.CurrentLbl.TabIndex = 77;
+            this.CurrentLbl.Text = "Current: NA";
             // 
-            // label14
+            // VoltageLbl
             // 
-            this.label14.AutoSize = true;
-            this.label14.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label14.Location = new System.Drawing.Point(20, 90);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(55, 16);
-            this.label14.TabIndex = 76;
-            this.label14.Text = "Voltage";
+            this.VoltageLbl.AutoSize = true;
+            this.VoltageLbl.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.VoltageLbl.Location = new System.Drawing.Point(20, 90);
+            this.VoltageLbl.Name = "VoltageLbl";
+            this.VoltageLbl.Size = new System.Drawing.Size(96, 16);
+            this.VoltageLbl.TabIndex = 76;
+            this.VoltageLbl.Text = "Voltage: NA";
             // 
             // VoltageTextBox
             // 
             this.VoltageTextBox.Enabled = false;
-            this.VoltageTextBox.Location = new System.Drawing.Point(109, 90);
+            this.VoltageTextBox.Location = new System.Drawing.Point(208, 92);
             this.VoltageTextBox.Name = "VoltageTextBox";
             this.VoltageTextBox.Size = new System.Drawing.Size(60, 20);
             this.VoltageTextBox.TabIndex = 74;
+            this.VoltageTextBox.Visible = false;
             // 
             // CurrentTextBox
             // 
             this.CurrentTextBox.Enabled = false;
-            this.CurrentTextBox.Location = new System.Drawing.Point(109, 120);
+            this.CurrentTextBox.Location = new System.Drawing.Point(230, 116);
             this.CurrentTextBox.Name = "CurrentTextBox";
             this.CurrentTextBox.Size = new System.Drawing.Size(60, 20);
             this.CurrentTextBox.TabIndex = 73;
+            this.CurrentTextBox.Visible = false;
             // 
             // MotorSpeedUpDown
             // 
+            this.MotorSpeedUpDown.Font = new System.Drawing.Font("Courier New", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.MotorSpeedUpDown.Increment = new decimal(new int[] {
             100,
             0,
             0,
             0});
-            this.MotorSpeedUpDown.Location = new System.Drawing.Point(108, 60);
+            this.MotorSpeedUpDown.Location = new System.Drawing.Point(120, 60);
             this.MotorSpeedUpDown.Maximum = new decimal(new int[] {
             3200,
             0,
             0,
             0});
             this.MotorSpeedUpDown.Name = "MotorSpeedUpDown";
-            this.MotorSpeedUpDown.Size = new System.Drawing.Size(60, 20);
+            this.MotorSpeedUpDown.Size = new System.Drawing.Size(60, 21);
             this.MotorSpeedUpDown.TabIndex = 72;
             this.MotorSpeedUpDown.Value = new decimal(new int[] {
             1600,
@@ -860,10 +964,10 @@
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label10.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label10.Location = new System.Drawing.Point(20, 60);
             this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(86, 16);
+            this.label10.Size = new System.Drawing.Size(96, 16);
             this.label10.TabIndex = 68;
             this.label10.Text = "Motor Speed";
             // 
@@ -876,24 +980,6 @@
             this.CloseControlPanelBtn.Text = "CLOSE";
             this.CloseControlPanelBtn.UseVisualStyleBackColor = true;
             this.CloseControlPanelBtn.Click += new System.EventHandler(this.CloseControlPanelBtn_Click);
-            // 
-            // MotorReadTextBox
-            // 
-            this.MotorReadTextBox.Enabled = false;
-            this.MotorReadTextBox.Location = new System.Drawing.Point(109, 240);
-            this.MotorReadTextBox.Name = "MotorReadTextBox";
-            this.MotorReadTextBox.Size = new System.Drawing.Size(60, 20);
-            this.MotorReadTextBox.TabIndex = 65;
-            // 
-            // MotorReadBtn
-            // 
-            this.MotorReadBtn.Location = new System.Drawing.Point(23, 240);
-            this.MotorReadBtn.Name = "MotorReadBtn";
-            this.MotorReadBtn.Size = new System.Drawing.Size(75, 23);
-            this.MotorReadBtn.TabIndex = 64;
-            this.MotorReadBtn.Text = "READ";
-            this.MotorReadBtn.UseVisualStyleBackColor = true;
-            this.MotorReadBtn.Click += new System.EventHandler(this.MotorReadBtn_Click);
             // 
             // MotorStopBtn
             // 
@@ -947,9 +1033,9 @@
             this.ProfileGroupBox.Controls.Add(this.SaveProfileBtn);
             this.ProfileGroupBox.Controls.Add(this.textBox3);
             this.ProfileGroupBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ProfileGroupBox.Location = new System.Drawing.Point(45, 69);
+            this.ProfileGroupBox.Location = new System.Drawing.Point(6, 212);
             this.ProfileGroupBox.Name = "ProfileGroupBox";
-            this.ProfileGroupBox.Size = new System.Drawing.Size(590, 520);
+            this.ProfileGroupBox.Size = new System.Drawing.Size(448, 520);
             this.ProfileGroupBox.TabIndex = 47;
             this.ProfileGroupBox.TabStop = false;
             this.ProfileGroupBox.Text = "Profile";
@@ -972,7 +1058,7 @@
             this.panel2.Controls.Add(this.LeftBreastUpDown);
             this.panel2.Controls.Add(this.LeftArmUpDown);
             this.panel2.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.panel2.Location = new System.Drawing.Point(335, 201);
+            this.panel2.Location = new System.Drawing.Point(230, 201);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(233, 252);
             this.panel2.TabIndex = 73;
@@ -1157,9 +1243,9 @@
             this.panel1.Controls.Add(this.RightArmUpDown);
             this.panel1.Controls.Add(this.TorsoUpDown);
             this.panel1.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.panel1.Location = new System.Drawing.Point(32, 201);
+            this.panel1.Location = new System.Drawing.Point(10, 201);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(233, 256);
+            this.panel1.Size = new System.Drawing.Size(211, 256);
             this.panel1.TabIndex = 72;
             // 
             // label18
@@ -1358,7 +1444,7 @@
             this.groupBox3.Controls.Add(this.ModelTextBox);
             this.groupBox3.Controls.Add(this.SnTextBox);
             this.groupBox3.Controls.Add(this.NameTextBox);
-            this.groupBox3.Location = new System.Drawing.Point(32, 15);
+            this.groupBox3.Location = new System.Drawing.Point(32, 20);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(224, 180);
             this.groupBox3.TabIndex = 69;
@@ -1509,37 +1595,37 @@
             this.Controller2GridView.AllowUserToResizeColumns = false;
             this.Controller2GridView.AllowUserToResizeRows = false;
             this.Controller2GridView.BackgroundColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle73.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle73.BackColor = System.Drawing.SystemColors.Info;
-            dataGridViewCellStyle73.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle73.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle73.SelectionBackColor = System.Drawing.Color.LightGray;
-            dataGridViewCellStyle73.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle73.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.Controller2GridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle73;
+            dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle7.BackColor = System.Drawing.SystemColors.Info;
+            dataGridViewCellStyle7.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle7.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle7.SelectionBackColor = System.Drawing.Color.LightGray;
+            dataGridViewCellStyle7.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.Controller2GridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle7;
             this.Controller2GridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.Controller2GridView.Cursor = System.Windows.Forms.Cursors.Default;
-            dataGridViewCellStyle74.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle74.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle74.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle74.ForeColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle74.SelectionBackColor = System.Drawing.Color.White;
-            dataGridViewCellStyle74.SelectionForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle74.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.Controller2GridView.DefaultCellStyle = dataGridViewCellStyle74;
+            dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle8.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle8.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle8.ForeColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle8.SelectionBackColor = System.Drawing.Color.White;
+            dataGridViewCellStyle8.SelectionForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.Controller2GridView.DefaultCellStyle = dataGridViewCellStyle8;
             this.Controller2GridView.Enabled = false;
             this.Controller2GridView.EnableHeadersVisualStyles = false;
             this.Controller2GridView.Location = new System.Drawing.Point(18, 121);
             this.Controller2GridView.Name = "Controller2GridView";
             this.Controller2GridView.ReadOnly = true;
-            dataGridViewCellStyle75.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle75.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle75.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle75.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle75.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle75.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle75.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.Controller2GridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle75;
+            dataGridViewCellStyle9.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle9.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle9.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle9.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle9.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle9.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle9.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.Controller2GridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle9;
             this.Controller2GridView.RowHeadersWidth = 120;
             this.Controller2GridView.Size = new System.Drawing.Size(240, 75);
             this.Controller2GridView.TabIndex = 53;
@@ -1560,14 +1646,14 @@
             this.BleGroupBox.Controls.Add(this.BleDiscoverBtn);
             this.BleGroupBox.Location = new System.Drawing.Point(460, 15);
             this.BleGroupBox.Name = "BleGroupBox";
-            this.BleGroupBox.Size = new System.Drawing.Size(341, 560);
+            this.BleGroupBox.Size = new System.Drawing.Size(341, 620);
             this.BleGroupBox.TabIndex = 52;
             this.BleGroupBox.TabStop = false;
             this.BleGroupBox.Text = "BLE";
             // 
             // BleMgsTextClear
             // 
-            this.BleMgsTextClear.Location = new System.Drawing.Point(233, 530);
+            this.BleMgsTextClear.Location = new System.Drawing.Point(244, 585);
             this.BleMgsTextClear.Name = "BleMgsTextClear";
             this.BleMgsTextClear.Size = new System.Drawing.Size(82, 23);
             this.BleMgsTextClear.TabIndex = 60;
@@ -1582,7 +1668,7 @@
             this.BleMsgTextBox.Location = new System.Drawing.Point(6, 410);
             this.BleMsgTextBox.Name = "BleMsgTextBox";
             this.BleMsgTextBox.ReadOnly = true;
-            this.BleMsgTextBox.Size = new System.Drawing.Size(309, 116);
+            this.BleMsgTextBox.Size = new System.Drawing.Size(320, 170);
             this.BleMsgTextBox.TabIndex = 59;
             this.BleMsgTextBox.Text = "";
             // 
@@ -1643,7 +1729,7 @@
             this.lvDevices.HideSelection = false;
             this.lvDevices.Location = new System.Drawing.Point(6, 54);
             this.lvDevices.Name = "lvDevices";
-            this.lvDevices.Size = new System.Drawing.Size(309, 175);
+            this.lvDevices.Size = new System.Drawing.Size(320, 175);
             this.lvDevices.TabIndex = 53;
             this.lvDevices.UseCompatibleStateImageBehavior = false;
             this.lvDevices.View = System.Windows.Forms.View.Details;
@@ -1673,19 +1759,6 @@
             this.BleConnectBtn.UseVisualStyleBackColor = true;
             this.BleConnectBtn.Click += new System.EventHandler(this.BleConnectBtn_Click);
             // 
-            // BleDiscoverBtn
-            // 
-            this.BleDiscoverBtn.BackColor = System.Drawing.Color.SkyBlue;
-            this.BleDiscoverBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.BleDiscoverBtn.Location = new System.Drawing.Point(6, 23);
-            this.BleDiscoverBtn.Name = "BleDiscoverBtn";
-            this.BleDiscoverBtn.Size = new System.Drawing.Size(130, 25);
-            this.BleDiscoverBtn.TabIndex = 51;
-            this.BleDiscoverBtn.Text = "Discover";
-            this.toolTip1.SetToolTip(this.BleDiscoverBtn, "Search for bluetooth devices");
-            this.BleDiscoverBtn.UseVisualStyleBackColor = false;
-            this.BleDiscoverBtn.Click += new System.EventHandler(this.button1_Click);
-            // 
             // ControllerGridView
             // 
             this.ControllerGridView.AllowUserToAddRows = false;
@@ -1693,37 +1766,37 @@
             this.ControllerGridView.AllowUserToResizeColumns = false;
             this.ControllerGridView.AllowUserToResizeRows = false;
             this.ControllerGridView.BackgroundColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle76.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle76.BackColor = System.Drawing.SystemColors.Info;
-            dataGridViewCellStyle76.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle76.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle76.SelectionBackColor = System.Drawing.Color.LightGray;
-            dataGridViewCellStyle76.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle76.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.ControllerGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle76;
+            dataGridViewCellStyle10.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle10.BackColor = System.Drawing.SystemColors.Info;
+            dataGridViewCellStyle10.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle10.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle10.SelectionBackColor = System.Drawing.Color.LightGray;
+            dataGridViewCellStyle10.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle10.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.ControllerGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle10;
             this.ControllerGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.ControllerGridView.Cursor = System.Windows.Forms.Cursors.Default;
-            dataGridViewCellStyle77.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle77.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle77.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle77.ForeColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle77.SelectionBackColor = System.Drawing.Color.White;
-            dataGridViewCellStyle77.SelectionForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle77.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.ControllerGridView.DefaultCellStyle = dataGridViewCellStyle77;
+            dataGridViewCellStyle11.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle11.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle11.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle11.ForeColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle11.SelectionBackColor = System.Drawing.Color.White;
+            dataGridViewCellStyle11.SelectionForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle11.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.ControllerGridView.DefaultCellStyle = dataGridViewCellStyle11;
             this.ControllerGridView.Enabled = false;
             this.ControllerGridView.EnableHeadersVisualStyles = false;
             this.ControllerGridView.Location = new System.Drawing.Point(18, 32);
             this.ControllerGridView.Name = "ControllerGridView";
             this.ControllerGridView.ReadOnly = true;
-            dataGridViewCellStyle78.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle78.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle78.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle78.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle78.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle78.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle78.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.ControllerGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle78;
+            dataGridViewCellStyle12.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle12.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle12.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle12.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle12.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle12.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle12.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.ControllerGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle12;
             this.ControllerGridView.RowHeadersWidth = 120;
             this.ControllerGridView.Size = new System.Drawing.Size(240, 75);
             this.ControllerGridView.TabIndex = 48;
@@ -1945,9 +2018,9 @@
             // 
             this.FtcStatusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel1});
-            this.FtcStatusStrip.Location = new System.Drawing.Point(0, 601);
+            this.FtcStatusStrip.Location = new System.Drawing.Point(0, 694);
             this.FtcStatusStrip.Name = "FtcStatusStrip";
-            this.FtcStatusStrip.Size = new System.Drawing.Size(1211, 22);
+            this.FtcStatusStrip.Size = new System.Drawing.Size(1248, 22);
             this.FtcStatusStrip.TabIndex = 26;
             this.FtcStatusStrip.Text = "statusStrip1";
             // 
@@ -1964,38 +2037,17 @@
             this.FileSystemWatcher.SynchronizingObject = this;
             this.FileSystemWatcher.Changed += new System.IO.FileSystemEventHandler(this.FileSystemWatcher_Changed);
             // 
-            // CameraGroupBox
+            // FileMonitorTimer
             // 
-            this.CameraGroupBox.Controls.Add(this.StartPreviewBtn);
-            this.CameraGroupBox.Controls.Add(this.StopCaptureBtn);
-            this.CameraGroupBox.Controls.Add(this.CaptureBtn);
-            this.CameraGroupBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CameraGroupBox.Location = new System.Drawing.Point(15, 163);
-            this.CameraGroupBox.Name = "CameraGroupBox";
-            this.CameraGroupBox.Size = new System.Drawing.Size(285, 80);
-            this.CameraGroupBox.TabIndex = 79;
-            this.CameraGroupBox.TabStop = false;
-            this.CameraGroupBox.Text = "Camera Control";
-            // 
-            // MotorGroupBox
-            // 
-            this.MotorGroupBox.Controls.Add(this.FwdBtn);
-            this.MotorGroupBox.Controls.Add(this.RevBtn);
-            this.MotorGroupBox.Controls.Add(this.StopBtn);
-            this.MotorGroupBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.MotorGroupBox.Location = new System.Drawing.Point(15, 244);
-            this.MotorGroupBox.Name = "MotorGroupBox";
-            this.MotorGroupBox.Size = new System.Drawing.Size(285, 65);
-            this.MotorGroupBox.TabIndex = 80;
-            this.MotorGroupBox.TabStop = false;
-            this.MotorGroupBox.Text = "Motor Control";
+            this.FileMonitorTimer.Interval = 500;
+            this.FileMonitorTimer.Tick += new System.EventHandler(this.timer2_Tick);
             // 
             // TheMainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.WhiteSmoke;
-            this.ClientSize = new System.Drawing.Size(1211, 623);
+            this.ClientSize = new System.Drawing.Size(1248, 716);
             this.Controls.Add(this.FtcStatusStrip);
             this.Controls.Add(this.MainPanel);
             this.Controls.Add(this.OpenSerialPortBtn);
@@ -2015,6 +2067,10 @@
             this.MainPanel.PerformLayout();
             this.OperationPanel.ResumeLayout(false);
             this.OperationPanel.PerformLayout();
+            this.MotorGroupBox.ResumeLayout(false);
+            this.MotorGroupBox.PerformLayout();
+            this.CameraGroupBox.ResumeLayout(false);
+            this.CameraGroupBox.PerformLayout();
             this.FitGroupBox.ResumeLayout(false);
             this.ControlPanel.ResumeLayout(false);
             this.ControlPanel.PerformLayout();
@@ -2056,8 +2112,6 @@
             this.FtcStatusStrip.ResumeLayout(false);
             this.FtcStatusStrip.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.FileSystemWatcher)).EndInit();
-            this.CameraGroupBox.ResumeLayout(false);
-            this.MotorGroupBox.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -2183,20 +2237,18 @@
         private System.Windows.Forms.Button MotorFwdBtn;
         private System.Windows.Forms.Button MotorStopBtn;
         private System.Windows.Forms.Button MotorRevBtn;
-        private System.Windows.Forms.TextBox MotorReadTextBox;
-        private System.Windows.Forms.Button MotorReadBtn;
         private System.Windows.Forms.Button CloseControlPanelBtn;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.NumericUpDown MotorSpeedUpDown;
         private System.Windows.Forms.TextBox VoltageTextBox;
         private System.Windows.Forms.TextBox CurrentTextBox;
-        private System.Windows.Forms.Label label16;
-        private System.Windows.Forms.Label label15;
-        private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.Label LimitLbl;
+        private System.Windows.Forms.Label CurrentLbl;
+        private System.Windows.Forms.Label VoltageLbl;
         private System.Windows.Forms.Button RevLimitInd;
         private System.Windows.Forms.Button FwdLimitInd;
         private System.Windows.Forms.Label label19;
-        private System.Windows.Forms.Label label20;
+        private System.Windows.Forms.Label SpeedLbl;
         private System.Windows.Forms.TextBox SpeedTextBox;
         private System.Windows.Forms.Button DirFwdInd;
         private System.Windows.Forms.Button DirRevInd;
@@ -2212,11 +2264,11 @@
         private System.Windows.Forms.Button FwdBtn;
         private System.Windows.Forms.Button UploadFilesBtn;
         private System.Windows.Forms.Button OpCloseBtn;
-        private System.Windows.Forms.Label label24;
+        private System.Windows.Forms.Label MotorDetectLbl;
         private System.Windows.Forms.ComboBox FitTypeComboBox;
         private System.Windows.Forms.Label label25;
         private System.Windows.Forms.TextBox SnLoadTextBox;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button OpLoadBtn;
         private System.Windows.Forms.ComboBox FitTypeLoadComboBox;
         private System.Windows.Forms.Button OpTightFitBtn;
         private System.Windows.Forms.Button OpNormalFitBtn;
@@ -2225,6 +2277,12 @@
         private System.Windows.Forms.GroupBox FitGroupBox;
         private System.Windows.Forms.GroupBox CameraGroupBox;
         private System.Windows.Forms.GroupBox MotorGroupBox;
+        private System.Windows.Forms.Timer FileMonitorTimer;
+        private System.Windows.Forms.Label CameraOperationLbl;
+        private System.Windows.Forms.Label CameraStatusLbl;
+        private System.Windows.Forms.Label MotorStatusLbl;
+        private System.Windows.Forms.Label CameraPortLbl;
+        private System.Windows.Forms.Button button1;
         //private Gigasoft.ProEssentials.Pesgo GenericPlot;
     }
 }
