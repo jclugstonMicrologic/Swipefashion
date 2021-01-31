@@ -108,7 +108,7 @@ BOOL Ble_MachineInit(void)
 */
 static void Ble_Notify_Timer_Callback (void * pvParameter)
 { 
-#if 1  
+#if 0 
     //uint16_t length =0;
     char data_array[16];
 
@@ -121,6 +121,7 @@ var -=1;
     Ble_SendString(data_array); 
 #else      
     /* send pressure readings periodically */
+    //Ble_ProcessCommands(CMD_GET_PRESS_TEMP, NULL_PTR);
     Ble_ProcessCommands(CMD_GET_PRESS, NULL_PTR);
 #endif
 }
@@ -284,6 +285,17 @@ void Ble_ProcessCommands
                 if( valveNbr& (0x01<<j) )
                     CloseValve(j+1);
             }                       
+            break;
+        case CMD_SET_VALUE:
+            valveNbr  =*pRxBuf++;
+            
+            for(int j=0;j<8; j++)
+            {
+                if( valveNbr&(0x01<<j) )
+                    CloseValve(j+1);
+                else
+                    OpenValve(j+1);
+            }
             break;            
         case CMD_GET_PRESS_TEMP:            
             PressureTdr_GetPressTemp(pressSensorData);
@@ -296,7 +308,10 @@ void Ble_ProcessCommands
       
             for(int j=0; j<NBR_TRANSDUCERS; j++)
             {
-                pressSensorPsi[j] =(UINT16)(pressSensorData[j].press/0.00689476);
+                if( pressSensorData[j].press >=0 )
+                    pressSensorPsi[j] =(UINT16)(pressSensorData[j].press/0.00689476);
+                else
+                    pressSensorPsi[j] =0;
             }
             
             memcpy(BleSerialTxBuffer, &pressSensorPsi, sizeof(BleSerialTxBuffer));            
@@ -356,7 +371,7 @@ BOOL Ble_Machine(void)
                 else if( msgNbr ==2 )
                     Ble_SendString("SS,C0\r\n"); // enable device information and UART transparent service
                 else if( msgNbr ==3 )
-                    Ble_SendString("S-,SF\r\n"); // enable device information and UART transparent service                
+                    Ble_SendString("S-,SwipeFashion\r\n"); // enable device information and UART transparent service                
                 else if(msgNbr ==4 )
                 {
                     Ble_SendString("R,1\r\n"); // reboot the module                  

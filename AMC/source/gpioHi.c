@@ -297,7 +297,7 @@ void GpioSleep
 }
 
 
-#define PULSE_PERIOD 12000 //msec
+#define PULSE_PERIOD 10000 //msec
 /*
 *|----------------------------------------------------------------------------
 *|  Routine: OpenValve

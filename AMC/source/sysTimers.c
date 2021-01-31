@@ -49,7 +49,7 @@ BOOL TimerSetupUs( void )
 
     /* Time base configuration */
     TIM_TimeBaseStructure.TIM_Period = 0xffffffffUL;    /* free-run over full 32-bit range */
-    TIM_TimeBaseStructure.TIM_Prescaler =3;// 79;           /* divide 80MHz clock by 80 */
+    TIM_TimeBaseStructure.TIM_Prescaler =96;           /* divide 80MHz clock by 80 */
     TIM_TimeBaseStructure.TIM_ClockDivision = 0;
     TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
 

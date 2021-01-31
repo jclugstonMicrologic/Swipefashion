@@ -111,6 +111,10 @@ BOOL SciBinaryReceiverInit
             pSerialData =&PcDataCom;
             pSerialData->pCheckSumFunction =CrcCalc16;
             break;
+         case SCI_BLUETOOTH_COM:
+            pSerialData =&BleDataCom;
+            pSerialData->pCheckSumFunction =CrcCalc16;
+            break;            
     }    
 
     pSerialData->pCmdFunction = pCallBack;

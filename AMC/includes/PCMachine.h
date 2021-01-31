@@ -60,6 +60,8 @@
 #define CMD_GET_BRD_ID                          0x0210
 #define CMD_GET_PRESS                           0x0211
 
+#define CMD_SET_VALUE                           0x0212
+
 #define CMD_GW_LAST                             0x02ff
 
 

@@ -187,7 +187,7 @@ UINT8 debounceCnt =0;
     }
 #endif    
    
-    Solenoid_StartPeriodicToggle();
+  //  Solenoid_StartPeriodicToggle();
 
     int sensor =0;
     
