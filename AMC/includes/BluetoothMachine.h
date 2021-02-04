@@ -20,7 +20,7 @@
 
 #include "types.h"
 //#include "SciAsciiMachine.h"
-#include "SciBinaryMachine.h"
+//#include "SciBinaryMachine.h"
 
 BOOL Ble_MachineInit(void);
 BOOL Ble_Machine(void);

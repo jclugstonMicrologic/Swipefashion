@@ -31,12 +31,14 @@
 
 #include "sysTimers.h"
 
-//#include "AdcFd.h"
+#include "SciAsciiMachine.h"
+
 #include "PressureTdrHi.h"
 #include "BluetoothMachine.h"
 
-#include "SciAsciiMachine.h"
-   
+  
+UINT16 BoardId;
+
 void MainControlTask(void * pvParameters);
 
 /** Functions *****************************************************************/
@@ -153,7 +155,7 @@ void MainControlTask(void * pvParameters)
 UINT32 loopCnt =0;
 char aStr[32];
 UINT8 sensorPresent =0;
-press_sensor_data_t PSensorData[8];
+press_sensor_data_t PSensorData[NBR_TRANSDUCERS];
 
 #ifdef DEV_BOARD
 UINT8 valveState =0;
@@ -162,6 +164,8 @@ UINT8 debounceCnt =0;
 
   //  TickType_t delayTime = xTaskGetTickCount();    
 
+    BoardId =0;
+    
     /* !!! test !!! */
     strcpy(aStr, "AMC v");
     strcat(aStr, FW_VERSION);
@@ -172,7 +176,7 @@ UINT8 debounceCnt =0;
     
     sensorPresent =PressureTdr_GetTdrs();
     
-    for(int j=0; j<8; j++)
+    for(int j=0; j<NBR_TRANSDUCERS; j++)
     {
         if( sensorPresent & (0x01<<j) )
         {
@@ -190,6 +194,9 @@ UINT8 debounceCnt =0;
   //  Solenoid_StartPeriodicToggle();
 
     int sensor =0;
+    
+    /* get our board id now */
+    BoardId =BOARD_ID;
     
     for( ;; )
     {      
@@ -322,7 +329,13 @@ UINT8 debounceCnt =0;
 
         Ble_Machine();
           
-        PressureTdr_CheckOverPres();
+        if( (loopCnt %1000 ) ==0 )
+        {
+            if( PressureTdr_CheckOverPres() )
+            {
+                SciAsciiSendString(SCI_PC_COM, "BLADDER OVER PRESSURE!!!\r\n");
+            }
+        }
         
         /* place this task in the blocked state until it is time to run again */
         vTaskDelayUntil( &xNextWakeTime, 1 );        

@@ -60,6 +60,8 @@ int MlinkBinaryRxMachine(sci_data_t *pSerialData,char sciPort);
 void SendMlinkPacket(UINT8 sciPort, UINT16 cmd, UINT16 nbrBytes, char *pPayload);
 void SendMlinkAsciiPacket(UINT8 sciPort, UINT16 nbrBytes, char *pPayload);
 
+UINT8 Sci_GetAsciiString(char sciPort,char *pString);
+
 #endif
 
 

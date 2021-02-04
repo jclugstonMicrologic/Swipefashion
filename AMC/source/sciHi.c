@@ -48,7 +48,6 @@ QUE_STRUCT RxBuff[NBR_PORTS];
 /* We need this que for the MQTT application */
 //QUE_STRUCT SocketQue;
 
-
 void SciComInit(COMTypeDef sciPort, USART_InitTypeDef* USART_InitStruct);
                 
                 

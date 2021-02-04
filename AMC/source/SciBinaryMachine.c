@@ -26,6 +26,8 @@
 #include "gpioHi.h"
 #include "SciBinaryMachine.h"
 
+#include "SciAsciiMachine.h"
+
 /** Local Variable Declarations ***********************************************/
 #define SERIAL_TIMEOUT_500MSEC (500)  //500msec
 #define SERIAL_TIMEOUT_100MSEC (100)  //100msec
@@ -51,6 +53,7 @@ sci_data_t PcDataCom;
 
 sci_data_t BleDataCom;
 
+UINT8 AsciiBuf[256];
 /** Local Function Prototypes *************************************************/
 void SciBinaryTaskComx(void * pvParameters);
 int SciBinaryRxMachine(sci_data_t *pSerialData,char sciPort);
@@ -149,9 +152,6 @@ void SciBinaryTaskComx(void * pvParameters)
         SciBinaryRxMachine(&PcDataCom, SCI_PC_COM);
         
         SciBinaryRxMachine(&BleDataCom, SCI_BLUETOOTH_COM);
-            
-        //SerialTxBuffer[0] ='H';
-        //SciSendPacket(SCI_PC_COM, 1, 1, SerialTxBuffer);     
         
         /* place this task in the blocked state until it is time to run again */
         vTaskDelayUntil( &xNextWakeTime, 1 );         
@@ -221,7 +221,14 @@ int SciBinaryRxMachine
                     
 		    pSerialData->rxBuffer[pSerialData->byteCnt++] =rxByte;
 		    SciStateProcess( &pSerialData->common, SCI_BINARY_RX_STX_STATE);                                         
-		}                             
+		}   
+                else
+                {
+		    pSerialData->rxBuffer[pSerialData->byteCnt++] =rxByte;
+                    
+                    if(pSerialData->byteCnt> 250)
+                        pSerialData->byteCnt =0;
+                }
 	    }
     	    break;
         case SCI_BINARY_RX_STX_STATE:
@@ -362,3 +369,40 @@ void SciSendPacket(UINT8 sciPort, UINT16 cmd, UINT16 nbrBytes, char *pPayload)
     SciSendByte(sciPort, ((calculatedCrc&0x00ff)>>0) );    
 }
 
+
+
+/*
+*|----------------------------------------------------------------------------
+*|  Routine: Sci_GetAsciiString
+*|  Description:
+*|   Checks serial rx register for ASCII data. 
+*|  Retval: UINT8
+*|----------------------------------------------------------------------------
+*/
+UINT8 Sci_GetAsciiString
+(
+   char sciPort,
+   char *pString
+)
+{    
+    int k=0;
+    
+    memset( AsciiBuf, 0x00, sizeof(AsciiBuf));
+    
+    for(int j=0; j<256; j++)
+    {
+        //if(RxBuff[sciPort].q[j]<0x7f && RxBuff[sciPort].q[j]>=0x20)          
+        if(BleDataCom.rxBuffer[j]<0x7f && BleDataCom.rxBuffer[j]>=0x20)          
+            AsciiBuf[k++]= BleDataCom.rxBuffer[j];
+    }
+       
+    //if( strstr( (char *)RxBuff[sciPort].q, pString) !=0 )
+    if( strstr( (char *)AsciiBuf, pString) !=0 )
+    {
+        BleDataCom.byteCnt =0;
+        memset( &BleDataCom.rxBuffer, 0x00, sizeof(BleDataCom.rxBuffer));
+        return 1;
+    }
+    else
+        return 0;
+}

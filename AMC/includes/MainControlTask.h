@@ -20,7 +20,9 @@
 
 #include "types.h"
 
-#define FW_VERSION "0.04 " 
+#define FW_VERSION "0.05 " 
+
+extern UINT16 BoardId;
 
 BOOL MainControlTaskInit(void);
 

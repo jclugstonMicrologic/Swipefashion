@@ -23,6 +23,9 @@
 #include "sciFd.h"
 #include "sciHi.h"
 
+
+#define TERMINAL_DEBUG_ENABLED 
+
 typedef enum
 {
     AT_CMD_UNKNOWN =0,
@@ -37,6 +40,8 @@ typedef enum
 BOOL SciAsciiReceiverInit(UINT8 sciPort,UINT32 baudRate,void (*pCallBack)(int, char *), void (*pAltCallBack)(int, char *));
 BOOL SciAsciiStartReceiver(void);
 void SciAsciiSendString(UINT8 port, char *pBuf);
+
+int SciAsciiRxMachine(sci_data_t *pSerialData,char sciPort);
 
 void TestBluetoothComms(char *pBuf);
 

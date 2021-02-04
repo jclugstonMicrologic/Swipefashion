@@ -232,6 +232,7 @@ void SciSerialPortInit(COMTypeDef port, UINT32 baudRate,UINT8 parity);
 void SciSetPort(UINT16 port);
 UINT16 SciGetByte(char uart, char *rxBytePtr);
 extern void SciSendByte(char txByte,char sciPort);
+UINT8 SciGetString(char sciPort,char *pString);
 
 void SciSocketInit(void);
 int SciSocketCheckQue(void);

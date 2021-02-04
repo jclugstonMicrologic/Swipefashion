@@ -11,7 +11,7 @@
 * REVISION LOG
 *
 *******************************************************************************
-* Copyright (c) 2020, MICROLOGIC
+* Copyright (c) 2021, MICROLOGIC
 * Calgary, Alberta, Canada, www.micrologic.ab.ca
 *******************************************************************************/
 
@@ -19,10 +19,9 @@
 /** Include Files *************************************************************/
 
 #include "gpioHi.h"
-#include "FreeRTOS.h"
-#include "task.h"
-
-#include "sysTimers.h"
+//#include "FreeRTOS.h"
+//#include "task.h"
+//#include "sysTimers.h"
 
 /** Functions *****************************************************************/
 
@@ -65,9 +64,6 @@ void Gpio_Init
     GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
     GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
-
-GPIO_InitStructure.GPIO_Pin =BRD_ID_BIT1_PIN;
-GPIO_Init(BRD_ID_BIT1_PORT, &GPIO_InitStructure);            
 
     GPIO_InitStructure.GPIO_Pin =GREEN_LED_PIN;
     GPIO_Init(GREEN_LED_PORT, &GPIO_InitStructure);          
@@ -146,8 +142,8 @@ GPIO_Init(BRD_ID_BIT1_PORT, &GPIO_InitStructure);
     GPIO_InitStructure.GPIO_Pin =BRD_ID_BIT0_PIN;
     GPIO_Init(BRD_ID_BIT0_PORT, &GPIO_InitStructure);        
     
-    //GPIO_InitStructure.GPIO_Pin =BRD_ID_BIT1_PIN;
-    //GPIO_Init(BRD_ID_BIT1_PORT, &GPIO_InitStructure);            
+    GPIO_InitStructure.GPIO_Pin =BRD_ID_BIT1_PIN;
+    GPIO_Init(BRD_ID_BIT1_PORT, &GPIO_InitStructure);            
     
 #if 0
     GPIO_InitStructure.GPIO_Pin =GPIO_Pin_12;
@@ -185,6 +181,27 @@ GPIO_Init(BRD_ID_BIT1_PORT, &GPIO_InitStructure);
     GPIO_InitStructure.GPIO_Pin =GPIO_Pin_0;                                 
     GPIO_Init(GPIOB, &GPIO_InitStructure);		           
 #endif    
+}
+
+/*
+*|----------------------------------------------------------------------------
+*|  Routine: GpioSleep
+*|  Description:
+*|  Retval:
+*|----------------------------------------------------------------------------
+*/
+void GpioSetOutput(void)
+{
+    GPIO_InitTypeDef  GPIO_InitStructure;    
+    
+    /* configure the following GPIO pins as outputs */
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
+    GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+    GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
+    
+    GPIO_InitStructure.GPIO_Pin =BRD_ID_BIT1_PIN;
+    GPIO_Init(BRD_ID_BIT1_PORT, &GPIO_InitStructure);
 }
 
 
@@ -296,144 +313,6 @@ void GpioSleep
     ADC_Cmd( ADC1, DISABLE );
 }
 
-
-#define PULSE_PERIOD 10000 //msec
-/*
-*|----------------------------------------------------------------------------
-*|  Routine: OpenValve
-*|  Description:
-*|  Retval:
-*|----------------------------------------------------------------------------
-*/
-void OpenValve(uint8_t valveNbr)
-{
-    switch(valveNbr)
-    {
-        case 1:
-          S_DRIVE1_ASSERT;S_PULSE1_ON;                    
-          TimerDelayUs(PULSE_PERIOD);
-          S_PULSE1_OFF;                    
-          break;
-        case 2:
-          S_DRIVE2_ASSERT;S_PULSE2_ON;                    
-          TimerDelayUs(PULSE_PERIOD);
-          S_PULSE2_OFF;                    
-          break;          
-        case 3:
-          S_DRIVE3_ASSERT;S_PULSE3_ON;                    
-          TimerDelayUs(PULSE_PERIOD);
-          S_PULSE3_OFF;                    
-          break; 
-        case 4:
-          S_DRIVE4_ASSERT;S_PULSE4_ON;                    
-          TimerDelayUs(PULSE_PERIOD);
-          S_PULSE4_OFF;                              
-          break;          
-        case 5:
-          S_DRIVE5_ASSERT;S_PULSE5_ON;                    
-          TimerDelayUs(PULSE_PERIOD);
-          S_PULSE5_OFF;                    
-          break;          
-        case 6:
-          S_DRIVE6_ASSERT;S_PULSE6_ON;                    
-          TimerDelayUs(PULSE_PERIOD);
-          S_PULSE6_OFF;                    
-          break;  
-        case 7:
-          S_DRIVE7_ASSERT;S_PULSE7_ON;                    
-          TimerDelayUs(PULSE_PERIOD);
-          S_PULSE7_OFF;                    
-          break;          
-    }    
-}
-
-/*
-*|----------------------------------------------------------------------------
-*|  Routine: CloseValve
-*|  Description:
-*|  Retval:
-*|----------------------------------------------------------------------------
-*/
-void CloseValve(uint8_t valveNbr)
-{
-    switch(valveNbr)
-    {
-        case 1:
-          S_DRIVE1_NEGATE;
-          break;
-        case 2:
-          S_DRIVE2_NEGATE;
-          break;          
-        case 3:
-          S_DRIVE3_NEGATE;
-          break;  
-        case 4:
-          S_DRIVE4_NEGATE;
-          break;  
-        case 5:
-          S_DRIVE5_NEGATE;
-          break;  
-        case 6:
-          S_DRIVE6_NEGATE;
-          break;  
-        case 7:
-          S_DRIVE7_NEGATE;
-          break;                    
-    }    
-}
-
-
-/*
-*|----------------------------------------------------------------------------
-*|  Routine: OpenReliefValve
-*|  Description:
-*|  Retval:
-*|----------------------------------------------------------------------------
-*/
-void OpenReliefValve(uint8_t valveNbr)
-{
-    switch(valveNbr)
-    {
-        case 1:
-          AC_DRIVE1_ASSERT;
-          break;
-        case 2:
-          AC_DRIVE2_ASSERT;
-          break;          
-        case 3:
-          AC_DRIVE3_ASSERT;
-          break;  
-        case 4:
-          AC_DRIVE4_ASSERT;
-          break;  
-    }    
-}
-
-/*
-*|----------------------------------------------------------------------------
-*|  Routine: CloseReliefValve
-*|  Description:
-*|  Retval:
-*|----------------------------------------------------------------------------
-*/
-void CloseReliefValve(uint8_t valveNbr)
-{
-    switch(valveNbr)
-    {
-        case 1:
-          AC_DRIVE1_NEGATE;
-          break;
-        case 2:
-          AC_DRIVE2_NEGATE;
-          break;          
-        case 3:
-          AC_DRIVE3_NEGATE;
-          break;  
-        case 4:
-          AC_DRIVE4_NEGATE;
-          break;  
-    }    
-}
 
 /*
 *|----------------------------------------------------------------------------

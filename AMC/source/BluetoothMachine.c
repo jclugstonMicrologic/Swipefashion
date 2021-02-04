@@ -11,7 +11,7 @@
 * REVISION LOG
 *
 *******************************************************************************
-* Copyright (c) 2020, MICROLOGIC
+* Copyright (c) 2021, MICROLOGIC
 * Calgary, Alberta, Canada, www.micrologic.ab.ca
 *******************************************************************************/
 
@@ -25,8 +25,11 @@
 #include "stdio.h"
 
 #include "rtcHi.h"
+#include "solenoidHi.h" 
 #include "gpioHi.h"
 
+#include "SciBinaryMachine.h"
+#include "SciAsciiMachine.h"
 
 #include "AmcConfig.h"
 #include "PCMachine.h"
@@ -47,6 +50,7 @@ typedef enum
     BLUETOOTH_IDLE_STATE,
     BLUETOOTH_START_NOTIFY_STATE,
     BLUETOOTH_WAIT_FOR_CLIENT_STATE,
+    BLUETOOTH_CONNECTED_STATE,
     
     BLUETOOTH_LAST_STATE
       
@@ -59,7 +63,7 @@ typedef struct
     BluetoothStatesTypeEnum prevMachState;
         
     UINT32 timer;
-    UINT32 sleepTimer;    
+    UINT32 waitTimer;    
           
 }ble_t;
 
@@ -180,7 +184,6 @@ void Ble_ProcessCommands
     UINT16 pressSensorPsi[8];
 
     UINT8 valveNbr =0;
-    UINT8 boardId =0;
     UINT16 nbrTxBytes =0;
     
     //ErrorStatus errStatus =SUCCESS;
@@ -271,7 +274,7 @@ void Ble_ProcessCommands
         case CMD_OPEN_VALUE:
             valveNbr  =*pRxBuf++;
             
-            for(int j=0;j<8; j++)
+            for(int j=0;j<NBR_VALVES; j++)
             {
                 if( valveNbr&(0x01<<j) )
                     OpenValve(j+1);
@@ -280,30 +283,35 @@ void Ble_ProcessCommands
         case CMD_CLOSE_VALUE:
             valveNbr  =*pRxBuf++;
 
-            for(int j=0;j<8; j++)
+            for(int j=0;j<NBR_VALVES; j++)
             {
                 if( valveNbr& (0x01<<j) )
                     CloseValve(j+1);
             }                       
             break;
         case CMD_SET_VALUE:
+            /* open and close all valves */
             valveNbr  =*pRxBuf++;
             
-            for(int j=0;j<8; j++)
+            for(int j=0;j<NBR_VALVES; j++)
             {
                 if( valveNbr&(0x01<<j) )
-                    CloseValve(j+1);
-                else
                     OpenValve(j+1);
+                else
+                    CloseValve(j+1);
             }
             break;            
         case CMD_GET_PRESS_TEMP:            
+            /* pressure and temperature, and they are floats, 
+               large packet
+            */
             PressureTdr_GetPressTemp(pressSensorData);
             
-            memcpy(BleSerialTxBuffer, &pressSensorData, sizeof(BleSerialTxBuffer));            
+            memcpy(BleSerialTxBuffer, &pressSensorData, sizeof(pressSensorData));            
             nbrTxBytes =sizeof(pressSensorData);         
             break;
         case CMD_GET_PRESS:
+            /* just pressure, and UINT16 instead of float, much smaller packet */
             PressureTdr_GetPressTemp(pressSensorData);
       
             for(int j=0; j<NBR_TRANSDUCERS; j++)
@@ -314,14 +322,16 @@ void Ble_ProcessCommands
                     pressSensorPsi[j] =0;
             }
             
-            memcpy(BleSerialTxBuffer, &pressSensorPsi, sizeof(BleSerialTxBuffer));            
-            nbrTxBytes =sizeof(pressSensorPsi);     
+            /* send the board id along with this message */
+            memcpy(BleSerialTxBuffer, &BoardId, sizeof(BoardId));            
+            nbrTxBytes =sizeof(BoardId);     
+            
+            memcpy(&BleSerialTxBuffer[nbrTxBytes], &pressSensorPsi, sizeof(pressSensorPsi));            
+            nbrTxBytes +=sizeof(pressSensorPsi);     
             break;            
         case CMD_GET_BRD_ID:
-            boardId =BOARD_ID;
-
-            memcpy(BleSerialTxBuffer, &boardId, sizeof(boardId));            
-            nbrTxBytes =sizeof(boardId);                
+            memcpy(BleSerialTxBuffer, &BoardId, sizeof(BoardId));            
+            nbrTxBytes =sizeof(BoardId);                
             break;
         default:            
             cmd =0x7fff;
@@ -333,8 +343,26 @@ void Ble_ProcessCommands
     
     /* send a packet */
     SciSendPacket(SCI_BLUETOOTH_COM, cmd, nbrTxBytes, BleSerialTxBuffer);     
-} 
+}
 
+/*
+*|----------------------------------------------------------------------------
+*|  Routine: Ble_StateProcess
+*|  Description:
+*|  Retval:
+*|----------------------------------------------------------------------------
+*/
+void Ble_StateProcess
+(
+    ble_t *pStructInfo,
+    BluetoothStatesTypeEnum nextState
+)
+{
+    pStructInfo->prevMachState =pStructInfo->machState;
+    pStructInfo->machState =nextState;
+    
+    pStructInfo->timer =xTaskGetTickCount();
+}
 
 /*
 *|----------------------------------------------------------------------------
@@ -346,68 +374,93 @@ void Ble_ProcessCommands
 BOOL Ble_Machine(void)
 {  
     TickType_t xTicks=xTaskGetTickCount();
-    
     static UINT8 msgNbr =0;
+    BOOL msgPass =FALSE;
     
     switch( BleData.machState )
     {
         case BLUETOOTH_INIT_STATE:
-            //GPIO_ResetBits(BRD_ID_BIT1_PORT, BRD_ID_BIT1_PIN);
+            /* dual pupose pin, was input on startupm, now needs to be output */
+            GpioSetOutput();  
+
+            BLE_RESET_NEGATE;
             TimerDelayUs(500000);
-            GPIO_SetBits(BRD_ID_BIT1_PORT, BRD_ID_BIT1_PIN);
+            BLE_RESET_ASSERT;
             
-            msgNbr =0;
-                                    
-            BleData.timer =xTicks;            
-            BleData.machState =BLUETOOTH_WAIT_RESPONSE_STATE;
+            msgNbr =1;
+                         
+            BleData.waitTimer =xTicks;
+            
+            Ble_StateProcess(&BleData,BLUETOOTH_WAIT_RESPONSE_STATE);
             break;
         case BLUETOOTH_WAIT_RESPONSE_STATE:
-            if( (xTicks -BleData.timer ) >1000 )
-            {
-                msgNbr ++;
-                
-                if( msgNbr ==1 )
+            if( (xTicks -BleData.waitTimer ) >1000 )
+            {                
+                if( msgNbr ==1 && Sci_GetAsciiString(0, "%REBOOT") ==1 )
+                {
+                    msgPass =TRUE;
                     Ble_SendString("$$$");  //enter command mode
+                }
                 else if( msgNbr ==2 )
+                {
+                    msgPass =TRUE;
                     Ble_SendString("SS,C0\r\n"); // enable device information and UART transparent service
-                else if( msgNbr ==3 )
+                }
+                else if( msgNbr ==3 && Sci_GetAsciiString(0, "AOK") ==1 )
+                {
+                    msgPass =TRUE;
                     Ble_SendString("S-,SwipeFashion\r\n"); // enable device information and UART transparent service                
+                }
                 else if(msgNbr ==4 )
                 {
-                    Ble_SendString("R,1\r\n"); // reboot the module                  
-                    
+                    msgPass =TRUE;
+                    Ble_SendString("R,1\r\n"); // reboot the module                                      
+                }
+                else if(msgNbr ==5 && Sci_GetAsciiString(0, "%REBOOT") ==1 )
+                {                
                     /* done */
-                    BleData.machState =BLUETOOTH_IDLE_STATE;
+                    SciAsciiSendString(SCI_PC_COM, "BLE INIT PASS\r\n");
+                    msgPass =TRUE;
+                    Ble_StateProcess(&BleData,BLUETOOTH_START_NOTIFY_STATE);;                  
                 }
                 
-                BleData.timer =xTicks;       
+                if(msgPass)                
+                {
+                    msgPass =FALSE;
+                    msgNbr++;
+                }
+                else
+                {
+                    SciAsciiSendString(SCI_PC_COM, "ERROR BLE INIT FAIL\r\n");
+                    Ble_StateProcess(&BleData,BLUETOOTH_INIT_STATE);
+                }
+                
+                BleData.waitTimer =xTicks;       
             }
             break;
         case BLUETOOTH_IDLE_STATE:
-//            Ble_SendString("$$$");  //enter command mode
-#if 0
-//Ble_SendString("+\r\n"); //echo on
-Ble_SendString("SS,C0\r\n"); // enable device information and UART transparent service
-
-Ble_SendString("R,1\r\n"); // reboot the module
-//Ble_SendString("D\r\n"); // display settings (ensure service is no C0)
-
-//Ble_SendString("F\r\n"); // initiate scan
-//Ble_SendString("C,<0,1><MAC address>\r\n"); 
-
-/* kill connection */
-//Ble_SendString("$$$");
-//Ble_SendString("K,1\r\n");
-#endif
-            BleData.machState =BLUETOOTH_START_NOTIFY_STATE;
+            //BleData.machState =BLUETOOTH_START_NOTIFY_STATE;
             break;       
         case BLUETOOTH_START_NOTIFY_STATE:
             Ble_StartPeriodicNotify();
-            BleData.machState =BLUETOOTH_WAIT_FOR_CLIENT_STATE;
+            Ble_StateProcess(&BleData,BLUETOOTH_WAIT_FOR_CLIENT_STATE);
             break;          
         case BLUETOOTH_WAIT_FOR_CLIENT_STATE:
             /* GATT Client will subscribe to our notify characteristic */
+            if( Sci_GetAsciiString(0, "%CONNECT") ==1 )
+            {
+                Ble_StateProcess(&BleData,BLUETOOTH_CONNECTED_STATE);
+            }
             break;      
+        case BLUETOOTH_CONNECTED_STATE:
+            if( Sci_GetAsciiString(0, "%DISCONNECT") ==1 )
+            {
+                /* lost connection with PC, close all valves for safety */
+                SciAsciiSendString(SCI_PC_COM, "BLE DISCONNECT\r\n");
+                CloseAllValves();
+                Ble_StateProcess(&BleData,BLUETOOTH_WAIT_FOR_CLIENT_STATE);
+            }           
+            break;
     }
     
     return TRUE;

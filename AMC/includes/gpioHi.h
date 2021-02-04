@@ -22,6 +22,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32l4xx_gpio.h"
 
+
 #define USER_BTN_PIN          GPIO_Pin_13
 #define USER_BTN_PORT         GPIOC
 
@@ -212,6 +213,9 @@
 
 #define AC_DRIVE4_ASSERT         GPIO_SetBits(AC_DRIVE4_PORT, AC_DRIVE4_PIN)
 #define AC_DRIVE4_NEGATE         GPIO_ResetBits(AC_DRIVE4_PORT, AC_DRIVE4_PIN)
+                           
+#define BLE_RESET_ASSERT         GPIO_SetBits(BRD_ID_BIT1_PORT, BRD_ID_BIT1_PIN)
+#define BLE_RESET_NEGATE         GPIO_ResetBits(BRD_ID_BIT1_PORT, BRD_ID_BIT1_PIN)
 
 
 
@@ -223,6 +227,10 @@ void CloseValve(uint8_t valveNbr);
 
 void OpenReliefValve(uint8_t valveNbr);
 void CloseReliefValve(uint8_t valveNbr);
+
+void CloseAllValves(void);
+
+void GpioSetOutput(void);
 
 #endif
 

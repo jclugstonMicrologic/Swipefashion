@@ -276,6 +276,8 @@ int SciAsciiRxMachine
 */
 void SciAsciiSendString(UINT8 port, char *pBuf)
 {
+#ifdef TERMINAL_DEBUG_ENABLED
     SciTxPacket(port, strlen(pBuf), pBuf);      
+#endif    
 }
 
