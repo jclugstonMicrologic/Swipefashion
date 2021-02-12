@@ -32,6 +32,7 @@
 #include "dataFlashFd.h"
 #include "AmcConfig.h"
 #include "LogMachine.h"
+#include "solenoidHi.h"
 
 #include "PressureTdrHi.h"
 #include "MainControlTask.h"
@@ -174,22 +175,22 @@ void PCProcessCommands
             break;
         case CMD_GW_GET_ANALOG:
             break;   
-        case CMD_OPEN_VALUE:
+        case CMD_OPEN_VALVE:
             valveNbr  =*pRxBuf++;
             
             for(int j=0;j<8; j++)
             {
                 if( valveNbr&(0x01<<j) )
-                    OpenValve(j+1);
+                   Solenoid_OpenValve(j+1);
             }
             break;
-        case CMD_CLOSE_VALUE:
+        case CMD_CLOSE_VALVE:
             valveNbr  =*pRxBuf++;
 
             for(int j=0;j<8; j++)
             {
                 if( valveNbr& (0x01<<j) )
-                    CloseValve(j+1);
+                    Solenoid_CloseValve(j+1);
             }                       
             break;            
         case CMD_GET_PRESS_TEMP:             

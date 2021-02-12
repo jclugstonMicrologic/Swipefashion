@@ -184,6 +184,8 @@ void Ble_ProcessCommands
     UINT16 pressSensorPsi[8];
 
     UINT8 valveNbr =0;
+    UINT8 comprNbr =0;
+    
     UINT16 nbrTxBytes =0;
     
     //ErrorStatus errStatus =SUCCESS;
@@ -271,40 +273,51 @@ void Ble_ProcessCommands
             break;
         case CMD_GW_GET_ANALOG:
             break;   
-        case CMD_OPEN_VALUE:
+        case CMD_OPEN_VALVE:
             valveNbr  =*pRxBuf++;
             
             for(int j=0;j<NBR_VALVES; j++)
             {
                 if( valveNbr&(0x01<<j) )
-                    OpenValve(j+1);
+                    Solenoid_OpenValve(j+1);
             }
             break;
-        case CMD_CLOSE_VALUE:
+        case CMD_CLOSE_VALVE:
             valveNbr  =*pRxBuf++;
 
             for(int j=0;j<NBR_VALVES; j++)
             {
                 if( valveNbr& (0x01<<j) )
-                    CloseValve(j+1);
+                    Solenoid_CloseValve(j+1);
             }                       
             break;
-        case CMD_SET_VALUE:
+        case CMD_SET_VALVE:
             /* open and close all valves */
             valveNbr  =*pRxBuf++;
             
             for(int j=0;j<NBR_VALVES; j++)
             {
                 if( valveNbr&(0x01<<j) )
-                    OpenValve(j+1);
+                    Solenoid_OpenValve(j+1);
                 else
-                    CloseValve(j+1);
+                    Solenoid_CloseValve(j+1);
             }
-            break;            
+            break; 
+        case CMD_START_COMR:
+            comprNbr  =*pRxBuf++;
+            
+            Solenoid_StartCompr(comprNbr);
+            break;
+        case CMD_SET_COMR:                      
+            /* turn on/off the compresssor */
+            comprNbr  =*pRxBuf++;
+            
+            Solenoid_SetCompr( comprNbr );
+            break;
         case CMD_GET_PRESS_TEMP:            
             /* pressure and temperature, and they are floats, 
                large packet
-            */
+            */           
             PressureTdr_GetPressTemp(pressSensorData);
             
             memcpy(BleSerialTxBuffer, &pressSensorData, sizeof(pressSensorData));            
@@ -322,16 +335,16 @@ void Ble_ProcessCommands
                     pressSensorPsi[j] =0;
             }
             
-            /* send the board id along with this message */
-            memcpy(BleSerialTxBuffer, &BoardId, sizeof(BoardId));            
-            nbrTxBytes =sizeof(BoardId);     
+            /* send the board status along with this message */
+            memcpy(BleSerialTxBuffer, &BoardStatus, sizeof(BoardStatus));            
+            nbrTxBytes =sizeof(BoardStatus);     
             
             memcpy(&BleSerialTxBuffer[nbrTxBytes], &pressSensorPsi, sizeof(pressSensorPsi));            
             nbrTxBytes +=sizeof(pressSensorPsi);     
             break;            
         case CMD_GET_BRD_ID:
-            memcpy(BleSerialTxBuffer, &BoardId, sizeof(BoardId));            
-            nbrTxBytes =sizeof(BoardId);                
+            memcpy(BleSerialTxBuffer, &BoardStatus, sizeof(BoardStatus));            
+            nbrTxBytes =sizeof(BoardStatus);                
             break;
         default:            
             cmd =0x7fff;
@@ -457,7 +470,12 @@ BOOL Ble_Machine(void)
             {
                 /* lost connection with PC, close all valves for safety */
                 SciAsciiSendString(SCI_PC_COM, "BLE DISCONNECT\r\n");
-                CloseAllValves();
+                
+                Solenoid_CloseAllValves();               
+                /* stop the pumps if this is the pump controller card */
+                Solenoid_StopCompr( (COMPR_LO | COMPR_HI) );
+                Solenoid_StopCompr(0x00);
+                
                 Ble_StateProcess(&BleData,BLUETOOTH_WAIT_FOR_CLIENT_STATE);
             }           
             break;

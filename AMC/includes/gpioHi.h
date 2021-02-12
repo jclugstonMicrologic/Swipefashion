@@ -21,32 +21,28 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32l4xx_gpio.h"
+#include "types.h"
 
+//#define USER_BTN_PIN          GPIO_Pin_13
+//#define USER_BTN_PORT         GPIOC
 
-#define USER_BTN_PIN          GPIO_Pin_13
-#define USER_BTN_PORT         GPIOC
-
-#define TP204_PIN             GPIO_Pin_7
-#define TP204_PORT            GPIOA
+//#define TP204_PIN             GPIO_Pin_7
+//#define TP204_PORT            GPIOA
 
 //#define TP206_PIN             GPIO_Pin_8
 //#define TP206_PORT            GPIOC
 
-#define TP208_PIN             GPIO_Pin_8
-#define TP208_PORT            GPIOE
+//#define TP208_PIN             GPIO_Pin_8
+//#define TP208_PORT            GPIOE
 
 //#define TP209_PIN             GPIO_Pin_9
 //#define TP209_PORT            GPIOE
 
+//#define GREEN_LED_PIN         TP204_PIN //TP204
+//#define GREEN_LED_PORT        TP204_PORT
 
-//#define POWER_5V_ENABLE_PIN   GPIO_Pin_8
-//#define POWER_5V_ENABLE_PORT  GPIOB
-
-#define GREEN_LED_PIN         TP204_PIN //TP204
-#define GREEN_LED_PORT        TP204_PORT
-
-#define RED_LED_PIN           TP208_PIN //TP208
-#define RED_LED_PORT          TP208_PORT
+//#define RED_LED_PIN           TP208_PIN //TP208
+//#define RED_LED_PORT          TP208_PORT
 
 
 #define BRD_ID_BIT0_PIN       GPIO_Pin_7
@@ -109,7 +105,7 @@
 #define AC_DRIVE4_PIN          GPIO_Pin_10
 #define AC_DRIVE4_PORT         GPIOB
 
-
+/* pressure sensor chipselects */
 #define PRESS_SENSOR1_CS_PIN   GPIO_Pin_11
 #define PRESS_SENSOR1_CS_PORT  GPIOB
 #define PRESS_SENSOR2_CS_PIN   GPIO_Pin_12
@@ -136,6 +132,7 @@
 //#define ADC_PORT              GPIOC
 
 /********************* MACROS **************************************/
+/*
 #define GREEN_LED_ON     GPIO_SetBits(GREEN_LED_PORT, GREEN_LED_PIN)
 #define GREEN_LED_OFF    GPIO_ResetBits(GREEN_LED_PORT, GREEN_LED_PIN)
 #define GREEN_LED_TOGGLE GPIO_ToggleBits(GREEN_LED_PORT, GREEN_LED_PIN)
@@ -147,6 +144,7 @@
 #define RED_LED_ON       GPIO_SetBits(RED_LED_PORT, RED_LED_PIN)
 #define RED_LED_OFF      GPIO_ResetBits(RED_LED_PORT, RED_LED_PIN)
 #define RED_LED_TOGGLE   GPIO_ToggleBits(RED_LED_PORT, RED_LED_PIN)
+*/
 
 #define BOARD_ID         GPIO_ReadInputDataBit(BRD_ID_BIT0_PORT, BRD_ID_BIT0_PIN) | \
                          (GPIO_ReadInputDataBit(BRD_ID_BIT1_PORT, BRD_ID_BIT1_PIN)<<1)
@@ -170,7 +168,6 @@
 #define S_PULSE1_OFF     GPIO_ResetBits(S_PULSE1_PORT, S_PULSE1_PIN)
 #define S_PULSE2_ON      GPIO_SetBits(S_PULSE2_PORT, S_PULSE2_PIN)
 #define S_PULSE2_OFF     GPIO_ResetBits(S_PULSE2_PORT, S_PULSE2_PIN)
-
 #define S_PULSE3_ON      GPIO_SetBits(S_PULSE3_PORT, S_PULSE3_PIN)
 #define S_PULSE3_OFF     GPIO_ResetBits(S_PULSE3_PORT, S_PULSE3_PIN)
 #define S_PULSE4_ON      GPIO_SetBits(S_PULSE4_PORT, S_PULSE4_PIN)
@@ -202,22 +199,40 @@
 #define PRESS_SENSOR8_ASSERT_CS  GPIO_ResetBits(PRESS_SENSOR8_CS_PORT, PRESS_SENSOR8_CS_PIN)
 #define PRESS_SENSOR8_NEGATE_CS  GPIO_SetBits(PRESS_SENSOR8_CS_PORT, PRESS_SENSOR8_CS_PIN)
 
-#define AC_DRIVE1_ASSERT         GPIO_SetBits(AC_DRIVE1_PORT, AC_DRIVE1_PIN)
-#define AC_DRIVE1_NEGATE         GPIO_ResetBits(AC_DRIVE1_PORT, AC_DRIVE1_PIN)
+#define COMP_HI_ASSERT           GPIO_SetBits(AC_DRIVE1_PORT, AC_DRIVE1_PIN)
+#define COMP_HI_NEGATE           GPIO_ResetBits(AC_DRIVE1_PORT, AC_DRIVE1_PIN)
+#define COMP_LO_ASSERT           GPIO_SetBits(AC_DRIVE2_PORT, AC_DRIVE2_PIN)
+#define COMP_LO_NEGATE           GPIO_ResetBits(AC_DRIVE2_PORT, AC_DRIVE2_PIN)
 
-#define AC_DRIVE2_ASSERT         GPIO_SetBits(AC_DRIVE2_PORT, AC_DRIVE2_PIN)
-#define AC_DRIVE2_NEGATE         GPIO_ResetBits(AC_DRIVE2_PORT, AC_DRIVE2_PIN)
-
-#define AC_DRIVE3_ASSERT         GPIO_SetBits(AC_DRIVE3_PORT, AC_DRIVE3_PIN)
-#define AC_DRIVE3_NEGATE         GPIO_ResetBits(AC_DRIVE3_PORT, AC_DRIVE3_PIN)
-
-#define AC_DRIVE4_ASSERT         GPIO_SetBits(AC_DRIVE4_PORT, AC_DRIVE4_PIN)
-#define AC_DRIVE4_NEGATE         GPIO_ResetBits(AC_DRIVE4_PORT, AC_DRIVE4_PIN)
+#define RELIEF_HI_ASSERT         GPIO_SetBits(AC_DRIVE3_PORT, AC_DRIVE3_PIN)
+#define RELIEF_HI_NEGATE         GPIO_ResetBits(AC_DRIVE3_PORT, AC_DRIVE3_PIN)
+#define RELIEF_LO_ASSERT         GPIO_SetBits(AC_DRIVE4_PORT, AC_DRIVE4_PIN)
+#define RELIEF_LO_NEGATE         GPIO_ResetBits(AC_DRIVE4_PORT, AC_DRIVE4_PIN)
                            
 #define BLE_RESET_ASSERT         GPIO_SetBits(BRD_ID_BIT1_PORT, BRD_ID_BIT1_PIN)
 #define BLE_RESET_NEGATE         GPIO_ResetBits(BRD_ID_BIT1_PORT, BRD_ID_BIT1_PIN)
 
+typedef union
+{
+  struct
+  {
+    UINT8 id:2;         
+    UINT8 fitting:1;    
+    UINT8 compr:2;      
+    UINT8 relief:2;
+    UINT8 spare:1;
+  } b;         
+  
+}status_t;
 
+typedef struct
+{
+    status_t status;
+    UINT8 valve; /* state of all solenoids/valves */
+}board_status_t;
+
+//extern UINT16 BoardId;
+extern board_status_t BoardStatus;
 
 void Gpio_Init(void);
 void GpioSleep(void);
@@ -231,6 +246,7 @@ void CloseReliefValve(uint8_t valveNbr);
 void CloseAllValves(void);
 
 void GpioSetOutput(void);
+void GpioGetBoardId(void);
 
 #endif
 

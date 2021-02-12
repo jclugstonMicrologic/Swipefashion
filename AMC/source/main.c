@@ -37,6 +37,7 @@
 #include "AdcFd.h"
 #include "crc.h"
 #include "PressureTdrHi.h"
+#include "solenoidHi.h"
 
 #include "PCMachine.h"
 #include "BluetoothMachine.h"
@@ -68,7 +69,7 @@ void vTimerCallback( TimerHandle_t xTimer )
 #ifdef RED_LED_TEST  
     RED_LED_TOGGLE;   
 #else        
-    GREEN_LED_TOGGLE;   
+//    GREEN_LED_TOGGLE;   
 #endif    
 
     TickType_t xTicks=xTaskGetTickCount();
@@ -192,10 +193,11 @@ BOOL TargetHardwareInit(void)
     /* initialize internal RTC */
     RtcInit();
     
-    RtcInit();       
+   RtcInit();       
 
     PressureTdr_Init();
 
+    Solenoid_Init();
     /* initialize hardware crc */
     //CrcInit32();
       

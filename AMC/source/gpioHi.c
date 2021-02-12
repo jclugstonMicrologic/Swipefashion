@@ -19,9 +19,8 @@
 /** Include Files *************************************************************/
 
 #include "gpioHi.h"
-//#include "FreeRTOS.h"
-//#include "task.h"
-//#include "sysTimers.h"
+
+board_status_t BoardStatus;
 
 /** Functions *****************************************************************/
 
@@ -65,11 +64,11 @@ void Gpio_Init
     GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
 
-    GPIO_InitStructure.GPIO_Pin =GREEN_LED_PIN;
-    GPIO_Init(GREEN_LED_PORT, &GPIO_InitStructure);          
+    //GPIO_InitStructure.GPIO_Pin =GREEN_LED_PIN;
+    //GPIO_Init(GREEN_LED_PORT, &GPIO_InitStructure);          
     
-    GPIO_InitStructure.GPIO_Pin = RED_LED_PIN;
-    GPIO_Init(RED_LED_PORT, &GPIO_InitStructure);              
+    //GPIO_InitStructure.GPIO_Pin = RED_LED_PIN;
+    //GPIO_Init(RED_LED_PORT, &GPIO_InitStructure);              
                      
     /* pressure sensor chipselects */
     GPIO_InitStructure.GPIO_Pin = PRESS_SENSOR1_CS_PIN;
@@ -132,7 +131,7 @@ void Gpio_Init
     /* configure the following GPIO pins as inputs */
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
     GPIO_InitStructure.GPIO_OType = GPIO_OType_OD;
-    GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+    GPIO_InitStructure.GPIO_PuPd =GPIO_PuPd_UP;// GPIO_PuPd_NOPULL;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_25MHz;  
 
     /* this is here for dev board only, shares press sensor cs7 */
@@ -204,7 +203,16 @@ void GpioSetOutput(void)
     GPIO_Init(BRD_ID_BIT1_PORT, &GPIO_InitStructure);
 }
 
-
+void GpioGetBoardId(void)
+{
+    /* must make global, as readin thsi prot only avaaible out of reset,
+       it then becomes an output
+    */
+    //BoardId =BOARD_ID;
+    
+    BoardStatus.status.b.id =BOARD_ID;
+BoardStatus.status.b.id =0;
+}
 /*
 *|----------------------------------------------------------------------------
 *|  Routine: GpioSleep
@@ -225,11 +233,11 @@ void GpioSleep
     GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_25MHz; 
    
-    GPIO_InitStructure.GPIO_Pin =GREEN_LED_PIN;
-    GPIO_Init(GREEN_LED_PORT, &GPIO_InitStructure);                   
+    //GPIO_InitStructure.GPIO_Pin =GREEN_LED_PIN;
+    //GPIO_Init(GREEN_LED_PORT, &GPIO_InitStructure);                   
 
-    GPIO_InitStructure.GPIO_Pin = RED_LED_PIN;
-    GPIO_Init(RED_LED_PORT, &GPIO_InitStructure);              
+    //GPIO_InitStructure.GPIO_Pin = RED_LED_PIN;
+    //GPIO_Init(RED_LED_PORT, &GPIO_InitStructure);              
        
     //GPIO_InitStructure.GPIO_Pin =(ADC_1_PIN | ADC_2_PIN );                                
     //GPIO_Init(ADC_PORT, &GPIO_InitStructure);		   

@@ -35,10 +35,7 @@
 
 #include "PressureTdrHi.h"
 #include "BluetoothMachine.h"
-
-  
-UINT16 BoardId;
-
+ 
 void MainControlTask(void * pvParameters);
 
 /** Functions *****************************************************************/
@@ -163,9 +160,7 @@ UINT8 debounceCnt =0;
 #endif
 
   //  TickType_t delayTime = xTaskGetTickCount();    
-
-    BoardId =0;
-    
+   
     /* !!! test !!! */
     strcpy(aStr, "AMC v");
     strcat(aStr, FW_VERSION);
@@ -196,7 +191,7 @@ UINT8 debounceCnt =0;
     int sensor =0;
     
     /* get our board id now */
-    BoardId =BOARD_ID;
+    GpioGetBoardId();
     
     for( ;; )
     {      

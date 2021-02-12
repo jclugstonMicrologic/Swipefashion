@@ -25,6 +25,8 @@
 
 #include "gpioHi.h"
 #include "spiHi.h"
+#include "solenoidHi.h"
+
 #include "PressureTdrHi.h"
 
 #define BLADDER_OVER_PRESSURE ((float)20.67) //3psi
@@ -156,7 +158,7 @@ BOOL PressureTdr_CheckOverPres(void)
     {
         if( (PSensorData[j].press -PSensorData[7].press)>BLADDER_OVER_PRESSURE )
         {
-            CloseValve(j+1);
+            Solenoid_CloseValve(j+1);
             status =TRUE;
         }
         else

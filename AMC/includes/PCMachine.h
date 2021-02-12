@@ -53,14 +53,18 @@
 #define CMD_ERASE_ALL_LOG_MEMORY                0x020b
 #define CMD_GET_ERASE_STATUS                    0x020c
           
-#define CMD_OPEN_VALUE                          0x020d
-#define CMD_CLOSE_VALUE                         0x020e
+#define CMD_OPEN_VALVE                          0x020d
+#define CMD_CLOSE_VALVE                         0x020e
 
 #define CMD_GET_PRESS_TEMP                      0x020f
 #define CMD_GET_BRD_ID                          0x0210
 #define CMD_GET_PRESS                           0x0211
 
-#define CMD_SET_VALUE                           0x0212
+#define CMD_SET_VALVE                           0x0212
+
+#define CMD_START_COMR                          0x0213
+#define CMD_STOP_COMR                           0x0214
+#define CMD_SET_COMR                            0x0215
 
 #define CMD_GW_LAST                             0x02ff
 
