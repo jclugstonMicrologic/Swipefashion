@@ -14,8 +14,8 @@ using SerialCom;
 using System.Drawing;
 
 
-using OpenCvSharp;
-using OpenCvSharp.ML;
+//using OpenCvSharp;
+//using OpenCvSharp.ML;
 
 //using Gigasoft.ProEssentials.Enums;
 
@@ -37,7 +37,7 @@ namespace WindowsFormsApplication5
     enum SERIAL_COMMS
     {
        PORT =0,
-       BAUDRATE =115200 //motor is 9600
+       BAUDRATE =9600
     }
 
     enum PACKET
@@ -58,6 +58,11 @@ namespace WindowsFormsApplication5
         CMD_GET_PRESS_TEMP  =0x020f,
         CMD_GET_BRD_ID =0x0210,
         CMD_GET_PRESS = 0x0211,
+        CMD_SET_VALVE = 0x0212,
+
+        CMD_START_COMPR = 0x0213,
+        CMD_STOP_COMPR = 0x0214,
+        CMD_SET_COMPR = 0x0215,
 
         CMD_SET_AMC_SETUP = 0x2001,
         CMD_RESET = 0x200A,        
@@ -96,6 +101,12 @@ namespace WindowsFormsApplication5
         SEED = 0xffff
     }
 
+    enum BOARD_TYPE
+    {
+        COMPR_CNTRL =0,
+        LO_FLOW_CNTRL = 1,
+        HI_FLOW_CNTRL = 2,        
+    }
 
     public partial class TheMainForm : Form
     {
@@ -153,14 +164,14 @@ namespace WindowsFormsApplication5
         //class CLIENT_INFO
         public struct CLIENT_INFO
         {
-            public String addr;            
-            public int txcharacter;
+            public String addr;
+            public int character;
             public int brdId;
+            public int tclientNbr;
 
             //public wclGattCharacteristic[] FCharacteristics;
-            //public wclGattCharacteristic FCharacteristics;
-            public wclGattCharacteristic txCharacteristics;
-            public wclGattCharacteristic rxCharacteristics;
+            public wclGattCharacteristic txCharacteristic;
+            public wclGattCharacteristic rxCharacteristic;
         }
 
         //List<int> Stuff = new List<int>();
@@ -171,6 +182,8 @@ namespace WindowsFormsApplication5
         public AMC_SETUP AmcSetup = new AMC_SETUP();
                 
         public byte ValveNbr = 0;
+        public byte ComprNbr = 0;
+
         public float Pressure = 0;
 
         public struct motor_cntrl_t
@@ -205,6 +218,11 @@ namespace WindowsFormsApplication5
         //public float[] ProfileValuesCard2 = new float[7];
 
         int BoardId = 0;
+        int CompressorState = 0;
+        int ReliefState = 0;
+
+        bool LoFlowBoardFitStart = false;
+        bool HiFlowBoardFitStart = false;
 
         private wclBluetoothManager Manager;
         //private wclGattClient Client;
@@ -256,7 +274,7 @@ namespace WindowsFormsApplication5
         private void Form1_Load(object sender, EventArgs e)
         {
             this.Width = 850;
-            this.Height = 750;
+            this.Height = 820;
 
             InitDataGrid();
 
@@ -266,7 +284,7 @@ namespace WindowsFormsApplication5
             MainPanel.Top = 40;
             MainPanel.Left = 10;
             MainPanel.Width = 1000;
-            MainPanel.Height = 680;
+            MainPanel.Height = 700;
 
             CommSelectPnl.Top = 10;
             CommSelectPnl.Left = 80;
@@ -274,14 +292,29 @@ namespace WindowsFormsApplication5
             InitProfileGrid(ProfileGridView);
             //InitProfileGrid2(ProfileGridView2);
 
-            InitControllerGrid(ControllerGridView);
-            InitController2Grid(Controller2GridView);
+            InitControllerGrid(ControllerGridView,20);
+            //InitController2Grid(Controller2GridView);
+            InitControllerGrid(Controller2GridView,320);
 
+            InitCompressorGrid(CompressorCntrlGridView, 620);
+            
             FwBrd1VersionLbl.Top = 0;
             FwBrd1VersionLbl.Left = 15;
 
+            BrdTypeLbl.Top = FwBrd1VersionLbl.Top;
+            BrdTypeLbl.Left = 175;
+
             FwBrd2VersionLbl.Top = 300;
             FwBrd2VersionLbl.Left = 15;
+
+            Brd2TypeLbl.Top = FwBrd2VersionLbl.Top;
+            Brd2TypeLbl.Left = 175;
+
+            FwBrd3VersionLbl.Top = 600;
+            FwBrd3VersionLbl.Left = 15;
+
+            Brd3TypeLbl.Top = FwBrd3VersionLbl.Top;
+            Brd3TypeLbl.Left = 175;
 
             StartFitBtn1.Top = 260;
             StartFitBtn1.Left = 15;
@@ -304,16 +337,16 @@ namespace WindowsFormsApplication5
             //UploadFilesBtn.Top = 560;
             //UploadFilesBtn.Left = 355;
 
-            ProfileGroupBox.Top = 5;
+            ProfileGroupBox.Top = 0;
             ProfileGroupBox.Left = 5;
             ProfileGroupBox.Height = 630;
             ProfileGroupBox.Width = 455;
 
-            FwBrd1VersionLbl.Visible = false;
-            FwBrd2VersionLbl.Visible = false;
+            FwBrd1VersionLbl.Visible = true;
+            FwBrd2VersionLbl.Visible = true;
             StartFitBtn1.Visible = true;
             StartFitBtn2.Visible = true;
-            BrdTypeLbl.Visible = false;
+            BrdTypeLbl.Visible = true;
 
             //FitTypeLoadComboBox.SelectedIndex = 0;
 
@@ -446,22 +479,23 @@ namespace WindowsFormsApplication5
             gridView.Visible = true;
         }
 
-        private void InitControllerGrid(DataGridView gridView)
+        private void InitControllerGrid(DataGridView gridView, int top)
         {
-            gridView.Width = 420;
+            gridView.Width = 425;
             gridView.Height = 240;
             gridView.Left = 15;
-            gridView.Top = 20;
+            gridView.Top = top;
 
-            gridView.ColumnCount = 4;
+            gridView.ColumnCount = 5;
             gridView.ColumnHeadersVisible = true;
             gridView.RowHeadersVisible = true;
             gridView.RowHeadersWidth = 60;
 
-            gridView.Columns[0].Width = 85;
-            gridView.Columns[1].Width = 85;
-            gridView.Columns[2].Width = 85;
-            gridView.Columns[3].Width = 90;
+            gridView.Columns[0].Width = 80;
+            gridView.Columns[1].Width = 80;
+            gridView.Columns[2].Width = 80;
+            gridView.Columns[3].Width = 80;
+            gridView.Columns[4].Width = 35;
 
             /* create the rows */
             for (int i = 1; i < 9; i++)
@@ -474,28 +508,62 @@ namespace WindowsFormsApplication5
             gridView.Columns[1].HeaderText = "Temp (DegC)";
             gridView.Columns[2].HeaderText = "Target (psi)";
             gridView.Columns[3].HeaderText = "Delta P (psi)";
+            gridView.Columns[4].HeaderText = "V";
 
             gridView.Visible = true;
         }
 
+        private void InitCompressorGrid(DataGridView gridView, int top)
+        {
+            gridView.Width = 425;
+            gridView.Height = 80;
+            gridView.Left = 15;
+            gridView.Top = top;
+
+            gridView.ColumnCount = 4;
+            gridView.ColumnHeadersVisible = true;
+            gridView.RowHeadersVisible = true;
+            gridView.RowHeadersWidth = 60;
+
+            gridView.Columns[0].Width = 80;
+            gridView.Columns[1].Width = 80;
+            gridView.Columns[2].Width = 80;
+            gridView.Columns[3].Width = 80;
+
+            // create the rows
+            for (int i = 1; i < 2; i++)
+            {
+                gridView.Rows.Add("", "", "");
+                gridView.Rows[i - 1].HeaderCell.Value = "";// "S" + i.ToString();
+            }
+
+            gridView.Columns[0].HeaderText = "Hi Comp";
+            gridView.Columns[1].HeaderText = "Lo Comp";
+            gridView.Columns[2].HeaderText = "Hi Relief";
+            gridView.Columns[3].HeaderText = "Lo Relief";
+
+            gridView.Visible = true;
+        }
+        /*
         private void InitController2Grid(DataGridView gridView)
         {
-            gridView.Width = 420;
+            gridView.Width = 425;
             gridView.Height = 240;
             gridView.Left = 15;
             gridView.Top = 320;
 
-            gridView.ColumnCount = 4;
+            gridView.ColumnCount = 5;
             gridView.ColumnHeadersVisible = true;
             gridView.RowHeadersVisible = true;
             gridView.RowHeadersWidth = 60;
 
-            gridView.Columns[0].Width = 85;
-            gridView.Columns[1].Width = 85;
-            gridView.Columns[2].Width = 85;
-            gridView.Columns[3].Width = 90;
+            gridView.Columns[0].Width = 80;
+            gridView.Columns[1].Width = 80;
+            gridView.Columns[2].Width = 80;
+            gridView.Columns[3].Width = 80;
+            gridView.Columns[4].Width = 35;
 
-            /* create the rows */
+            // create the rows
             for (int i = 1; i < 9; i++)
             {
                 gridView.Rows.Add("", "", "");
@@ -506,9 +574,13 @@ namespace WindowsFormsApplication5
             gridView.Columns[1].HeaderText = "Temp (DegC)";
             gridView.Columns[2].HeaderText = "Target (psi)";
             gridView.Columns[3].HeaderText = "Delta P (psi)";
+            gridView.Columns[4].HeaderText = "V";
 
             gridView.Visible = true;
         }
+        */
+
+
         /*
                 private void InitGenericPlot(Gigasoft.ProEssentials.Pesgo pePlot, string title_,          string xaxisLbl_,                    string yaxisLbl_            )
                 {
@@ -695,6 +767,96 @@ namespace WindowsFormsApplication5
         public Thread MotorThread;
         //public Thread[] cameraThread =new Thread[3];
 
+        public byte DisplayGridData(DataGridView gridView, bool brdFitStart)
+        {
+            float delatP = 0.0F;
+            byte vNbr = 0;
+
+            for (int j = 0; j < 8; j++)
+            {
+                delatP = (float)(PressSensorPsi[j] - PressSensorPsi[7]) / (float)1000;
+
+                if (PressSensorPsi[j] != 0)
+                {
+                    gridView[0, j].Value = ((float)PressSensorPsi[j] / 1000).ToString("0.000");
+                    //gridView[1, j].Value = (PSensorData[j].temp).ToString("0.0");
+
+                    gridView[3, j].Value = delatP.ToString("0.000");
+
+                    gridView.Rows[j].Cells[0].Style.BackColor = Color.White;
+                    gridView.Rows[j].Cells[1].Style.BackColor = Color.White;
+                    gridView.Rows[j].Cells[2].Style.BackColor = Color.White;
+                    gridView.Rows[j].Cells[3].Style.BackColor = Color.White;
+
+                    try
+                    {
+                        if (delatP < Convert.ToSingle(gridView[2, j].Value))
+                            vNbr |= (byte)(0x01 << j);
+                    }
+                    catch (Exception ex)
+                    {
+                        //                     MessageBox.Show(ex.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+                else
+                {
+                    gridView[0, j].Value = "FAULT";
+                    gridView[1, j].Value = "FAULT";
+
+                    gridView[3, j].Value = "FAULT";
+
+                    gridView.Rows[j].Cells[0].Style.BackColor = Color.Orange;
+                    gridView.Rows[j].Cells[1].Style.BackColor = Color.Orange;
+                    gridView.Rows[j].Cells[2].Style.BackColor = Color.Orange;
+                    gridView.Rows[j].Cells[3].Style.BackColor = Color.Orange;
+                    gridView.Rows[j].Cells[4].Style.BackColor = Color.Orange;
+                }
+
+                if (!brdFitStart)
+                    vNbr = 0;
+
+                if ( (vNbr & (0x01<<j)) ==(0x01<<j) )
+                    gridView[4, j].Value ="O";
+                else
+                    gridView[4, j].Value = "X";
+
+            }
+
+            return vNbr;
+
+        }
+        public byte DisplayComprGridData(DataGridView gridView)
+        {
+            byte cNbr = 0;
+
+            if ( (CompressorState &0x0010) ==0x0010)
+                gridView[0, 0].Value ="O";
+            else
+                gridView[0, 0].Value = "X";
+
+            if ((CompressorState & 0x0008) == 0x0008)
+                gridView[1, 0].Value = "O";
+            else
+                gridView[1, 0].Value = "X";
+
+            if ((ReliefState & 0x0040) == 0x0040)
+                gridView[2, 0].Value = "O";
+            else
+                gridView[2, 0].Value = "X";
+
+            if ((ReliefState & 0x0020) == 0x0020)
+                gridView[3, 0].Value = "O";
+            else
+                gridView[3, 0].Value = "X";
+
+            if (LoFlowBoardFitStart)
+                cNbr |= 0x01;
+            if (HiFlowBoardFitStart)
+                cNbr |= 0x02;
+
+            return cNbr;
+        }
+
         public void rxDataThread()
         {
             uint nbrBytesRx = 0;
@@ -758,17 +920,17 @@ namespace WindowsFormsApplication5
                                     }
 
                                     if(ValveNbr !=0)
-                                        BuildSerialMessage((int)PACKET.CMD_CLOSE_VALVE);
+                                        BuildSerialMessage((int)PACKET.CMD_CLOSE_VALVE,0);
                                     break;
                                 case (int)PACKET.CMD_GET_PRESS:
                                     break;
                                 case (int)PACKET.CMD_SET_AMC_SETUP:         
                                    break;
                                case (int)PACKET.CMD_GET_VERSION:
-                                   FwBrd1VersionLbl.Text = "AMC: " + System.Text.Encoding.ASCII.GetString(Payload);
+                                   FwBrd1VersionLbl.Text = "AMC: v" + System.Text.Encoding.ASCII.GetString(Payload);
                                    break;
                                case (int)PACKET.CMD_GET_BRD_ID:
-                                    BrdTypeLbl.Text ="Board Type: " + BoardId.ToString();
+                                   BrdTypeLbl.Text ="Board Type: " + BoardId.ToString();
                                    break;                                
                          }
                     }
@@ -878,9 +1040,11 @@ namespace WindowsFormsApplication5
         {
             SerialMonitorTimer.Enabled = true;
 
-            if( !BuildSerialMessage((int)PACKET.CMD_GET_PRESS_TEMP) )
+            if( !BuildSerialMessage((int)PACKET.CMD_GET_PRESS_TEMP, 0) )
             {                
                 timer1.Enabled = false;
+
+                MessageBox.Show("Error: BLE comms", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
             Refresh();
@@ -927,12 +1091,12 @@ namespace WindowsFormsApplication5
         {
         }
    
-        public bool BuildSerialMessage(UInt16 command)
+        public bool BuildSerialMessage(UInt16 command, int addr)
         {
             uint nbrBytes = 0;
             uint nbrBytesToTx = 0;
 
-            byte[] TxBuf = new byte[256];
+            byte[] TxBuf = new byte[64];
             byte[] tempBuf = new byte[4];
 
             int calculatedCRC = 0;
@@ -964,6 +1128,36 @@ namespace WindowsFormsApplication5
                     nbrBytes = (int)PACKET.SIZEOF_HEADER + 2;
 
                     Payload[0] = ValveNbr;
+
+                    TxBuf[nbrBytes++] = Payload[0];
+                    break;
+                case (int)PACKET.CMD_SET_VALVE:
+                    // build the message here, then send
+                    ConvetToBuffer16((int)command, out tempBuf);
+                    tempBuf.CopyTo(TxBuf, (int)PACKET.SIZEOF_HEADER);
+                    nbrBytes = (int)PACKET.SIZEOF_HEADER + 2;
+
+                    Payload[0] = ValveNbr;
+
+                    TxBuf[nbrBytes++] = Payload[0];
+                    break;
+                case (int)PACKET.CMD_SET_COMPR:
+                    // build the message here, then send
+                    ConvetToBuffer16((int)command, out tempBuf);
+                    tempBuf.CopyTo(TxBuf, (int)PACKET.SIZEOF_HEADER);
+                    nbrBytes = (int)PACKET.SIZEOF_HEADER + 2;
+
+                    Payload[0] = ComprNbr;
+
+                    TxBuf[nbrBytes++] = Payload[0];
+                    break;
+                case (int)PACKET.CMD_START_COMPR:
+                    // build the message here, then send
+                    ConvetToBuffer16((int)command, out tempBuf);
+                    tempBuf.CopyTo(TxBuf, (int)PACKET.SIZEOF_HEADER);
+                    nbrBytes = (int)PACKET.SIZEOF_HEADER + 2;
+
+                    Payload[0] = ComprNbr;
 
                     TxBuf[nbrBytes++] = Payload[0];
                     break;
@@ -1020,18 +1214,22 @@ namespace WindowsFormsApplication5
             TxBuf[nbrBytes++] = (byte)(calculatedCRC & 0x00ff);        //0xa5;  // CRC LSB
 
             /*
-            send via bluetooth
+            send via bluetooth*/
             try
             {
-                wclGattCharacteristic Characteristic = FCharacteristics[0];// lvCharacteristics.SelectedItems[0].Index];
+                wclGattCharacteristic Characteristic = ClientInfo[addr].rxCharacteristic;
 
-                Int32 Res = Client.WriteCharacteristicValue(Characteristic, TxBuf, wclGattProtectionLevel.plNone);// Protection());
+                Array.Resize<byte>(ref TxBuf, (int)nbrBytes);
+                Int32 Res = TClient[ClientInfo[addr].tclientNbr].WriteCharacteristicValue(Characteristic, TxBuf, wclGattProtectionLevel.plNone);// Protection());
                 if (Res != wclErrors.WCL_E_SUCCESS)
-                    MessageBox.Show("Error: 0x" + Res.ToString("X8"), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                {
+                    //MessageBox.Show("Error: 0x" + Res.ToString("X8"), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return false;
+                }
             }
-            catch (Exception ex) { }
-            */
+            catch (Exception ex) { return false; }
 
+            /*
             if (serialFd.SendMessage(0, nbrBytes, TxBuf))
             {
                 SerialMonitorTimer.Enabled = true;
@@ -1040,6 +1238,9 @@ namespace WindowsFormsApplication5
             }
             else
                 return false;
+            */
+
+            return true;
         }
 
         private bool ParseMessage(out uint response, uint nbrRxBytes, params byte[] rxBuffer)
@@ -1050,7 +1251,14 @@ namespace WindowsFormsApplication5
 
             cErrorCheck errCheck = new cErrorCheck();
             int calculatedCRC = 0;
+            int tempValue = 0;
 
+            if(rxBuffer.Length <=1 )
+            {
+                // not a proper serial message
+                response = 0;
+                return false;
+            }
 
             // check header
             if (rxBuffer[0] != 0x10 &&
@@ -1098,7 +1306,7 @@ namespace WindowsFormsApplication5
             }           
 
             // get payload (i.e. remove header)
-            System.Array.Copy(rxBuffer, ((int)PACKET.SIZEOF_HEADER + 2), tempBuf, 0, PayloadSize);
+            System.Array.Copy(rxBuffer, ((int)PACKET.SIZEOF_HEADER + 2), tempBuf, 0, PayloadSize-8);
 
             status = true;
 
@@ -1125,10 +1333,17 @@ namespace WindowsFormsApplication5
 
                     //Pressure    = System.BitConverter.ToSingle(tempBuf, 0);
                     //Temperature = System.BitConverter.ToSingle(tempBuf, 0);
+
+                    //BoardId = (UInt16)(tempBuf[1] << 8 | tempBuf[0]);
+		            tempValue = (UInt16)System.BitConverter.ToUInt16(tempBuf, 0);
+                    BoardId = (tempValue & 0x0003);
+                    CompressorState = (tempValue & 0x0018);
+                    ReliefState = (tempValue & 0x0060);
+                                        
                     for (int j = 0; j < 8; j++)
                     {
-                        PressSensorPsi[j] =(UInt16)(tempBuf[1] << 8 | tempBuf[0]);
-
+                        //PressSensorPsi[j] =(UInt16)(tempBuf[3] << 8 | tempBuf[2]);
+			PressSensorPsi[j] = (UInt16)System.BitConverter.ToUInt16(tempBuf, 2);
                         System.Array.Copy(tempBuf, 2, tempBuf, 0, (PayloadSize - 2));
                     }
                     break;
@@ -1199,7 +1414,7 @@ namespace WindowsFormsApplication5
 
         private void button11_Click_2(object sender, EventArgs e)
         {
-            BuildSerialMessage((int)PACKET.CMD_GET_PRESS_TEMP);
+            BuildSerialMessage((int)PACKET.CMD_GET_PRESS_TEMP, 0);
         }
 
         private void SerialMonitorTimer_Tick(object sender, EventArgs e)
@@ -1232,7 +1447,7 @@ namespace WindowsFormsApplication5
                 serialThread.Start();
 
                 // get FTC fw version
-                BuildSerialMessage((int)PACKET.CMD_GET_VERSION);
+                BuildSerialMessage((int)PACKET.CMD_GET_VERSION, 0);
             }
             else
             {
@@ -1307,14 +1522,14 @@ namespace WindowsFormsApplication5
         {
             ValveNbr = 0x01;
 
-            BuildSerialMessage((int)PACKET.CMD_CLOSE_VALVE);
+            BuildSerialMessage((int)PACKET.CMD_CLOSE_VALVE, 0);
         }
 
         private void button19_Click(object sender, EventArgs e)
         {
             ValveNbr = 0x01;
 
-            BuildSerialMessage((int)PACKET.CMD_OPEN_VALVE);            
+            BuildSerialMessage((int)PACKET.CMD_OPEN_VALVE, 0);            
         }
 
         private void button21_Click(object sender, EventArgs e)
@@ -1356,7 +1571,7 @@ namespace WindowsFormsApplication5
             if (result1 == DialogResult.No)
                 return;
 
-            BuildSerialMessage((int)PACKET.CMD_RESET); 
+            BuildSerialMessage((int)PACKET.CMD_RESET, 0); 
         }
 
         private void SaveProfileBtn_Click(object sender, EventArgs e)
@@ -1937,6 +2152,8 @@ namespace WindowsFormsApplication5
 
         private void StartFitBtn_Click(object sender, EventArgs e)
         {
+            int res = 0;
+
             for (int row = 0; row < 7; row++)
             {
                 //if ((String)ProfileGridView[0, row].Value.ToString() == "")
@@ -1953,16 +2170,32 @@ namespace WindowsFormsApplication5
 
                 ControllerGridView[2, row].Value = ProValues[row];
             }
+           
+            res =FindClientBrdId((int)BOARD_TYPE.COMPR_CNTRL);
+            if (res == -1)
+            {
+                MessageBox.Show("Pump controller not connected, cannot proceed",
+                                "Error",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Error
+                               );
+                return;
+            }
+            else
+            {
+                ComprNbr =0x02;
+                BuildSerialMessage((int)PACKET.CMD_START_COMPR, res);
+            }
 
-            if (!BuildSerialMessage((int)PACKET.CMD_GET_PRESS_TEMP))
+            res = FindClientBrdId((int)BOARD_TYPE.HI_FLOW_CNTRL);
+
+            if (!BuildSerialMessage((int)PACKET.CMD_GET_PRESS_TEMP, res))
             {
                 timer1.Enabled = false;
                 return;
             }
 
-            ValveNbr = 0x87;
-
-            if (!BuildSerialMessage((int)PACKET.CMD_OPEN_VALVE))
+            if (!BuildSerialMessage((int)PACKET.CMD_OPEN_VALVE, res))
             {
                 timer1.Enabled = false;
                 return;
@@ -1970,7 +2203,8 @@ namespace WindowsFormsApplication5
 
             ControllerGridView[2, 7].Value = "0";
 
-            timer1.Enabled = true;
+            HiFlowBoardFitStart = true;
+       //     timer1.Enabled = true;
 
             Refresh();
         }
@@ -2034,9 +2268,12 @@ namespace WindowsFormsApplication5
 
         private void StartFitBtn2_Click(object sender, EventArgs e)
         {
-            for (int row = 0; row < 7; row++)
+            int res = 0;
+              
+            for (int row = 7; row < 14; row++)
             {
-                if ((String)ProfileGridView[1, row].Value == "")
+                //if ((String)ProfileGridView[0, row].Value.ToString() == "")
+                if (ProValues[row] == 0)
                 {
                     MessageBox.Show("No Profile Selected",
                                     "Error",
@@ -2045,19 +2282,36 @@ namespace WindowsFormsApplication5
                                    );
                     return;
                 }
-       //         Controller2GridView[2, row].Value = ProfileGridView[1, row].Value;
-                Controller2GridView[2, row].Value = ProValues[7+row];
+                //             ControllerGridView[2, row].Value = ProfileGridView[0, row].Value;
+
+                Controller2GridView[2, row - 7].Value = ProValues[row];
             }
 
-            if (!BuildSerialMessage((int)PACKET.CMD_GET_PRESS_TEMP))
+            res = FindClientBrdId((int)BOARD_TYPE.COMPR_CNTRL);
+            if (res == -1)
+            {
+                MessageBox.Show("Pump controller not connected, cannot proceed",
+                                "Error",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Error
+                               );
+                return;
+            }
+            else
+            {
+                ComprNbr = 0x01;
+                BuildSerialMessage((int)PACKET.CMD_START_COMPR, res);
+            }
+
+            res =FindClientBrdId((int)BOARD_TYPE.LO_FLOW_CNTRL);
+
+            if (!BuildSerialMessage((int)PACKET.CMD_GET_PRESS_TEMP, res))
             {
                 timer1.Enabled = false;
                 return;
             }
 
-            ValveNbr = 0x87;
-
-            if (!BuildSerialMessage((int)PACKET.CMD_OPEN_VALVE))
+            if (!BuildSerialMessage((int)PACKET.CMD_OPEN_VALVE, res))
             {
                 timer1.Enabled = false;
                 return;
@@ -2065,7 +2319,8 @@ namespace WindowsFormsApplication5
 
             Controller2GridView[2, 7].Value = "0";
 
-            timer1.Enabled = true;
+            //timer1.Enabled = true;
+            LoFlowBoardFitStart = true;
 
             Refresh();
         }
@@ -2078,7 +2333,7 @@ namespace WindowsFormsApplication5
         private void GetPressBtn_Click(object sender, EventArgs e)
         {
             //BuildSerialMessage((int)PACKET.CMD_GET_PRESS_TEMP);
-            BuildSerialMessage((int)PACKET.CMD_GET_PRESS);
+            BuildSerialMessage((int)PACKET.CMD_GET_PRESS, 0);
         }
 
         private void FileSystemWatcher_Changed(object sender, FileSystemEventArgs e)
@@ -2139,13 +2394,15 @@ namespace WindowsFormsApplication5
 
         private void BleConnectBtn_Click(object sender, EventArgs e)
         {
+            int j = 0; 
+
             if (lvDevices.SelectedItems.Count == 0)
                 MessageBox.Show("Select device", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             else
             {
                 ListViewItem Item = lvDevices.SelectedItems[0];
 
-                for (int j = 0; j < ClientInfo.Count; j++)
+                for (j = 0; j < ClientInfo.Count; j++)
                 {
                     if (ClientInfo[j].addr == Item.SubItems[0].Text)
                     {
@@ -2153,39 +2410,51 @@ namespace WindowsFormsApplication5
                     }
                 }
 
-                if (TClient[0].State == 0)
-                {
-                    TClient[0].Address = Convert.ToInt64(Item.Text, 16);
-                    //Client.ConnectOnRead = cbConnectOnRead.Checked;
-                    Int32 Res = TClient[0].Connect((wclBluetoothRadio)Item.Tag);
-                    if (Res != wclErrors.WCL_E_SUCCESS)
-                        MessageBox.Show("Error: 0x" + Res.ToString("X8"), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-                else
-                {
+                for (j = 0; j < 4; j++)
+                { 
+                    if (TClient[j].State == 0)
+                    {
+                         TClient[j].Address = Convert.ToInt64(Item.Text, 16);
+                        //Client.ConnectOnRead = cbConnectOnRead.Checked;
+                        Int32 Res = TClient[j].Connect((wclBluetoothRadio)Item.Tag);
+                        if (Res != wclErrors.WCL_E_SUCCESS)
+                            MessageBox.Show("Error: 0x" + Res.ToString("X8"), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                        break;
+                    }
                 }
             }
         }
 
         private void BleDisconnectBtn_Click(object sender, EventArgs e)
         {
+            int j = 0; 
+
             if (lvDevices.SelectedItems.Count == 0)
                 MessageBox.Show("Select device", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             else
             {
                 ListViewItem Item = lvDevices.SelectedItems[0];
 
-                for (int j = 0; j < ClientInfo.Count; j++)
+                for (j = 0; j < ClientInfo.Count; j++)
                 {
                     if (ClientInfo[j].addr == Item.SubItems[0].Text)
+                    //if (TClient[j].Address.ToString() == Item.SubItems[0].Text)
                     {
                         break;
                     }
                 }
 
-                Int32 Res = TClient[0].Disconnect();
-                if (Res != wclErrors.WCL_E_SUCCESS)
-                    MessageBox.Show("Error: 0x" + Res.ToString("X8"), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                try
+                {
+                    Int32 Res = TClient[ClientInfo[j].tclientNbr].Disconnect();
+                    if (Res != wclErrors.WCL_E_SUCCESS)
+                        MessageBox.Show("Error: 0x" + Res.ToString("X8"), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Device Error", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
         }
 
@@ -2216,13 +2485,44 @@ namespace WindowsFormsApplication5
             {
                 if (ClientInfo[j].addr == addrStr)
                 {
-                    break;
+                    return j;
                 }
             }
 
-            return j;
+            return -1;
         }
 
+        int FindClientBrdId(int brdId)
+        {
+            int j = 0;
+
+            for (j = 0; j < ClientInfo.Count; j++)
+            {
+                if (ClientInfo[j].brdId == brdId)
+                {
+                    return j;
+                }
+            }
+
+            return -1;
+        }
+
+        int FindTClientInfoAddr(long addr)
+        {
+            int j = 0;
+            //String tclientAddr = "";
+
+            for (j = 0; j < 4; j++)
+            {
+                //tclientAddr = TClient[j].Address.ToString();
+                if (TClient[j].Address == addr)
+                {
+                    return j;
+                }
+            }
+
+            return -1;
+        }
         private void TraceEvent(Int64 Address, String Event, String Param, String Value)
         {
             String s = "";
@@ -2263,7 +2563,7 @@ namespace WindowsFormsApplication5
                         Item.SubItems[1].Text = "Error: 0x" + Res.ToString("X8");
                     else
                         Item.SubItems[1].Text = DevName;
-
+/*
                     if (DevName.Contains(DeviceName)) //connect to our ble device
                     {
                         if (TClient[ClientInfo.Count].State == 0)
@@ -2275,6 +2575,7 @@ namespace WindowsFormsApplication5
                                 MessageBox.Show("Error: 0x" + Res.ToString("X8"), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
                     }
+*/
                 }
             }
 
@@ -2319,8 +2620,11 @@ namespace WindowsFormsApplication5
         }
         void Client_OnDisconnect(object Sender, int Reason)
         {
+            BleMsgTextBox.AppendText("Disconnect\r\n");
+            BleMsgTextBox.ScrollToCaret();
+
             // Connection property is valid here.
-            TraceEvent(((wclGattClient)Sender).Address, "Disconnected", "Reason", "0x" + Reason.ToString("X8"));          
+            TraceEvent(((wclGattClient)Sender).Address, "Disconnected", "Reason", "0x" + Reason.ToString("X8"));
 
             String addrStr = ((wclGattClient)Sender).Address.ToString("X12");
 
@@ -2338,37 +2642,39 @@ namespace WindowsFormsApplication5
                 }
             }
 
-            int res =FindClientInfoAddr(addrStr);
+            int res = FindClientInfoAddr(addrStr);
+
+            if (ClientInfo[res].brdId == (int)BOARD_TYPE.HI_FLOW_CNTRL)
+                BrdTypeLbl.Text = "Board Type: Hi Flow   DISCONNECTED";
+            else if (ClientInfo[res].brdId == (int)BOARD_TYPE.HI_FLOW_CNTRL)
+                Brd2TypeLbl.Text = "Board Type: Lo Flow   DISCONNECTED";
+            else if (ClientInfo[res].brdId == (int)BOARD_TYPE.COMPR_CNTRL)
+                Brd3TypeLbl.Text = "Board Type: Compr   DISCONNECTED";
 
             try
             {
                 ClientInfo.RemoveAt(res);
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Disconnect", "warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            }
+            catch (Exception ex) { }
 
-            /*
-            for (int j = 0; j < ClientInfo.Count; j++)
-            {
-                if (ClientInfo[j].addr == addrStr)
-                {
-                    ClientInfo.RemoveAt(j);
-                    break;
-                }
-            }
-            */
         }
 
         void Client_OnConnect(object Sender, int Error)
         {
+            BleMsgTextBox.AppendText("Connect\r\n");
+            BleMsgTextBox.ScrollToCaret();
+
+            int tclientIndex = FindTClientInfoAddr(((wclGattClient)Sender).Address);
             // Connection property is valid here.
             TraceEvent(((wclGattClient)Sender).Address, "Connected", "Error", "0x" + Error.ToString("X8"));
 
-            BleMsgTextBox.AppendText("Connected\r\n");
-            BleMsgTextBox.ScrollToCaret();
+            if (TClient[tclientIndex].State == 0)
+            {
+                BleMsgTextBox.AppendText("Disconnect\r\n");
+                BleMsgTextBox.ScrollToCaret();
 
+                return;
+            }
             String addrStr = ((wclGattClient)Sender).Address.ToString("X12");
 
             for (int j = 0; j < lvDevices.Items.Count; j++)
@@ -2385,13 +2691,51 @@ namespace WindowsFormsApplication5
                 }
             }
 
-            BleGetServices();
+            CLIENT_INFO server = new CLIENT_INFO();
+            server.addr = TClient[tclientIndex].Address.ToString("X12");
+            server.brdId = -1;
+            server.tclientNbr = tclientIndex;
 
-            BleGetCharacteristics();
+            if (!BleGetServices(tclientIndex))
+            {
+                ClientInfo.Add(server);
+                return;
+            }
+
+
+            server.character = BleGetCharacteristics(tclientIndex, "1e4d");
+
+            if (server.character == -1)
+            {
+                ClientInfo.Add(server);
+                return;
+            }
+
+            server.txCharacteristic = FCharacteristics[server.character];
+
+            server.character = BleGetCharacteristics(tclientIndex, "1e4d");
+            server.rxCharacteristic = FCharacteristics[server.character];
+
+            ClientInfo.Add(server);
+
+            BleSubscribeCharacteristics(ClientInfo[ClientInfo.Count-1]);// ClientInfo[tclientIndex]);// characterNbr, server.tclientNbr);
+
+            BleWriteCcd(ClientInfo[ClientInfo.Count - 1]);// ClientInfo[tclientIndex]);            
+
+            //BuildSerialMessage((int)PACKET.CMD_GET_BRD_ID, ClientInfo[ClientInfo.Count - 1].tclientNbr);
+
+            //BuildSerialMessage((int)PACKET.CMD_GET_VERSION, ClientInfo[ClientInfo.Count - 1].tclientNbr);
+
+            BuildSerialMessage((int)PACKET.CMD_GET_BRD_ID, ClientInfo.Count - 1);
+
+            BuildSerialMessage((int)PACKET.CMD_GET_VERSION, ClientInfo.Count - 1);
         }
 
         void Client_OnCharacteristicChanged(object Sender, ushort Handle, byte[] Value)
         {
+            uint response = 0;
+            CLIENT_INFO temp;
+
             TraceEvent(((wclGattClient)Sender).Address, "ValueChanged", "Handle", Handle.ToString("X4"));
 
             if (Value == null)
@@ -2410,6 +2754,131 @@ namespace WindowsFormsApplication5
 
                 //RxTextBox.Text = Str;
                 RxTextBox.Text = System.Text.Encoding.ASCII.GetString(Value);
+
+                float delatP = 0.0F;
+                
+                if (ParseMessage(out response, (uint)Value.Length, Value))                
+                {
+
+                    int boardClient= FindClientInfoAddr(((wclGattClient)Sender).Address.ToString("X12"));
+
+                    SerialMonitorTimer.Enabled = false;
+
+                    switch (response)
+                    {
+                        case (int)PACKET.CMD_GET_PRESS_TEMP:
+                            ValveNbr = 0;
+                            
+                            for (int j = 0; j < 8; j++)
+                            {
+                                delatP = (float)(PSensorData[j].press - PSensorData[7].press) / (float)6.89476;
+
+                                DataGridView gridView = ControllerGridView; ;
+                                if (ClientInfo[boardClient].brdId == (int)BOARD_TYPE.HI_FLOW_CNTRL)
+                                {
+                                    gridView = ControllerGridView;
+                                }
+                                else if(ClientInfo[boardClient].brdId == (int)BOARD_TYPE.LO_FLOW_CNTRL)
+                                {
+                                    gridView = Controller2GridView;
+                                }
+
+                                if (PSensorData[j].press != -1)
+                                {
+                                    gridView[0, j].Value = (PSensorData[j].press / 6.89476).ToString("0.000");
+                                    gridView[1, j].Value = (PSensorData[j].temp).ToString("0.0");
+
+                                    gridView[3, j].Value = delatP.ToString("0.000");
+
+                                    try
+                                    {
+                                        if (delatP >= Convert.ToSingle(gridView[2, j].Value))
+                                            ValveNbr |= (byte)(0x01 << j);
+                                    }
+                                    catch (Exception ex)
+                                    {
+                   //                     MessageBox.Show(ex.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                    }
+                                }
+                                else
+                                {
+                                    ValveNbr |= (byte)(0x01 << j);
+
+                                    gridView[0, j].Value = "FAULT";
+                                    gridView[1, j].Value = "FAULT";
+
+                                    gridView[3, j].Value = "FAULT";
+
+                                    gridView.Rows[j].Cells[0].Style.BackColor = Color.Orange;
+                                    gridView.Rows[j].Cells[1].Style.BackColor = Color.Orange;
+                                    gridView.Rows[j].Cells[2].Style.BackColor = Color.Orange;
+                                    gridView.Rows[j].Cells[3].Style.BackColor = Color.Orange;
+                                }
+                            }
+
+                            if (ValveNbr != 0)
+                                BuildSerialMessage((int)PACKET.CMD_CLOSE_VALVE, boardClient);
+                            break;
+                        case (int)PACKET.CMD_GET_PRESS:
+                            ValveNbr = 0;
+                            ComprNbr = 0;
+
+                            temp = ClientInfo[boardClient];
+                            temp.brdId = BoardId;
+                            ClientInfo[boardClient] = temp;
+
+                            if (ClientInfo[boardClient].brdId == (int)BOARD_TYPE.HI_FLOW_CNTRL)
+                            {
+                                ValveNbr = DisplayGridData(ControllerGridView, HiFlowBoardFitStart);
+
+                                if (ValveNbr == 0)
+                                    HiFlowBoardFitStart = false;
+                            }
+                            else if (ClientInfo[boardClient].brdId == (int)BOARD_TYPE.LO_FLOW_CNTRL)
+                            {
+                                ValveNbr = DisplayGridData(Controller2GridView, LoFlowBoardFitStart);
+
+                                if (ValveNbr == 0)
+                                    LoFlowBoardFitStart = false;
+                            }
+                            else if (ClientInfo[boardClient].brdId == (int)BOARD_TYPE.COMPR_CNTRL)
+                                ComprNbr = DisplayComprGridData(CompressorCntrlGridView);
+
+                            if (ClientInfo[boardClient].brdId == (int)BOARD_TYPE.COMPR_CNTRL)
+                            {
+                                /* send compressor control board its message */
+                                BuildSerialMessage((int)PACKET.CMD_SET_COMPR , boardClient);
+                            }
+                            else
+                            {
+                                /* send solenoid controller board its message */
+                                BuildSerialMessage((int)PACKET.CMD_SET_VALVE, boardClient);
+                            }
+                            break;
+                        case (int)PACKET.CMD_GET_VERSION:
+                            if (ClientInfo[boardClient].brdId == (int)BOARD_TYPE.HI_FLOW_CNTRL)
+                                FwBrd1VersionLbl.Text = "AMC: v" + System.Text.Encoding.ASCII.GetString(Payload);
+                            else if (ClientInfo[boardClient].brdId == (int)BOARD_TYPE.LO_FLOW_CNTRL)
+                                FwBrd2VersionLbl.Text = "AMC: v" + System.Text.Encoding.ASCII.GetString(Payload);
+                            else if (ClientInfo[boardClient].brdId == (int)BOARD_TYPE.COMPR_CNTRL)
+                                FwBrd3VersionLbl.Text = "AMC: v" + System.Text.Encoding.ASCII.GetString(Payload);
+                            break;
+                        case (int)PACKET.CMD_GET_BRD_ID:
+                            temp = ClientInfo[boardClient];
+                            temp.brdId = BoardId;
+                            ClientInfo[boardClient] = temp;
+
+                            if (ClientInfo[boardClient].brdId == (int)BOARD_TYPE.HI_FLOW_CNTRL)
+                                BrdTypeLbl.Text = "Board Type: Hi Flow   Addr: " + ((wclGattClient)Sender).Address.ToString("X");
+                            //BrdTypeLbl.Text =  "Board Type: " + BoardId.ToString() + "   Addr: " + ((wclGattClient)Sender).Address.ToString("X");
+                            else if (ClientInfo[boardClient].brdId == (int)BOARD_TYPE.LO_FLOW_CNTRL)
+                                Brd2TypeLbl.Text = "Board Type: Lo Flow   Addr: " + ((wclGattClient)Sender).Address.ToString("X");
+                            //Brd2TypeLbl.Text = "Board Type: " + BoardId.ToString() + "   Addr: " + ((wclGattClient)Sender).Address.ToString("X");
+                            else if (ClientInfo[boardClient].brdId == (int)BOARD_TYPE.COMPR_CNTRL)
+                                Brd3TypeLbl.Text = "Board Type: Compr   Addr: " + ((wclGattClient)Sender).Address.ToString("X");
+                            break;
+                    }
+                }
             }
         }
         private wclBluetoothRadio GetRadio()
@@ -2420,12 +2889,13 @@ namespace WindowsFormsApplication5
                     // Return first non MS.
                     return Manager[i];
 
-            MessageBox.Show("No Bluetooth Radio found.", "Error", MessageBoxButtons.OK,MessageBoxIcon.Error);
+            MessageBox.Show("No Bluetooth Radio found.", "Error", MessageBoxButtons.OK,
+                MessageBoxIcon.Error);
 
             return null;
         }
- 
-        private void BleGetServices()
+
+        private bool BleGetServices(int tclientIndex)
         {
             FServices = null;
 
@@ -2433,16 +2903,16 @@ namespace WindowsFormsApplication5
             BleMsgTextBox.ScrollToCaret();
 
             //Int32 Res = Client.ReadServices(wclGattOperationFlag.goNone, out FServices);
-            Int32 Res = TClient[ClientInfo.Count].ReadServices(wclGattOperationFlag.goNone, out FServices);
+            Int32 Res = TClient[tclientIndex].ReadServices(wclGattOperationFlag.goNone, out FServices);
 
             if (Res != wclErrors.WCL_E_SUCCESS)
             {
                 MessageBox.Show("Error: 0x" + Res.ToString("X8"), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
+                return false;
             }
 
             if (FServices == null)
-                return;
+                return false;
 
             foreach (wclGattService Service in FServices)
             {
@@ -2456,16 +2926,16 @@ namespace WindowsFormsApplication5
                 //Item.SubItems.Add(Service.Uuid.IsShortUuid.ToString());
                 //Item.SubItems.Add(Service.Handle.ToString("X4"));
             }
+
+            return true;
         }
 
-        private void BleGetCharacteristics()
+        private int BleGetCharacteristics(int tclientIndex, string characteristic)
         {
             int servNbr = 0;
-            int txCharNbr = 0;
-            int rxCharNbr = 0;
-
+            int characterNbr = 0;
             bool serviceFound = false;
-            String s ="";
+            String s = "";
 
             FCharacteristics = null;
 
@@ -2477,8 +2947,8 @@ namespace WindowsFormsApplication5
 
                     /* 49535343-FE7D-4AE5-8FA9-9FAFD205E455.
                      * The Transparent UART Service contains the following data characteristics:
-                     • Transparent UART Transmit(TX) Characteristic
-                     • Transparent UART Receive(RX) Characteristic
+                     â€¢ Transparent UART Transmit(TX) Characteristic
+                     â€¢ Transparent UART Receive(RX) Characteristic
                     */
                     if (s.Contains("fe7d"))
                     {
@@ -2500,24 +2970,24 @@ namespace WindowsFormsApplication5
             {
                 BleMsgTextBox.AppendText("Our Service Not Found\r\n");
                 BleMsgTextBox.ScrollToCaret();
-                return;
+                return -1;
             }
 
             BleMsgTextBox.AppendText("Get Characteristics\r\n");
             BleMsgTextBox.ScrollToCaret();
 
             wclGattService Service = FServices[servNbr];// lvServices.SelectedItems[0].Index];            
-            
+
             /* read the characteristics for this service of interest */
-            Int32 Res = TClient[ClientInfo.Count].ReadCharacteristics(Service, wclGattOperationFlag.goNone, out FCharacteristics);
+            Int32 Res = TClient[tclientIndex].ReadCharacteristics(Service, wclGattOperationFlag.goNone, out FCharacteristics);
             if (Res != wclErrors.WCL_E_SUCCESS)
             {
                 MessageBox.Show("Error: 0x" + Res.ToString("X8"), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
+                return -1;
             }
 
             if (FCharacteristics == null)
-                return;
+                return -1;
 
             foreach (wclGattCharacteristic Character in FCharacteristics)
             {
@@ -2531,28 +3001,28 @@ namespace WindowsFormsApplication5
                     /* The Transparent UART TX Characteristic is used for data transmission 
                      * by the Server or the Client, so lets find that characteristic
                     */
-                    if (s.Contains("1e4d"))
+                    //if (s.Contains("1e4d"))
                     {
                         /* Transparent UART TX 49535343-1E4D-4BD9-BA61-23C647249616,
                          * find the 1E4D
                         */
-                        break;
+                      //  break;
                     }
 
                     /* RX Characteristic UUID: 6E400002-B5A3-F393-E0A9-E50E24DCCA9E
                      * TX Characteristic UUID: 6E400003-B5A3-F393-E0A9-E50E24DCCA9E
                      * Nordic transparent UART (nRF52840)
                     */
-                    if (s.Contains("6e400003"))
+                    if (s.Contains(characteristic))//"6e400003"))
                     {
                         /* Transparent UART RX 6E400002-B5A3-F393-E0A9-E50E24DCCA9E
                          * Transparent UART TX 6E400003-B5A3-F393-E0A9-E50E24DCCA9E
                          * find the 6E400003
                         */
-                        break;
+                        return characterNbr;
                     }
 
-                    txCharNbr++;
+                    characterNbr++;
                 }
                 /*
                 ListViewItem Item = lvCharacteristics.Items.Add(s);
@@ -2572,67 +3042,34 @@ namespace WindowsFormsApplication5
                 */
             }
 
-            /* Nordic chip rx is different, for Microchip it's the same */   
-            foreach (wclGattCharacteristic Character in FCharacteristics)
-            {
-                //String s;
-                if (Character.Uuid.IsShortUuid)
-                    s = Character.Uuid.ShortUuid.ToString("X4");
-                else
-                {
-                    s = Character.Uuid.LongUuid.ToString();
 
-                    /* The Transparent UART TX Characteristic is used for data transmission 
-                     * by the Server or the Client, so lets find that characteristic
-                    */
-                    if (s.Contains("1e4d"))
-                    {
-                        /* Transparent UART TX 49535343-1E4D-4BD9-BA61-23C647249616,
-                         * find the 1E4D
-                        */
-                        break;
-                    }
-
-                    /* RX Characteristic UUID: 6E400002-B5A3-F393-E0A9-E50E24DCCA9E
-                     * TX Characteristic UUID: 6E400003-B5A3-F393-E0A9-E50E24DCCA9E
-                     * Nordic transparent UART (nRF52840)
-                    */
-                    if (s.Contains("6e400002"))
-                    {
-                        /* Transparent UART RX 6E400002-B5A3-F393-E0A9-E50E24DCCA9E
-                         * Transparent UART TX 6E400003-B5A3-F393-E0A9-E50E24DCCA9E
-                         * find the 6E400002
-                        */
-                        break;
-                    }
-
-                    rxCharNbr++;
-                }
-
-            }
-            BleSubscribeCharacteristics(txCharNbr);
-
-            BleWriteCcd(txCharNbr);
-
+            return -1;
+            /*
             CLIENT_INFO server = new CLIENT_INFO();
-            server.addr = TClient[ClientInfo.Count].Address.ToString("X12");
+            server.addr = TClient[tclientIndex].Address.ToString("X12");
             server.brdId = 1;
-            server.txcharacter = txCharNbr;
-            //server.FCharacteristics = FCharacteristics;
-            server.txCharacteristics = FCharacteristics[txCharNbr];
-            server.rxCharacteristics = FCharacteristics[rxCharNbr];
+            server.character = characterNbr;
+            server.tclientNbr = tclientIndex;
+            
+            server.TxCharacteristic = FCharacteristics[characterNbr];
 
             ClientInfo.Add(server);
+            //ClientInfo[tclientIndex].character = characterNbr;
+          //  ClientInfo[tclientIndex].FCharacteristics = FCharacteristics[characterNbr]; ;
 
+            BleSubscribeCharacteristics(ClientInfo[tclientIndex]);// characterNbr, server.tclientNbr);
+
+            BleWriteCcd(ClientInfo[tclientIndex]);
+            */
         }
 
-        private void BleSubscribeCharacteristics(int characterNbr)
+        private void BleSubscribeCharacteristics(CLIENT_INFO clientInfo)//int characterNbr,int tclientIndex)
         {
 
             BleMsgTextBox.AppendText("Subscribe\r\n");
             BleMsgTextBox.ScrollToCaret();
 
-            wclGattCharacteristic Characteristic = FCharacteristics[characterNbr];
+            wclGattCharacteristic Characteristic = clientInfo.txCharacteristic;// FCharacteristics[clientInfo.character];
 
             // In case if characteristic has both Indication and Notification properties
             // set to True we have to select one of them. Here we use Notifications but
@@ -2643,17 +3080,17 @@ namespace WindowsFormsApplication5
                 // if you want to receive Indications instead of notifications.
                 Characteristic.IsIndicatable = false;
             //Int32 Res = Client.Subscribe(Characteristic);
-            Int32 Res = TClient[ClientInfo.Count].Subscribe(Characteristic);
+            Int32 Res = TClient[clientInfo.tclientNbr].Subscribe(Characteristic);
             if (Res != wclErrors.WCL_E_SUCCESS)
                 MessageBox.Show("Error: 0x" + Res.ToString("X8"), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
-        private void BleWriteCcd(int characterNbr)        
+        private void BleWriteCcd(CLIENT_INFO clientInfo)
         {
             BleMsgTextBox.AppendText("Write CCCD Subscribe\r\n");
             BleMsgTextBox.ScrollToCaret();
 
-            wclGattCharacteristic Characteristic = FCharacteristics[characterNbr];
+            wclGattCharacteristic Characteristic = clientInfo.txCharacteristic;// FCharacteristics[clientInfo.character];
 
             // In case if characteristic has both Indication and Notification properties
             // set to True we have to select one of them. Here we use Notifications but
@@ -2663,7 +3100,7 @@ namespace WindowsFormsApplication5
                 // Characteristic.IsNotifiable = false;
                 // if you want to receive Indications instead of notifications.
                 Characteristic.IsIndicatable = false;
-            Int32 Res = TClient[ClientInfo.Count].WriteClientConfiguration(Characteristic, true, wclGattOperationFlag.goNone, wclGattProtectionLevel.plNone);
+            Int32 Res = TClient[clientInfo.tclientNbr].WriteClientConfiguration(Characteristic, true, wclGattOperationFlag.goNone, wclGattProtectionLevel.plNone);
             if (Res != wclErrors.WCL_E_SUCCESS)
                 MessageBox.Show("Error: 0x" + Res.ToString("X8"), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
@@ -2674,7 +3111,7 @@ namespace WindowsFormsApplication5
             {
                 //int writeChar = ClientInfo[clientIndex].character;
                 //wclGattCharacteristic Characteristic = ClientInfo[clientIndex].FCharacteristics[writeChar]; // FCharacteristics[ClientInfo[clientIndex].character];// lvCharacteristics.SelectedItems[0].Index];
-                wclGattCharacteristic Characteristic = ClientInfo[clientIndex].rxCharacteristics; // FCharacteristics[ClientInfo[clientIndex].character];// lvCharacteristics.SelectedItems[0].Index];
+                wclGattCharacteristic Characteristic = ClientInfo[clientIndex].rxCharacteristic; // FCharacteristics[ClientInfo[clientIndex].character];// lvCharacteristics.SelectedItems[0].Index];
 
                 String Str = edCharVal.Text;
 
@@ -2692,7 +3129,7 @@ namespace WindowsFormsApplication5
                     Val[i] = Convert.ToByte(b, 16);
                 }
 */
-                Int32 Res = TClient[clientIndex].WriteCharacteristicValue(Characteristic, dataArray, wclGattProtectionLevel.plNone);// Protection());
+                Int32 Res = TClient[ClientInfo[clientIndex].tclientNbr].WriteCharacteristicValue(Characteristic, dataArray, wclGattProtectionLevel.plNone);// Protection());
                 if (Res != wclErrors.WCL_E_SUCCESS)
                     MessageBox.Show("Error: 0x" + Res.ToString("X8"), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
@@ -2705,7 +3142,16 @@ namespace WindowsFormsApplication5
 
         private void BleSendBtn_Click(object sender, EventArgs e)
         {
-            BleSendData(0);
+            if (lvDevices.SelectedItems.Count == 0)
+                MessageBox.Show("Select device", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            else
+            {
+                ListViewItem Item = lvDevices.SelectedItems[0];
+
+                int res = FindClientInfoAddr(Item.SubItems[0].Text);
+
+                BleSendData(res);
+            }
         }
 
         private void BleRssiBtn_Click(object sender, EventArgs e)
@@ -2829,7 +3275,7 @@ namespace WindowsFormsApplication5
 
         private void motorDiagnosticToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ControlPanel.Top = 10;
+            ControlPanel.Top = 0;
             ControlPanel.Left = 10;
             ControlPanel.Height = 630;
             ControlPanel.Width = 450;
@@ -2842,7 +3288,7 @@ namespace WindowsFormsApplication5
 
         private void button1_Click_2(object sender, EventArgs e)
         {
-            OperationPanel.Top = 5;
+            OperationPanel.Top = 0;
             OperationPanel.Left = 5;
             OperationPanel.Height = 630;
             OperationPanel.Width = 450;
