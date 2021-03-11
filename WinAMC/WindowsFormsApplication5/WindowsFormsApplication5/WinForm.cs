@@ -25,6 +25,7 @@ using System.Runtime.InteropServices; // required for DllImport( string, entrypo
 /* BTFramework libraries */
 using wclCommon;
 using wclBluetooth;
+using Ionic.Zip;
 
 /*
 https://www.servocity.com/high-power-simple-motor-controller-g2-18v25/
@@ -51,7 +52,6 @@ namespace WindowsFormsApplication5
 
         MSG_ACK = 0x8000,
 
-        /* AMC commands */
         CMD_GET_VERSION = 0x0200,
         CMD_OPEN_VALVE  =0x020d,
         CMD_CLOSE_VALVE =0x020e,
@@ -64,10 +64,20 @@ namespace WindowsFormsApplication5
         CMD_STOP_COMPR = 0x0214,
         CMD_SET_COMPR = 0x0215,
 
-        CMD_SET_AMC_SETUP = 0x2001,
-        CMD_RESET = 0x200A,        
+        CMD_ACK =0x9999,
     }
 
+    enum PACKET_XLOAD
+    {
+        CMD_ACK = 1,
+        CMD_ERASE_FLASH = 2,
+        CMD_FW_UPDATE_PACKET,
+        CMD_FW_UPDATE_COMPLETE,
+
+        CMD_RESET = 7,
+        CMD_MEASURE = 8
+    }
+	
     enum MC_PACKET
     {
         /* Motor control commands */
@@ -95,7 +105,11 @@ namespace WindowsFormsApplication5
         GET_CURRENT =0x2c,
     }
 
-
+    enum MAIN_DIM
+    {
+        TOP = 0,
+        HEIGHT =720,
+    }
     enum CRC
     {
         SEED = 0xffff
@@ -108,23 +122,32 @@ namespace WindowsFormsApplication5
         HI_FLOW_CNTRL = 2,        
     }
 
+    enum CAMERA_GRID
+    {
+        STATUS = 0,
+        DATA = 1,
+        FILE_CNT = 2,
+    }
+
+
+
     public partial class TheMainForm : Form
     {
-
         [DllImport("UsbComms.dll", EntryPoint = "OpenUsbPort")]
         public static extern bool OpenUsbPort();
+
+        const string DeviceName = "Swipe Fashion";
+        const string FileCapturePath = "C:\\WinAMC\\capture\\";
+        const string ProfilePath = "C:\\WinAMC\\Profile\\";
+
+        const int MAX_NBR_CAMERAS = 5;
 
         public SerialFd serialFd = new SerialFd();
 
         public byte[] Payload = new byte[2000];
         public uint PayloadSize;
 
-        //string server = null;
-        //int port = (int)CLIENTS.PORT;
-
         public int PanelSelect = 0;
-
-        //int dataPt = 0;
 
         public struct AMC_OP
         {
@@ -140,28 +163,6 @@ namespace WindowsFormsApplication5
             public UInt16 crc;
         }
 
-        public struct AMC_SETUP
-        {
-            //public byte setPoint;
-            //public byte deploy;
-          //  public byte seqTime;
-        //    public byte temp;
-
-      //      public UInt32 pcTimeStamp;
-
-    //        public UInt16 logAddr;
-
-  //          public byte detailedLog;
-
-//            public byte setupInfo; //bit0 trigger on both switches or only one 
-
-            //[MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            //public float[] profileValue;
-
-            public UInt16 crc;
-        }
-                
-        //class CLIENT_INFO
         public struct CLIENT_INFO
         {
             public String addr;
@@ -176,15 +177,7 @@ namespace WindowsFormsApplication5
 
         //List<int> Stuff = new List<int>();
         List<CLIENT_INFO> ClientInfo = new List<CLIENT_INFO>();
-                
-
-        public AMC_OP AmcOp = new AMC_OP();
-        public AMC_SETUP AmcSetup = new AMC_SETUP();
-                
-        public byte ValveNbr = 0;
-        public byte ComprNbr = 0;
-
-        public float Pressure = 0;
+                               
 
         public struct motor_cntrl_t
         {
@@ -211,18 +204,29 @@ namespace WindowsFormsApplication5
         }
         public P_SENSOR_DATA[] PSensorData = new P_SENSOR_DATA[8];
 
+        public struct level_sensor_data_t
+        {
+            public UInt16 outage;
+            public UInt16 temp;
+        }
+        public level_sensor_data_t LevelSensorData;
+		
         public UInt16[] PressSensorPsi = new UInt16[8];
 
         public float[] ProValues = new float[14];
-        //public float[] ProfileValuesCard1 = new float[7];
-        //public float[] ProfileValuesCard2 = new float[7];
 
+        public byte ValveNbr = 0;
+        public byte ComprNbr = 0;
+
+        public bool AckReceived = false;
+		
         int BoardId = 0;
         int CompressorState = 0;
         int ReliefState = 0;
 
         bool LoFlowBoardFitStart = false;
         bool HiFlowBoardFitStart = false;
+
 
         private wclBluetoothManager Manager;
         //private wclGattClient Client;
@@ -233,12 +237,8 @@ namespace WindowsFormsApplication5
         //private wclGattDescriptor[] FDescriptors;
         private wclGattService[] FServices;
 
-        //Process[] Proc = new Process[5];//();
-
         bool StartCapture = false;
-
         public int NbrCameras =0;
-        string CameraPortName = "";
 
         public struct camera_info_t
         {
@@ -248,14 +248,21 @@ namespace WindowsFormsApplication5
             public bool startCapture;
 
             public bool captureStarted;
+
+            public float fileSize;
+            public int fileCnt;
+
+            public string portName;
         }
 
-        camera_info_t[] CameraInfo =new camera_info_t[5];
+        camera_info_t[] CameraInfo =new camera_info_t[MAX_NBR_CAMERAS];
 
-        string fileName;
+        float CapturedFileSize = 0;        
+        float FolderSize = 0.0f;
+        int FileCnt = 0;
 
-        const string DeviceName = "RN4871";    
-
+        public Thread[] cameraThread =new Thread[MAX_NBR_CAMERAS];
+        
         public TheMainForm()
         {
             InitializeComponent();
@@ -273,13 +280,10 @@ namespace WindowsFormsApplication5
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            this.Top = 20;
+            this.Left = 20;
             this.Width = 850;
-            this.Height = 820;
-
-            InitDataGrid();
-
-            InitDownloadGrid();
-           
+            this.Height = 820;          
 
             MainPanel.Top = 40;
             MainPanel.Left = 10;
@@ -297,7 +301,9 @@ namespace WindowsFormsApplication5
             InitControllerGrid(Controller2GridView,320);
 
             InitCompressorGrid(CompressorCntrlGridView, 620);
-            
+
+            InitCameraGrid(CameraDataGridView, 620);            
+
             FwBrd1VersionLbl.Top = 0;
             FwBrd1VersionLbl.Left = 15;
 
@@ -325,21 +331,12 @@ namespace WindowsFormsApplication5
             TestBtn.Top = 260;
             TestBtn.Left = 150;
 
-            //StartPreviewBtn.Top = 560;
-            //StartPreviewBtn.Left = 100;
+            ControllerGroupBox.Top = 285;
+            ControllerGroupBox.Left = 5;
 
-            //CaptureBtn.Top = 560;
-            //CaptureBtn.Left = 185;
-
-            //StopCaptureBtn.Top = 560;
-            //StopCaptureBtn.Left = 270;
-
-            //UploadFilesBtn.Top = 560;
-            //UploadFilesBtn.Left = 355;
-
-            ProfileGroupBox.Top = 0;
+            ProfileGroupBox.Top = (int)MAIN_DIM.TOP;
             ProfileGroupBox.Left = 5;
-            ProfileGroupBox.Height = 630;
+            ProfileGroupBox.Height =(int)MAIN_DIM.HEIGHT;
             ProfileGroupBox.Width = 455;
 
             FwBrd1VersionLbl.Visible = true;
@@ -400,12 +397,6 @@ namespace WindowsFormsApplication5
 
             if (Res != wclErrors.WCL_E_SUCCESS)
                 MessageBox.Show("Error: 0x" + Res.ToString("X8"), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
-        }
-
-        private void InitDataGrid()
-        {
-
 
         }
 
@@ -544,42 +535,36 @@ namespace WindowsFormsApplication5
 
             gridView.Visible = true;
         }
-        /*
-        private void InitController2Grid(DataGridView gridView)
-        {
-            gridView.Width = 425;
-            gridView.Height = 240;
-            gridView.Left = 15;
-            gridView.Top = 320;
 
-            gridView.ColumnCount = 5;
+        private void InitCameraGrid(DataGridView gridView, int top)
+        {
+            gridView.Width = 355;
+            gridView.Height = 115;
+            gridView.Left = 15;
+            gridView.Top = 540;
+
+            gridView.ColumnCount = 3;
             gridView.ColumnHeadersVisible = true;
             gridView.RowHeadersVisible = true;
-            gridView.RowHeadersWidth = 60;
+            gridView.RowHeadersWidth = 55;
 
-            gridView.Columns[0].Width = 80;
-            gridView.Columns[1].Width = 80;
-            gridView.Columns[2].Width = 80;
-            gridView.Columns[3].Width = 80;
-            gridView.Columns[4].Width = 35;
+            gridView.Columns[(int)CAMERA_GRID.STATUS].Width = 140;
+            gridView.Columns[(int)CAMERA_GRID.DATA].Width = 80;
+            gridView.Columns[(int)CAMERA_GRID.FILE_CNT].Width = 75;
 
             // create the rows
-            for (int i = 1; i < 9; i++)
+            for (int i = 1; i < 5; i++)
             {
                 gridView.Rows.Add("", "", "");
-                gridView.Rows[i - 1].HeaderCell.Value = "S" + i.ToString();
+                gridView.Rows[i - 1].HeaderCell.Value = "C" + i.ToString();
             }
 
-            gridView.Columns[0].HeaderText = "Press (psi)";
-            gridView.Columns[1].HeaderText = "Temp (DegC)";
-            gridView.Columns[2].HeaderText = "Target (psi)";
-            gridView.Columns[3].HeaderText = "Delta P (psi)";
-            gridView.Columns[4].HeaderText = "V";
+            gridView.Columns[(int)CAMERA_GRID.STATUS].HeaderText = "Status";
+            gridView.Columns[(int)CAMERA_GRID.DATA].HeaderText = "Data(MB)";
+            gridView.Columns[(int)CAMERA_GRID.FILE_CNT].HeaderText = "Files";
 
             gridView.Visible = true;
         }
-        */
-
 
         /*
                 private void InitGenericPlot(Gigasoft.ProEssentials.Pesgo pePlot, string title_,          string xaxisLbl_,                    string yaxisLbl_            )
@@ -730,132 +715,11 @@ namespace WindowsFormsApplication5
                 }
         */
 
-        private void InitDownloadGrid()
-        {
-        }
-
-
-        private void button2_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                if (!OpenUsbPort())
-                {
-                    MessageBox.Show("USB Open Port Failed",
-                                    "Usb Comm",
-                                    MessageBoxButtons.OK,
-                                    MessageBoxIcon.Error
-                                   );
-                }
-                else
-                {
-                    MessageBox.Show("USB Open Port Succesful",
-                                    "Usb Comm",
-                                    MessageBoxButtons.OK
-                                   );
-                }
-            }
-            catch (EntryPointNotFoundException EpNotFoundEx)
-            {
-                MessageBox.Show(EpNotFoundEx.ToString());
-            }
-        }
-
-
+        /* threads */    
         public Thread serialThread;
-        public Thread cameraThread;
+        //public Thread cameraThread;
+        //cameraThread = new Thread(cameraDataThread);
         public Thread MotorThread;
-        //public Thread[] cameraThread =new Thread[3];
-
-        public byte DisplayGridData(DataGridView gridView, bool brdFitStart)
-        {
-            float delatP = 0.0F;
-            byte vNbr = 0;
-
-            for (int j = 0; j < 8; j++)
-            {
-                delatP = (float)(PressSensorPsi[j] - PressSensorPsi[7]) / (float)1000;
-
-                if (PressSensorPsi[j] != 0)
-                {
-                    gridView[0, j].Value = ((float)PressSensorPsi[j] / 1000).ToString("0.000");
-                    //gridView[1, j].Value = (PSensorData[j].temp).ToString("0.0");
-
-                    gridView[3, j].Value = delatP.ToString("0.000");
-
-                    gridView.Rows[j].Cells[0].Style.BackColor = Color.White;
-                    gridView.Rows[j].Cells[1].Style.BackColor = Color.White;
-                    gridView.Rows[j].Cells[2].Style.BackColor = Color.White;
-                    gridView.Rows[j].Cells[3].Style.BackColor = Color.White;
-
-                    try
-                    {
-                        if (delatP < Convert.ToSingle(gridView[2, j].Value))
-                            vNbr |= (byte)(0x01 << j);
-                    }
-                    catch (Exception ex)
-                    {
-                        //                     MessageBox.Show(ex.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
-                }
-                else
-                {
-                    gridView[0, j].Value = "FAULT";
-                    gridView[1, j].Value = "FAULT";
-
-                    gridView[3, j].Value = "FAULT";
-
-                    gridView.Rows[j].Cells[0].Style.BackColor = Color.Orange;
-                    gridView.Rows[j].Cells[1].Style.BackColor = Color.Orange;
-                    gridView.Rows[j].Cells[2].Style.BackColor = Color.Orange;
-                    gridView.Rows[j].Cells[3].Style.BackColor = Color.Orange;
-                    gridView.Rows[j].Cells[4].Style.BackColor = Color.Orange;
-                }
-
-                if (!brdFitStart)
-                    vNbr = 0;
-
-                if ( (vNbr & (0x01<<j)) ==(0x01<<j) )
-                    gridView[4, j].Value ="O";
-                else
-                    gridView[4, j].Value = "X";
-
-            }
-
-            return vNbr;
-
-        }
-        public byte DisplayComprGridData(DataGridView gridView)
-        {
-            byte cNbr = 0;
-
-            if ( (CompressorState &0x0010) ==0x0010)
-                gridView[0, 0].Value ="O";
-            else
-                gridView[0, 0].Value = "X";
-
-            if ((CompressorState & 0x0008) == 0x0008)
-                gridView[1, 0].Value = "O";
-            else
-                gridView[1, 0].Value = "X";
-
-            if ((ReliefState & 0x0040) == 0x0040)
-                gridView[2, 0].Value = "O";
-            else
-                gridView[2, 0].Value = "X";
-
-            if ((ReliefState & 0x0020) == 0x0020)
-                gridView[3, 0].Value = "O";
-            else
-                gridView[3, 0].Value = "X";
-
-            if (LoFlowBoardFitStart)
-                cNbr |= 0x01;
-            if (HiFlowBoardFitStart)
-                cNbr |= 0x02;
-
-            return cNbr;
-        }
 
         public void rxDataThread()
         {
@@ -871,12 +735,11 @@ namespace WindowsFormsApplication5
 
                 nbrBytesRx = serialFd.ReceiveMessage(0, 100, rxBuffer);
 
-                   if (nbrBytesRx != 0)
-                   {
-                       SerialMonitorTimer.Enabled = false;
+                if (nbrBytesRx != 0)
+                {
+                    SerialMonitorTimer.Enabled = false;
 
-    //                  RxListBox.Items.Add(rxBuffer[0].ToString("x") );
-
+                    /*
                        if (ParseMessage(out response, nbrBytesRx, rxBuffer))
                        {                     
                             switch(response)
@@ -934,24 +797,25 @@ namespace WindowsFormsApplication5
                                    break;                                
                          }
                     }
+                    */
                 }
 
                 if (nbrBytesRx == 2)
                 {
                     MotorCntrl.msgReceived = true;
 
-                    rxValue =(Int16)(rxBuffer[0] | (rxBuffer[1]<<8));
+                    rxValue = (Int16)(rxBuffer[0] | (rxBuffer[1] << 8));
 
                     switch (MotorCntrl.varId)
                     {
                         case (int)MC_VARS.GET_VOLTAGE:
-                            MotorCntrl.voltage = (float)rxValue/1000.0F;
+                            MotorCntrl.voltage = (float)rxValue / 1000.0F;
 
-                            VoltageTextBox.Text = (rxValue/1000.0).ToString("0.00") +"V";
-                            VoltageLbl.Text ="Voltage: " + (rxValue / 1000.0).ToString("0.00") + "V";
+                            VoltageTextBox.Text = (rxValue / 1000.0).ToString("0.00") + "V";
+                            VoltageLbl.Text = "Voltage: " + (rxValue / 1000.0).ToString("0.00") + "V";
                             MotorDetectLbl.Text = "Motor Detected: " + VoltageTextBox.Text;
 
-                            if (MotorCntrl.voltage<10.0)
+                            if (MotorCntrl.voltage < 10.0)
                                 MotorDetectLbl.ForeColor = Color.Red;
                             else
                                 MotorDetectLbl.ForeColor = Color.Black;
@@ -962,8 +826,8 @@ namespace WindowsFormsApplication5
                             BuildMCSerialMessage((int)MC_PACKET.CMD_GET_VAR);
                             break;
                         case (int)MC_VARS.GET_CURRENT:
-                            CurrentTextBox.Text = rxValue.ToString() +"mA";
-                            CurrentLbl.Text ="Current: " + rxValue.ToString() + "mA";
+                            CurrentTextBox.Text = rxValue.ToString() + "mA";
+                            CurrentLbl.Text = "Current: " + rxValue.ToString() + "mA";
                             MotorCntrl.varId = (int)MC_VARS.GET_FWD_LIMIT;
                             BuildMCSerialMessage((int)MC_PACKET.CMD_GET_VAR);
                             break;
@@ -1020,19 +884,531 @@ namespace WindowsFormsApplication5
                             MotorCntrl.speed = rxValue;
 
                             SpeedTextBox.Text = rxValue.ToString();
-                            SpeedLbl.Text ="Speed:   " +rxValue.ToString();
+                            SpeedLbl.Text = "Speed:   " + rxValue.ToString();
 
                             MotorCntrl.varId = (int)MC_VARS.GET_VOLTAGE;
                             BuildMCSerialMessage((int)MC_PACKET.CMD_GET_VAR);
                             break;
                     }
-                    
+
                     //MotorCurrent =(int)(rxBuffer[0] | (rxBuffer[1]<<8));
                     //MotorReadTextBox.Text = MotorCurrent.ToString();
                 }
 
                 Thread.Sleep(1);
             }
+        }
+
+        public void cameraDataThread(object cameraNbr)
+        {            
+            while (true)
+            {
+                if (!CameraMachine((int)cameraNbr)) //CameraInfo[0]))
+                {
+                    cameraThread[(int)cameraNbr].Abort(cameraNbr);                  
+                }
+            }
+        }
+
+
+        public void MotorDataThread()
+        {
+            int motorState = 0;
+
+            while (true)
+            {
+                switch (motorState)
+                {
+                    case 0:
+                        if (MotorCntrl.fwdLimit || MotorCntrl.revLimit)
+                        {
+                            motorState = 1;
+                            CameraOperationLbl.Text = "";
+                            MotorStatusLbl.Text = "Mannequin ready";
+                        }
+                        else
+                        {
+                            MotorStatusLbl.Text = "Positioning mannequin";
+                            MotorFwdBtn_Click(null, null);
+                        }
+                        break;
+                    case 1:
+                        if (CameraInfo[0].captureStarted)
+                        {
+                            if (MotorCntrl.fwdLimit)
+                                MotorRevBtn_Click(null, null);
+                            else if (MotorCntrl.revLimit)
+                                MotorFwdBtn_Click(null, null);
+                            else
+                            {
+                                /*ERROR, no limit anymore??? */
+                                MessageBox.Show("Mannequin out of position",
+                                                "Error",
+                                                MessageBoxButtons.OK,
+                                                MessageBoxIcon.Error
+                                               );
+
+                            }
+
+                            motorState = 2;
+                        }
+                        break;
+                    case 2:
+                        if (MotorCntrl.fwdLimit || MotorCntrl.revLimit)
+                        {
+                            motorState = 0;
+                            MotorThread.Abort();
+                        }
+                        break;
+                }
+
+                Thread.Sleep(1);
+            }
+        }
+
+        bool StartCameraRequest(int request, int camera)
+        {
+            //Proc[camera] = new Process();
+            CameraInfo[camera].proc = new Process();            
+
+            CapturedFileSize = 0;
+
+            //string filePath = "C:\\WinAMC\\camera\\video\\";
+            string filePath = FileCapturePath;// "C:\\WinAMC\\capture\\";
+            //fileName = DateTime.Now.ToString("MMM_dd_yyyy_hh_mm_ss") + ".h264";
+            if (!System.IO.Directory.Exists(filePath))
+                System.IO.Directory.CreateDirectory(filePath);
+
+            string cmdStr = "";
+
+            //p.StartInfo.FileName = "c:\\python3\\python.exe";
+            //p.StartInfo.WorkingDirectory = "C:\\Temp\\camerastuff";
+
+            if (request == 0)
+            {
+                //cmdStr = "C:\\WinAMC\\camera\\depthai_demo.py";// -v C:\\WinAMC\\camera\\vid.h264";// -s jpegout"; //"C:\\temp\\camerastuff\\depthai_demo.py";
+                //cmdStr = "C:\\WinAMC\\camera\\depthai_demo.py -dev list";// -v C:\\WinAMC\\camera\\vid.h264";// -s jpegout"; //"C:\\temp\\camerastuff\\depthai_demo.py";                
+                
+                //cmdStr = "C:\\WinAMC\\camera\\depthai_demo.py";// -v C:\\WinAMC\\camera\\vid.h264";// -s jpegout"; //"C:\\temp\\camerastuff\\depthai_demo.py";
+
+                /* does not work on win10, but will need for multiple cameras */
+                cmdStr = "C:\\WinAMC\\camera\\depthai_demo.py -dev " + CameraInfo[camera].portName + " -pos " + (camera+1); //"1.6";// -v C:\\WinAMC\\camera\\vid.h264";// -s jpegout"; //"C:\\temp\\camerastuff\\depthai_demo.py";
+            }
+            else if (request == 1)
+            {
+                //cmdStr = "C:\\WinAMC\\camera\\depthai_demo.py -rgbr 3040 -s depth -dd -sh 2 -nce 1";// -v " + filePath + fileName;// C:\\WinAMC\\camera\\video\\" +DateTime.Now.ToString("MMM_dd_yyyy_hh_mm_ss") +".h264";
+                //cmdStr = "C:\\WinAMC\\camera\\depthai_demo.py -rgbr 3040 -s color -dd -sh 2 -nce 1";// + filePath + fileName;// C:\\WinAMC\\camera\\video\\" +DateTime.Now.ToString("MMM_dd_yyyy_hh_mm_ss") +".h264";
+                cmdStr = "C:\\WinAMC\\camera\\depthai_demo.py -rgbr 3040 -s color -dev " + CameraInfo[camera].portName + " -pos " + (camera + 1);
+                //cmdStr = "C:\\WinAMC\\camera\\depthai_demo.py -s depth_raw -o";// + filePath + fileName;// C:\\WinAMC\\camera\\video\\" +DateTime.Now.ToString("MMM_dd_yyyy_hh_mm_ss") +".h264";
+                //cmdStr = "C:\\WinAMC\\camera\\depthai_demo.py -v " + filePath + fileName;// C:\\WinAMC\\camera\\video\\" +DateTime.Now.ToString("MMM_dd_yyyy_hh_mm_ss") +".h264";
+
+                /*
+                FileSystemWatcher.Path = filePath;
+                FileSystemWatcher.Filter = "*.png";
+                FileSystemWatcher.NotifyFilter = NotifyFilters.Size;
+
+                FileMonitorTimer.Enabled = true;
+                */
+            }
+            else
+                cmdStr = "C:\\WinAMC\\camera\\depthai_demo.py -dev list";// -v C:\\WinAMC\\camera\\vid.h264";// -s jpegout"; //"C:\\temp\\camerastuff\\depthai_demo.py";\
+            /*
+            Proc[camera].StartInfo.UseShellExecute = false;
+            Proc[camera].StartInfo.CreateNoWindow = true;
+            Proc[camera].StartInfo.RedirectStandardOutput = true;
+
+            Proc[camera].StartInfo.FileName = "c:\\WinAMC\\camera\\py.exe";
+            Proc[camera].StartInfo.Arguments = cmdStr; // "C:\\WinAMC\\camera\\depthai_demo.py -v C:\\WinAMC\\camera\\vid.h264";// -s jpegout"; //"C:\\temp\\camerastuff\\depthai_demo.py";
+            */
+            CameraInfo[camera].proc.StartInfo.UseShellExecute = false;
+            CameraInfo[camera].proc.StartInfo.CreateNoWindow = true;
+            CameraInfo[camera].proc.StartInfo.RedirectStandardOutput = true;
+            CameraInfo[camera].proc.StartInfo.FileName = "c:\\WinAMC\\camera\\py.exe";
+            CameraInfo[camera].proc.StartInfo.Arguments = cmdStr; // "C:\\WinAMC\\camera\\depthai_demo.py -v C:\\WinAMC\\camera\\vid.h264";// -s jpegout"; //"C:\\temp\\camerastuff\\depthai_demo.py";
+
+            CameraInfo[camera].proc.OutputDataReceived += SortOutputHandler;
+
+            try
+            {
+                //Proc[camera].Start();
+                CameraInfo[camera].proc.Start();
+
+                CameraInfo[camera].proc.BeginOutputReadLine();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                //MessageBox.Show(ex.ToString(), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Camera app failed to start", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
+            }
+
+        }
+
+        public void SortOutputHandler(object sendingProcess,DataReceivedEventArgs outLine)
+        {            
+            if (!String.IsNullOrEmpty(outLine.Data))
+            {
+                string line = outLine.Data;
+
+                Process sp = (Process)sendingProcess;
+
+                int cameraId = 0;
+                
+                for (cameraId = 0; cameraId < NbrCameras; cameraId++)
+                {
+                    if (CameraInfo[cameraId].proc.Id == sp.Id)
+                        break;
+                }
+
+                if (line.Contains("required")||
+                    line.Contains("installed") 
+                   )
+                {                
+                    BleMsgTextBox.Text += line;
+                }
+                if (line.Contains("Detected"))
+                {
+                    CameraStatusLbl.Text = "Camera: " + line;
+
+                    BleMsgTextBox.Text += line;
+                }
+                if (line.Contains("on USB port:"))
+                {
+                    int index = line.IndexOf(": ");
+                    CameraInfo[NbrCameras].portName = line.Substring(index + 2, 3);// [index+1];
+
+                    CameraPortLbl.Text += "Port: " + CameraInfo[NbrCameras].portName + " ";
+
+                    NbrCameras++;
+
+                    BleMsgTextBox.Text += line;
+                }
+                if (line.Contains("Successfully opened stream out"))
+                {
+                    CaptureBtn.Enabled = true;
+
+                    if (CameraInfo[cameraId].state == 1)
+                    {
+                        CameraOperationLbl.Text = "Camera preview started";
+                        CameraDataGridView[(int)CAMERA_GRID.STATUS, cameraId].Value = "Preview started";
+                    }
+                    else
+                    {
+                        CameraOperationLbl.Text = "Camera Capture started";
+                        CameraDataGridView[(int)CAMERA_GRID.STATUS, cameraId].Value = "Capture started";
+                    }
+
+                    BleMsgTextBox.Text += line;
+                }
+                if (line.Contains("Started thread for stream: color"))
+                {                   
+                    CameraDataGridView[(int)CAMERA_GRID.STATUS, cameraId].Value = "Capture started2";
+                        
+                    CameraOperationLbl.Text = "Camera capture started";
+
+                    BleMsgTextBox.Text += line;
+                }
+                if (line.Contains("failed"))
+                {    
+                    CameraDataGridView[(int)CAMERA_GRID.STATUS, cameraId].Value = "FAILED";
+
+                    BleMsgTextBox.Text += line;
+                }
+                if (line.Contains("Failed to boot"))
+                {
+                    CameraDataGridView[(int)CAMERA_GRID.STATUS, cameraId].Value = "Failed to boot";
+                }
+
+                if (NbrCameras == 0)
+                    CameraStatusLbl.ForeColor = Color.Red;
+                else
+                    CameraStatusLbl.ForeColor = Color.Black;
+
+               // try
+                {
+                 //   BleMsgTextBox.Text += line;
+                }
+                //catch(Exception ex){ }
+            }
+
+        }
+
+        public bool CameraMachine(int cameraNbr)//out camera_info_t cameraInfo)
+        {
+            //camera_info_t cameraInfo = CameraInfo[cameraNbr];
+
+            //while (true)
+            {
+                switch (CameraInfo[cameraNbr].state)// CameraState[cameraNbr])
+                {
+                    case 0:
+                        CameraInfo[cameraNbr].captureStarted = false;                        
+                        //cameraThread.Abort(cameraNbr);
+                        // cameraThread.Suspend();
+                        break;
+                    case 1:
+                        if (!StartCameraRequest(0, cameraNbr))
+                            return false;
+
+                        Thread.Sleep(250);
+                        CameraOperationLbl.Text = "Start Camera Preview";
+                        CameraDataGridView[(int)CAMERA_GRID.STATUS, cameraNbr].Value = "Preview";
+
+                        CameraInfo[cameraNbr].captureStarted = false;
+
+/*
+                        if (CameraInfo[cameraNbr].proc.StartInfo.RedirectStandardOutput)
+                        {
+                            while (!CameraInfo[cameraNbr].proc.StandardOutput.EndOfStream) //!Proc[0].StandardOutput.EndOfStream)
+                            {
+                                string line = CameraInfo[cameraNbr].proc.StandardOutput.ReadLine();// Proc[0].StandardOutput.ReadLine();
+                                if (line.Contains("Started thread for stream: previewout"))
+                                {
+                                    CaptureBtn.Enabled = true;
+                                    break;
+                                }
+                                if (line.Contains("Started thread for stream: video"))
+                                    break;
+                                if (line.Contains("Successfully opened stream out"))
+                                {
+                                    //BleMsgTextBox.Text += line;
+                                    CaptureBtn.Enabled = true;
+                                    CameraOperationLbl.Text = "Camera preview started";
+                                }
+                                if (line.Contains("Pipeline is not created"))
+                                {
+                                    CameraOperationLbl.Text = "Camera" + (cameraNbr+1).ToString() + " preview failed";
+                                }
+                                //if (line.Contains("[FOUND]"))
+                                //  BleMsgTextBox.Text += line;
+
+                                try
+                                { 
+                                    BleMsgTextBox.Text += line;                                    
+                                }
+                                catch(Exception ex){ }
+
+                                // do something with line
+                            }
+                        }
+*/
+                        CameraInfo[cameraNbr].proc.WaitForExit();
+                        if (StartCapture)
+                            CameraInfo[cameraNbr].state = 2;// CameraState[cameraNbr] = 2;
+                        else
+                            CameraInfo[cameraNbr].state = 5;
+
+                        Thread.Sleep(100);
+                        break;
+                    case 2:
+                        if (!StartCameraRequest(1, cameraNbr))
+                            return false;
+
+                        Thread.Sleep(100);
+
+                        CameraOperationLbl.Text = "Start Camera Capture";
+                        CameraDataGridView[(int)CAMERA_GRID.STATUS, cameraNbr].Value = "Start Capture";                       
+
+                        /*
+                        if (CameraInfo[cameraNbr].proc.StartInfo.RedirectStandardOutput)
+                        {
+                            while(!CameraInfo[cameraNbr].proc.StandardOutput.EndOfStream)
+                            {
+                                string line = CameraInfo[cameraNbr].proc.StandardOutput.ReadToEnd();// ReadLine();
+                                //if (line.Contains("Started thread for stream: previewout"))
+                                    //break;
+                                //if (line.Contains("Started thread for stream: video"))
+                                    //break;
+                                //if (line.Contains("Started thread for stream: color"))
+                                    //break;
+
+                                //            if (line.Contains("Successfully opened stream out"))
+                                //   break;
+                                //  BleMsgTextBox.Text += line;
+                                //if (line.Contains("[FOUND]"))
+                                //  BleMsgTextBox.Text += line;
+
+                                try
+                                {
+                                    BleMsgTextBox.Text += line;
+                                }
+                                catch (Exception ex) { }
+
+                                Thread.Sleep(1);
+                                // do something with line
+                            }
+                        }
+                        */
+
+                        //CameraOperationLbl.Text = "Camera capture started";
+                        //CameraDataGridView[0, cameraNbr].Value = "Capture started";
+
+                        //CameraMsgTextBox.Text += "Camera" + (cameraNbr + 1).ToString() + " capture started\n";
+
+                        CameraInfo[cameraNbr].captureStarted = true;
+                        CameraInfo[cameraNbr].proc.WaitForExit();
+                        CameraInfo[cameraNbr].state = 3;
+                        break;
+                    case 3:
+                        /* report file size/status */
+                        CameraOperationLbl.Text = "Camera capture complete: " + CapturedFileSize.ToString("0.00") + "MB\nFile Count: " +FileCnt;
+                        CameraDataGridView[(int)CAMERA_GRID.STATUS, cameraNbr].Value = "Capture complete";                        
+
+                        CameraInfo[cameraNbr].state = 10;
+                        break;
+                    case 5:
+                        /* report file size/status */
+                        CameraOperationLbl.Text = "Camera" + (cameraNbr + 1).ToString() + " preview complete: " + CapturedFileSize;
+                        //CameraMsgTextBox.Text += "Camera" + (cameraNbr + 1).ToString() + " preview complete\n";
+                        CameraInfo[cameraNbr].state = 10;
+                        break;
+                    case 6:
+                        /* report file size/status */
+                        CameraOperationLbl.Text = "Camera detect complete: " + CapturedFileSize;                        
+                        CameraInfo[cameraNbr].state = 10;
+                        break;
+                    case 10:
+                        CameraInfo[cameraNbr].state = 0;
+                        cameraThread[cameraNbr].Abort(cameraNbr);
+                        break;
+                    case 4:
+                        if (!StartCameraRequest(2, cameraNbr))
+                            return false;
+
+                        NbrCameras = 0;
+                        CameraPortLbl.Text = "";
+
+                        //if (Proc[0].StartInfo.RedirectStandardOutput)
+                        if (CameraInfo[cameraNbr].proc.StartInfo.RedirectStandardOutput)
+                        {
+                            /*
+                            while (!CameraInfo[cameraNbr].proc.StandardOutput.EndOfStream)
+                            {                               
+                                string line = CameraInfo[cameraNbr].proc.StandardOutput.ReadLine();// Proc[0].StandardOutput.ReadLine();
+
+                                if (line.Contains("Detected"))
+                                {
+                                    CameraStatusLbl.Text = "Camera: " + line;
+                                }
+                                if (line.Contains("on USB port:"))
+                                {
+                                    int index = line.IndexOf(": ");
+                                    CameraPortName[NbrCameras] = line.Substring(index + 2, 3);// [index+1];
+
+                                    CameraPortLbl.Text += "Port: " + CameraPortName[NbrCameras] +" ";
+
+                                    NbrCameras++;
+                                }
+
+
+                                BleMsgTextBox.Text += line;
+                                // do something with line
+                            }
+                            */
+                        }
+
+                        if (NbrCameras == 0)
+                            CameraStatusLbl.ForeColor = Color.Red;
+                        else
+                            CameraStatusLbl.ForeColor = Color.Black;
+
+                        CameraInfo[cameraNbr].proc.WaitForExit();
+
+                        CameraInfo[cameraNbr].state = 6;
+                        break;
+                }
+            }
+
+            return true;
+        }
+        public byte DisplayGridData(DataGridView gridView, bool brdFitStart)
+        {
+            float delatP = 0.0F;
+            byte vNbr = 0;
+
+            for (int j = 0; j < 8; j++)
+            {
+                delatP = (float)(PressSensorPsi[j] - PressSensorPsi[7]) / (float)1000;
+
+                if (PressSensorPsi[j] != 0)
+                {
+                    gridView[0, j].Value = ((float)PressSensorPsi[j] / 1000).ToString("0.000");
+                    //gridView[1, j].Value = (PSensorData[j].temp).ToString("0.0");
+
+                    gridView[3, j].Value = delatP.ToString("0.000");
+
+                    gridView.Rows[j].Cells[0].Style.BackColor = Color.White;
+                    gridView.Rows[j].Cells[1].Style.BackColor = Color.White;
+                    gridView.Rows[j].Cells[2].Style.BackColor = Color.White;
+                    gridView.Rows[j].Cells[3].Style.BackColor = Color.White;
+
+                    try
+                    {
+                        if (delatP < Convert.ToSingle(gridView[2, j].Value))
+                            vNbr |= (byte)(0x01 << j);
+                    }
+                    catch (Exception ex)
+                    {
+                        //                     MessageBox.Show(ex.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+                else
+                {
+                    gridView[0, j].Value = "FAULT";
+                    gridView[1, j].Value = "FAULT";
+
+                    gridView[3, j].Value = "FAULT";
+
+                    gridView.Rows[j].Cells[0].Style.BackColor = Color.Orange;
+                    gridView.Rows[j].Cells[1].Style.BackColor = Color.Orange;
+                    gridView.Rows[j].Cells[2].Style.BackColor = Color.Orange;
+                    gridView.Rows[j].Cells[3].Style.BackColor = Color.Orange;
+                    gridView.Rows[j].Cells[4].Style.BackColor = Color.Orange;
+                }
+
+                if (!brdFitStart)
+                    vNbr = 0;
+
+                if ( (vNbr & (0x01<<j)) ==(0x01<<j) )
+                    gridView[4, j].Value ="O";
+                else
+                    gridView[4, j].Value = "X";
+            }
+
+            return vNbr;
+
+        }
+        public byte DisplayComprGridData(DataGridView gridView)
+        {
+            byte cNbr = 0;
+
+            if ( (CompressorState &0x0010) ==0x0010)
+                gridView[0, 0].Value ="O";
+            else
+                gridView[0, 0].Value = "X";
+
+            if ((CompressorState & 0x0008) == 0x0008)
+                gridView[1, 0].Value = "O";
+            else
+                gridView[1, 0].Value = "X";
+
+            if ((ReliefState & 0x0040) == 0x0040)
+                gridView[2, 0].Value = "O";
+            else
+                gridView[2, 0].Value = "X";
+
+            if ((ReliefState & 0x0020) == 0x0020)
+                gridView[3, 0].Value = "O";
+            else
+                gridView[3, 0].Value = "X";
+
+            if (LoFlowBoardFitStart)
+                cNbr |= 0x01;
+            if (HiFlowBoardFitStart)
+                cNbr |= 0x02;
+
+            return cNbr;
         }
 
 
@@ -1076,8 +1452,28 @@ namespace WindowsFormsApplication5
 
         private void setupToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            int j = 0;
+
             FitTypeComboBox.SelectedIndex = 0;
             DateTextBox.Text = DateTime.Now.ToString("MMM_dd_yyyy hh:mm:ss");
+
+            var foldersFound = Directory.GetDirectories(ProfilePath);// "C:\\WinAMC\\Profile\\");
+            SnComboBox.Items.Clear();
+            for (j = 0; j < foldersFound.Length; j++)
+            {
+                string result = Path.GetFileName(foldersFound[j]);
+                SnComboBox.Items.Add(result);
+            }
+
+            try
+            {
+                SnComboBox.SelectedIndex = 0;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("No profiles found", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+
             ProfileGroupBox.Visible = true;
         }
 
@@ -1086,19 +1482,17 @@ namespace WindowsFormsApplication5
             AboutBox1 aboutBox = new AboutBox1();
             aboutBox.ShowDialog();
         }
-
-        private void downloadToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-        }
    
         public bool BuildSerialMessage(UInt16 command, int addr)
         {
             uint nbrBytes = 0;
             uint nbrBytesToTx = 0;
 
-            byte[] TxBuf = new byte[64];
-            byte[] tempBuf = new byte[4];
+            AckReceived = false;
 
+            byte[] TxBuf = new byte[255];
+            byte[] tempBuf = new byte[4];
+            
             int calculatedCRC = 0;
 
             cErrorCheck errCheck = new cErrorCheck();
@@ -1180,24 +1574,24 @@ namespace WindowsFormsApplication5
                     tempBuf.CopyTo(TxBuf, (int)PACKET.SIZEOF_HEADER);
                     nbrBytes = (int)PACKET.SIZEOF_HEADER + 2;
                     break;
-                case (int)PACKET.CMD_SET_AMC_SETUP:
+                case (int)PACKET_XLOAD.CMD_ERASE_FLASH:
+                case (int)PACKET_XLOAD.CMD_RESET:				
+                    // build the message here, then send
+                    ConvetToBuffer16((int)command, out tempBuf);
+                    tempBuf.CopyTo(TxBuf, (int)PACKET.SIZEOF_HEADER);
+                    nbrBytes = (int)PACKET.SIZEOF_HEADER + 2;
+                    break;
+                case (int)PACKET_XLOAD.CMD_FW_UPDATE_PACKET:
+                case (int)PACKET_XLOAD.CMD_FW_UPDATE_COMPLETE:
                     // build the message here, then send
                     ConvetToBuffer16((int)command, out tempBuf);
                     tempBuf.CopyTo(TxBuf, (int)PACKET.SIZEOF_HEADER);
                     nbrBytes = (int)PACKET.SIZEOF_HEADER + 2;
 
-                    Payload = StructArray.StructToByteArray(AmcSetup);
-
-                    for (int j = 0; j < Marshal.SizeOf(AmcSetup); j++)
+                    for (int j = 0; j < Payload.Length; j++)
                     {
                         TxBuf[nbrBytes++] = Payload[j];
-                    }                        
-                    break;
-                case (int)PACKET.CMD_RESET:
-                    // build the message here, then send
-                    ConvetToBuffer16((int)command, out tempBuf);
-                    tempBuf.CopyTo(TxBuf, (int)PACKET.SIZEOF_HEADER);
-                    nbrBytes = (int)PACKET.SIZEOF_HEADER + 2;
+                    }
                     break;
             }
 
@@ -1228,17 +1622,6 @@ namespace WindowsFormsApplication5
                 }
             }
             catch (Exception ex) { return false; }
-
-            /*
-            if (serialFd.SendMessage(0, nbrBytes, TxBuf))
-            {
-                SerialMonitorTimer.Enabled = true;
-
-                return true;
-            }
-            else
-                return false;
-            */
 
             return true;
         }
@@ -1293,6 +1676,7 @@ namespace WindowsFormsApplication5
             catch (Exception ex)
             {
                 MessageBox.Show(ex.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
             }
 
             // calculate CRC of received data
@@ -1316,9 +1700,6 @@ namespace WindowsFormsApplication5
             switch (response)
             {
                 case (int)PACKET.CMD_GET_PRESS_TEMP:
-                    //tempBuf = StructArray.SwapByteArray16(tempBuf);
-                    //Pressure    = System.BitConverter.ToSingle(tempBuf, 0);
-                    //Temperature = System.BitConverter.ToSingle(tempBuf, 0);
                     for (int j = 0; j < PSensorData.Length; j++)
                     {
                         int sizeofData = System.Runtime.InteropServices.Marshal.SizeOf(PSensorData[0]);
@@ -1329,12 +1710,6 @@ namespace WindowsFormsApplication5
                     }
                     break;
                 case (int)PACKET.CMD_GET_PRESS:
-                    //tempBuf = StructArray.SwapByteArray16(tempBuf);
-
-                    //Pressure    = System.BitConverter.ToSingle(tempBuf, 0);
-                    //Temperature = System.BitConverter.ToSingle(tempBuf, 0);
-
-                    //BoardId = (UInt16)(tempBuf[1] << 8 | tempBuf[0]);
 		            tempValue = (UInt16)System.BitConverter.ToUInt16(tempBuf, 0);
                     BoardId = (tempValue & 0x0003);
                     CompressorState = (tempValue & 0x0018);
@@ -1343,7 +1718,7 @@ namespace WindowsFormsApplication5
                     for (int j = 0; j < 8; j++)
                     {
                         //PressSensorPsi[j] =(UInt16)(tempBuf[3] << 8 | tempBuf[2]);
-			PressSensorPsi[j] = (UInt16)System.BitConverter.ToUInt16(tempBuf, 2);
+			            PressSensorPsi[j] = (UInt16)System.BitConverter.ToUInt16(tempBuf, 2);
                         System.Array.Copy(tempBuf, 2, tempBuf, 0, (PayloadSize - 2));
                     }
                     break;
@@ -1353,6 +1728,11 @@ namespace WindowsFormsApplication5
                 case (int)PACKET.CMD_GET_BRD_ID:
                     BoardId = Convert.ToByte(tempBuf[0]);
                     break;
+                case (int)PACKET.CMD_ACK:
+                    break;
+                case (int)PACKET_XLOAD.CMD_MEASURE:
+                    LevelSensorData = (level_sensor_data_t)StructArray.ByteArrayToStruct(typeof(level_sensor_data_t), tempBuf);
+                    break;					
             }
 
             return status;
@@ -1407,11 +1787,6 @@ namespace WindowsFormsApplication5
         }
 
 
-        private void SendToFpcBtn_Click_1(object sender, EventArgs e)
-        {
-
-        }
-
         private void button11_Click_2(object sender, EventArgs e)
         {
             BuildSerialMessage((int)PACKET.CMD_GET_PRESS_TEMP, 0);
@@ -1420,15 +1795,7 @@ namespace WindowsFormsApplication5
         private void SerialMonitorTimer_Tick(object sender, EventArgs e)
         {
             timer1.Enabled = false;
-            SerialMonitorTimer.Enabled = false;
-
-
-      //      MessageBox.Show("No response from FTC",
-           //                 "FTC Communications",
-                        //    MessageBoxButtons.OK,
-                        //    MessageBoxIcon.Error
-                        //   );
-            
+            SerialMonitorTimer.Enabled = false;          
         }
 
         private void button13_Click(object sender, EventArgs e)
@@ -1473,30 +1840,12 @@ namespace WindowsFormsApplication5
             panelsForm.ShowDialog();
         }
 
-        private void StartMotorBtn_Click(object sender, EventArgs e)
-        {
-        }
-
-        private void fPCParametersToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            PanelSelect = (int)SET_COMMANDS.SET_FPC_PARAM;
-            PanelsFrm panelsForm = new PanelsFrm(this);
-            panelsForm.ShowDialog();
-
-        }
-
         private void button15_Click(object sender, EventArgs e)
         {
             MotorCntrlTimer.Enabled = true;
         }
 
 
-        private void counterToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            PanelSelect = (int)SET_COMMANDS.SET_FPC_COUNTER;
-            PanelsFrm panelsForm = new PanelsFrm(this);
-            panelsForm.ShowDialog();
-        }
 
         private void TheMainForm_FormClosed(object sender, FormClosedEventArgs e)
         {
@@ -1504,7 +1853,7 @@ namespace WindowsFormsApplication5
 
             if (serialThread != null)
             {
-                serialThread.Suspend();
+                serialThread.Abort();
                 serialThread = null;
             }
 
@@ -1532,47 +1881,6 @@ namespace WindowsFormsApplication5
             BuildSerialMessage((int)PACKET.CMD_OPEN_VALVE, 0);            
         }
 
-        private void button21_Click(object sender, EventArgs e)
-        {
-            DialogResult result1 = MessageBox.Show("Are you sure you wish to restart the FTC ball states",
-                                                   "Ball state",
-                                                    MessageBoxButtons.YesNo,
-                                                    MessageBoxIcon.Warning
-                                                   );
-
-            if (result1 == DialogResult.No)
-                return;
-
-            byte[] aBuf = new byte[256];
-            aBuf[0] = (byte)'$';
-            aBuf[1] = (byte)'$';
-            aBuf[2] = (byte)'$';
-
-            /* string to array */
-            System.Text.ASCIIEncoding encoding = new System.Text.ASCIIEncoding();
-            aBuf = encoding.GetBytes("$$$");
-
-            serialFd.SendMessage(0, (uint)aBuf.Length, aBuf);
-
-            /* array to string */
-            //aStr = System.Text.Encoding.ASCII.GetString(anArray);
-
-            //BuildSerialMessage((int)PACKET.CMD_RESTART);  
-        }
-
-        private void button22_Click(object sender, EventArgs e)
-        {
-            DialogResult result1 = MessageBox.Show("Are you sure you wish to reset the FTC controller",
-                                                   "Ball state",
-                                                    MessageBoxButtons.YesNo,
-                                                    MessageBoxIcon.Warning
-                                                   );
-
-            if (result1 == DialogResult.No)
-                return;
-
-            BuildSerialMessage((int)PACKET.CMD_RESET, 0); 
-        }
 
         private void SaveProfileBtn_Click(object sender, EventArgs e)
         {
@@ -1592,8 +1900,10 @@ namespace WindowsFormsApplication5
 
             saveFileDialog1.Title = "AMC Profile File";
 
-            saveFileDialog1.InitialDirectory = "C:\\WinAMC\\Profile";
+            saveFileDialog1.InitialDirectory = ProfilePath + SnTextBox.Text;
 
+            if(!System.IO.Directory.Exists(saveFileDialog1.InitialDirectory))
+                System.IO.Directory.CreateDirectory(saveFileDialog1.InitialDirectory);
             /*
             if (saveFileDialog1.ShowDialog() != System.Windows.Forms.DialogResult.OK)
             {
@@ -1649,7 +1959,13 @@ namespace WindowsFormsApplication5
             if (result1 == DialogResult.No)
                 return;
 
-            fhandle.Open(saveFileDialog1.InitialDirectory +"\\" +saveFileDialog1.FileName +".txt", out fs, 0);
+            if (!fhandle.Open(saveFileDialog1.InitialDirectory + "\\" + saveFileDialog1.FileName + ".txt", out fs, 0))
+            {
+                MessageBox.Show("file open error for " + SnTextBox.Text,
+                                               "Profile",
+                                                MessageBoxButtons.OK, MessageBoxIcon.Error);                                 
+                return;
+            }
 
             string theString = "Fashion Swipe\nAMC Profile\n";
             dataArray = encoding.GetBytes(theString);
@@ -1685,31 +2001,23 @@ namespace WindowsFormsApplication5
 
    
             for (int j = 0; j <7; j++)// (downloadGridView.RowCount - 1); j++)
-            {
-                //dataArray[0] = (byte)'\n';
-                //fhandle.Write(fs, 1, dataArray);
-                //for (int i = 0; i <1; i++)// ProfileGridView.ColumnCount; i++)
-
-  
+            { 
                 i = 0;
 
+                try
                 {
-                    try
-                    {
-                        profileValue[i] = ProValues[j].ToString()+",";// ProfileGridView[i, j].Value.ToString() + ",";
-                        dataArray = encoding.GetBytes(profileValue[i]);
+                    profileValue[i] = ProValues[j].ToString()+",";// ProfileGridView[i, j].Value.ToString() + ",";
+                    dataArray = encoding.GetBytes(profileValue[i]);
 
-                        fhandle.Write(fs, dataArray.Length, dataArray);
+                    fhandle.Write(fs, dataArray.Length, dataArray);
 
-                        profileValue[i] = ProValues[j+7].ToString() + ",\n"; //ProfileGridView[i+1, j].Value.ToString() + ",\n" ;
-                        dataArray = encoding.GetBytes(profileValue[i]);
+                    profileValue[i] = ProValues[j+7].ToString() + ",\n"; //ProfileGridView[i+1, j].Value.ToString() + ",\n" ;
+                    dataArray = encoding.GetBytes(profileValue[i]);
 
-                        fhandle.Write(fs, dataArray.Length, dataArray);
-
-                        //dataArray = BitConverter.GetBytes(pValues[i]);                       
-                    }
-                    catch (Exception)
-                    {
+                    fhandle.Write(fs, dataArray.Length, dataArray);
+                }
+                catch (Exception)
+                {
                         MessageBox.Show("Table contains invalid entries",
                                         "Exception Error",
                                         MessageBoxButtons.OK,
@@ -1718,7 +2026,6 @@ namespace WindowsFormsApplication5
 
                         fhandle.Close(fs);
                         return;
-                    }
                 }
             }
 
@@ -1743,33 +2050,19 @@ namespace WindowsFormsApplication5
 
             if (e != null)
             {
-                /*
-                openFileDialog1.Filter = "text Files (*.txt)|*.txt";
-                openFileDialog1.FileName = "";
-                openFileDialog1.InitialDirectory = "C:\\WinAMC\\Profile";
-
-                openFileDialog1.Title = "File1";
-
-                if (openFileDialog1.ShowDialog() != System.Windows.Forms.DialogResult.OK)
-                {                
-                    return;
-                }
-
-                int profCnt = 0;
-                */
                 if (SnTextBox.Text == "")
                 {
                     MessageBox.Show("Please enter a serial number", "Profile", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
 
-                if (!System.IO.File.Exists("C:\\WinAMC\\Profile\\" + SnTextBox.Text + "_" + FitTypeComboBox.SelectedIndex.ToString() + ".txt"))
+                if (!System.IO.File.Exists(ProfilePath + SnTextBox.Text+"\\" + SnTextBox.Text + "_" + FitTypeComboBox.SelectedIndex.ToString() + ".txt"))
                 {
                     MessageBox.Show(FitTypeComboBox.Text + " fit profile not found", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
                 else
-                    openFileDialog1.FileName = "C:\\WinAMC\\Profile\\" + SnTextBox.Text + "_" + FitTypeComboBox.SelectedIndex.ToString() + ".txt";
+                    openFileDialog1.FileName = ProfilePath + SnTextBox.Text + "\\" + SnTextBox.Text + "_" + FitTypeComboBox.SelectedIndex.ToString() + ".txt";
             }
 
             if (System.IO.File.Exists(openFileDialog1.FileName))
@@ -1785,37 +2078,19 @@ namespace WindowsFormsApplication5
                         {
                             splitLine = textLine.Split(',');
 
-                            if (rowCnt == (rowProfileStart - 6))
-                            {
-                                NameTextBox.Text = textLine;
-                            }
-                            else if (rowCnt == (rowProfileStart - 5))
-                            {
-                                ModelTextBox.Text = textLine;
-                            }
-                            else if (rowCnt == (rowProfileStart - 4))
-                            {
-                                SnTextBox.Text = textLine;
-                            }
-                            else if (rowCnt == (rowProfileStart - 3))
-                            {
-                                DateTextBox.Text = textLine;
-                            }
-                            else if (rowCnt == (rowProfileStart - 2))
-                            {
-                                SizeTextBox.Text = textLine;
-                            }
-                            else if (rowCnt == (rowProfileStart - 1))
-                            {
-                                FitTypeComboBox.SelectedIndex = Convert.ToInt16(textLine);
-                            }
+                            if (rowCnt == (rowProfileStart - 6))      NameTextBox.Text = textLine;                            
+                            else if (rowCnt == (rowProfileStart - 5)) ModelTextBox.Text = textLine;                            
+                            else if (rowCnt == (rowProfileStart - 4)) SnTextBox.Text = textLine;                            
+                            else if (rowCnt == (rowProfileStart - 3)) DateTextBox.Text = textLine;                            
+                            else if (rowCnt == (rowProfileStart - 2)) SizeTextBox.Text = textLine;
+                            else if (rowCnt == (rowProfileStart - 1)) FitTypeComboBox.SelectedIndex = Convert.ToInt16(textLine);
 
+                            ModelTextBox2.Text = ModelTextBox.Text;
+                            SizeTextBox2.Text = SizeTextBox.Text;
+                            NameTextBox2.Text = NameTextBox.Text;
 
                             if (rowCnt >= rowProfileStart)
                             {
-                                //         ProfileGridView[0, (rowCnt - rowProfileStart)].Value = splitLine[0];
-                                //         ProfileGridView[1, (rowCnt - rowProfileStart)].Value = splitLine[1];
-
                                 ProValues[(rowCnt - rowProfileStart)] = Convert.ToSingle(splitLine[0]);
                                 ProValues[7 + (rowCnt - rowProfileStart)] = Convert.ToSingle(splitLine[1]);
                             }
@@ -1865,288 +2140,11 @@ namespace WindowsFormsApplication5
                                 MessageBoxIcon.Error
                                 );
 
+                return;
+
             }
 
             MessageBox.Show(FitTypeComboBox.Text +  " fit profile for " + SnTextBox.Text + " loaded", "Profile", MessageBoxButtons.OK);
-
-            //fhandle.Open(openFileDialog1.FileName, out fs, 2);
-            //fhandle.Read(fs, dataArray.Length, dataArray);
-            //fhandle.Close(fs);
-        }
-
-        bool StartCameraRequest(int request, int camera )
-        {
-            //Proc[camera] = new Process();
-            CameraInfo[camera].proc = new Process();
-
-            string filePath = "C:\\WinAMC\\camera\\video\\";
-            fileName = DateTime.Now.ToString("MMM_dd_yyyy_hh_mm_ss") + ".h264";
-
-      //      fileName = "Test.h264";
-
-            string cmdStr = "";
-
-            //p.StartInfo.FileName = "c:\\python3\\python.exe";
-            //p.StartInfo.WorkingDirectory = "C:\\Temp\\camerastuff";
-
-            if (request == 0)
-            {
-                cmdStr = "C:\\WinAMC\\camera\\depthai_demo.py";// -v C:\\WinAMC\\camera\\vid.h264";// -s jpegout"; //"C:\\temp\\camerastuff\\depthai_demo.py";
-                //cmdStr = "C:\\WinAMC\\camera\\depthai_demo.py -dev list";// -v C:\\WinAMC\\camera\\vid.h264";// -s jpegout"; //"C:\\temp\\camerastuff\\depthai_demo.py";                
-                //cmdStr = "C:\\WinAMC\\camera\\depthai_demo.py";// -v C:\\WinAMC\\camera\\vid.h264";// -s jpegout"; //"C:\\temp\\camerastuff\\depthai_demo.py";
-                //cmdStr = "C:\\WinAMC\\camera\\depthai_demo.py -dev " + CameraPortName; //"1.6";// -v C:\\WinAMC\\camera\\vid.h264";// -s jpegout"; //"C:\\temp\\camerastuff\\depthai_demo.py";
-            }
-            else if(request == 1)
-            {
-                //cmdStr = "C:\\WinAMC\\camera\\depthai_demo.py -rgbr 3040 -s depth -dd -sh 2 -nce 1";// -v " + filePath + fileName;// C:\\WinAMC\\camera\\video\\" +DateTime.Now.ToString("MMM_dd_yyyy_hh_mm_ss") +".h264";
-                //cmdStr = "C:\\WinAMC\\camera\\depthai_demo.py -rgbr 3040 -s color -dd -sh 2 -nce 1";// + filePath + fileName;// C:\\WinAMC\\camera\\video\\" +DateTime.Now.ToString("MMM_dd_yyyy_hh_mm_ss") +".h264";
-                cmdStr = "C:\\WinAMC\\camera\\depthai_demo.py -rgbr 3040 -s color";
-                //cmdStr = "C:\\WinAMC\\camera\\depthai_demo.py -s depth_raw -o";// + filePath + fileName;// C:\\WinAMC\\camera\\video\\" +DateTime.Now.ToString("MMM_dd_yyyy_hh_mm_ss") +".h264";
-                //cmdStr = "C:\\WinAMC\\camera\\depthai_demo.py -v " + filePath + fileName;// C:\\WinAMC\\camera\\video\\" +DateTime.Now.ToString("MMM_dd_yyyy_hh_mm_ss") +".h264";
-
-                FileSystemWatcher.Path = filePath;
-                FileSystemWatcher.Filter = "*.h264";
-                FileSystemWatcher.NotifyFilter = NotifyFilters.Size;
-
-                FileMonitorTimer.Enabled = true;
-            }
-            else
-                cmdStr = "C:\\WinAMC\\camera\\depthai_demo.py -dev list";// -v C:\\WinAMC\\camera\\vid.h264";// -s jpegout"; //"C:\\temp\\camerastuff\\depthai_demo.py";\
-            /*
-            Proc[camera].StartInfo.UseShellExecute = false;
-            Proc[camera].StartInfo.CreateNoWindow = true;
-            Proc[camera].StartInfo.RedirectStandardOutput = true;
-
-            Proc[camera].StartInfo.FileName = "c:\\WinAMC\\camera\\py.exe";
-            Proc[camera].StartInfo.Arguments = cmdStr; // "C:\\WinAMC\\camera\\depthai_demo.py -v C:\\WinAMC\\camera\\vid.h264";// -s jpegout"; //"C:\\temp\\camerastuff\\depthai_demo.py";
-            */
-            CameraInfo[camera].proc.StartInfo.UseShellExecute = false;
-            CameraInfo[camera].proc.StartInfo.CreateNoWindow = true;
-            CameraInfo[camera].proc.StartInfo.RedirectStandardOutput = true;
-            CameraInfo[camera].proc.StartInfo.FileName = "c:\\WinAMC\\camera\\py.exe";
-            CameraInfo[camera].proc.StartInfo.Arguments = cmdStr; // "C:\\WinAMC\\camera\\depthai_demo.py -v C:\\WinAMC\\camera\\vid.h264";// -s jpegout"; //"C:\\temp\\camerastuff\\depthai_demo.py";
-
-            try
-            {
-                //Proc[camera].Start();
-                CameraInfo[camera].proc.Start();
-                return true;
-            }
-            catch (Exception ex)
-            {
-                //MessageBox.Show(ex.ToString(), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                MessageBox.Show("Camera app failed to start", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return false;
-            }
-        }
-
-        public bool CameraMachine(int cameraNbr)
-        {
-            //while (true)
-            {
-                switch(CameraInfo[cameraNbr].state)// CameraState[cameraNbr])
-                {
-                    case 0:
-                        CameraInfo[cameraNbr].captureStarted = false;
-                        break;
-                    case 1:
-                        if (!StartCameraRequest(0, cameraNbr))
-                            return false;
-
-                        CameraOperationLbl.Text = "Start Camera Preview";
-
-                        CameraInfo[cameraNbr].captureStarted = false;
-
-                        //if (Proc[0].StartInfo.RedirectStandardOutput)
-                        if (CameraInfo[0].proc.StartInfo.RedirectStandardOutput)
-                        {
-                            while (!CameraInfo[0].proc.StandardOutput.EndOfStream) //!Proc[0].StandardOutput.EndOfStream)
-                            {
-                                string line = CameraInfo[0].proc.StandardOutput.ReadLine();// Proc[0].StandardOutput.ReadLine();
-                                if (line.Contains("Started thread for stream: previewout"))
-                                {
-                                    CaptureBtn.Enabled = true;
-                                    break;
-                                }
-                                if (line.Contains("Started thread for stream: video"))
-                                    break;
-                                if (line.Contains("Successfully opened stream out"))
-                                {
-                                    //BleMsgTextBox.Text += line;
-                                    CaptureBtn.Enabled = true;
-                                }
-                                //if (line.Contains("[FOUND]"))
-                                //  BleMsgTextBox.Text += line;
-
-                                BleMsgTextBox.Text += line;
-
-                                // do something with line
-                            }
-                        }
-
-                        CameraOperationLbl.Text = "Camera preview started";
-
-                        //Proc[0].WaitForExit();
-                        CameraInfo[0].proc.WaitForExit();
-                        if (StartCapture)
-                            CameraInfo[cameraNbr].state = 2;// CameraState[cameraNbr] = 2;
-
-                        else
-                            CameraInfo[cameraNbr].state = 3;// CameraState[cameraNbr] = 3;                        
-                        break;
-                    case 2:
-                        if (!StartCameraRequest(1, cameraNbr))
-                            return false;
-
-                        CameraOperationLbl.Text = "Start Camera Capture";
-
-                        if (CameraInfo[cameraNbr].proc.StartInfo.RedirectStandardOutput)
-                        {
-                            while (!CameraInfo[cameraNbr].proc.StandardOutput.EndOfStream)
-                            {
-                                string line = CameraInfo[cameraNbr].proc.StandardOutput.ReadLine();
-                                if (line.Contains("Started thread for stream: previewout"))
-                                    break;
-                                if (line.Contains("Started thread for stream: video"))
-                                    break;
-                                if (line.Contains("Successfully opened stream out"))
-                                    break;
-                                //  BleMsgTextBox.Text += line;
-                                //if (line.Contains("[FOUND]"))
-                                //  BleMsgTextBox.Text += line;
-
-                                BleMsgTextBox.Text += line;
-                                // do something with line
-                            }
-                        }
-
-                        CameraOperationLbl.Text = "Camera capture started";
-
-                        CameraInfo[cameraNbr].captureStarted =true;
-                        CameraInfo[cameraNbr].proc.WaitForExit();
-                        CameraInfo[cameraNbr].state = 3;
-                        break;
-                    case 3:
-                        /* report file size/status */
-                        CameraOperationLbl.Text = "Camera: ";
-
-                        CameraInfo[cameraNbr].state = 0;
-                        cameraThread.Abort();
-                        break;
-                    case 4:
-                        if (!StartCameraRequest(2, cameraNbr))
-                            return false;
-
-                        //if (Proc[0].StartInfo.RedirectStandardOutput)
-                        if(CameraInfo[0].proc.StartInfo.RedirectStandardOutput)
-                        {
-                            //while (!Proc[0].StandardOutput.EndOfStream)
-                            while(!CameraInfo[0].proc.StandardOutput.EndOfStream)
-                            {
-                                string line = CameraInfo[0].proc.StandardOutput.ReadLine();// Proc[0].StandardOutput.ReadLine();
-                                
-                                if (line.Contains("Detected"))
-                                {
-                                    if (line.Contains("1"))
-                                        NbrCameras = 1;
-                                    else if (line.Contains("2"))
-                                        NbrCameras = 2;
-                                    else if (line.Contains("3"))
-                                        NbrCameras = 3;
-
-                                    CameraStatusLbl.Text ="Camera: " + line;
-
-                                    if (NbrCameras == 0)
-                                        CameraStatusLbl.ForeColor = Color.Red;
-                                    else
-                                        CameraStatusLbl.ForeColor = Color.Black;
-                                }
-                                if (line.Contains("on USB port:"))
-                                {
-                                    int index = line.IndexOf(": ");
-                                    CameraPortName = line.Substring(index+2, 3);// [index+1];
-
-                                    CameraPortLbl.Text = "Port: " +CameraPortName;
-                                }
-                                
-
-                                BleMsgTextBox.Text += line;
-                                // do something with line
-                            }
-                        }
-                        //Proc[0].WaitForExit();
-                        CameraInfo[0].proc.WaitForExit();
-
-                        CameraInfo[cameraNbr].state = 3;// CameraState[cameraNbr] = 3;
-                        break;
-                }
-            }
-
-            return true;
-        }
-
-        public void cameraDataThread(object cameraNbr)
-        {
-            while (true)
-            {
-                if( !CameraMachine((int)cameraNbr) )
-                    cameraThread.Abort();
-            }            
-        }
-
-        public void MotorDataThread()
-        {
-            int motorState = 0;
-
-            while (true)
-            {
-                switch (motorState)
-                {
-                    case 0:
-                        if (MotorCntrl.fwdLimit || MotorCntrl.revLimit)
-                        {
-                            motorState = 1;
-                            CameraOperationLbl.Text = "";
-                            MotorStatusLbl.Text = "Mannequin ready";
-                        }
-                        else
-                        {
-                            MotorStatusLbl.Text = "Positioning mannequin";
-                            MotorFwdBtn_Click(null, null);
-                        }
-                        break;
-                    case 1:
-                        if (CameraInfo[0].captureStarted)
-                        {
-                            if (MotorCntrl.fwdLimit)
-                                MotorRevBtn_Click(null, null);
-                            else if (MotorCntrl.revLimit)
-                                MotorFwdBtn_Click(null, null);
-                            else
-                            {
-                                /*ERROR, no limit anymore??? */
-                                MessageBox.Show("Mannequin out of position",
-                                                "Error",
-                                                MessageBoxButtons.OK,
-                                                MessageBoxIcon.Error
-                                               );
-
-                            }
-
-                            motorState = 2;
-                        }
-                        break;
-                    case 2:
-                        if (MotorCntrl.fwdLimit || MotorCntrl.revLimit)
-                        {
-                            motorState = 0;
-                            MotorThread.Abort();
-                        }
-                        break;
-                }
-
-                Thread.Sleep(1);
-            }
         }
 
 
@@ -2166,20 +2164,20 @@ namespace WindowsFormsApplication5
                                    );
                     return;
                 }
-   //             ControllerGridView[2, row].Value = ProfileGridView[0, row].Value;
-
                 ControllerGridView[2, row].Value = ProValues[row];
             }
            
             res =FindClientBrdId((int)BOARD_TYPE.COMPR_CNTRL);
             if (res == -1)
             {
-                MessageBox.Show("Pump controller not connected, cannot proceed",
-                                "Error",
-                                MessageBoxButtons.OK,
-                                MessageBoxIcon.Error
+                DialogResult result1 = MessageBox.Show("Compressor controller not connected, do you wish to proceed",
+                                "Warning",
+                                MessageBoxButtons.YesNo,
+                                MessageBoxIcon.Warning
                                );
-                return;
+
+                if (result1 == DialogResult.No)
+                    return;
             }
             else
             {
@@ -2188,7 +2186,15 @@ namespace WindowsFormsApplication5
             }
 
             res = FindClientBrdId((int)BOARD_TYPE.HI_FLOW_CNTRL);
-
+            if (res == -1)
+            {
+                MessageBox.Show("Hi Flow Solenoid controller not connected, cannot proceed",
+                                "Error",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Error
+                               );
+                return;
+            }
             if (!BuildSerialMessage((int)PACKET.CMD_GET_PRESS_TEMP, res))
             {
                 timer1.Enabled = false;
@@ -2222,47 +2228,61 @@ namespace WindowsFormsApplication5
                 MessageBox.Show("Capture already in progress", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-            try
-            {
-                CameraInfo[0].proc.Kill();
-            }
-            catch (Exception ex)
-            {
-                //MessageBox.Show(ex.ToString(), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                MessageBox.Show("There is no process running, do you forget to perform a preview check", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
-                return;
+            for (int j = 0; j < NbrCameras; j++)
+            {
+                try
+                {
+                    CameraInfo[j].proc.Kill();
+                }
+                catch (Exception ex)
+                {
+                    //MessageBox.Show(ex.ToString(), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show("There is no process running for camera " + (j+1) + "\ndid you forget to perform a preview check", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                    //                return;
+                }
             }
 
             StartCapture = true;
 
             BleMsgTextBox.Clear();
 
-            //CameraState[0] = 1;
-            //CameraInfo[0].state = 1;
+        //    FileSystemWatcher.Path = FileCapturePath;
+       //     FileSystemWatcher.Filter = "*.png";
+        //    FileSystemWatcher.NotifyFilter = NotifyFilters.Size;
+
         }
 
         private void StopCaptureBtn_Click(object sender, EventArgs e)
         {
-            StartCapture = false;         
+            StartCapture = false;
 
-            try
+            if (MotorCntrl.detected)
             {
-                CameraInfo[0].proc.Kill();
-
-                CaptureBtn.Enabled = false;
-
                 MotorStopBtn_Click(null, null);
 
                 MotorThread.Abort();
             }
-            catch (Exception ex)
-            {
-                //MessageBox.Show(ex.ToString(), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                MessageBox.Show("There is no process running", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
-                return;
+            for (int j = 0; j < NbrCameras; j++)
+            {
+                try
+                {
+                    CameraInfo[j].proc.Kill();
+
+                    CaptureBtn.Enabled = false;
+                }
+                catch (Exception ex)
+                {
+                    //MessageBox.Show(ex.ToString(), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show("There is no process running for camera " + (j+1), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                    //return;
+                }
             }
+
+            FileMonitorTimer.Enabled = false;
         }
 
 
@@ -2282,7 +2302,6 @@ namespace WindowsFormsApplication5
                                    );
                     return;
                 }
-                //             ControllerGridView[2, row].Value = ProfileGridView[0, row].Value;
 
                 Controller2GridView[2, row - 7].Value = ProValues[row];
             }
@@ -2290,12 +2309,14 @@ namespace WindowsFormsApplication5
             res = FindClientBrdId((int)BOARD_TYPE.COMPR_CNTRL);
             if (res == -1)
             {
-                MessageBox.Show("Pump controller not connected, cannot proceed",
-                                "Error",
-                                MessageBoxButtons.OK,
-                                MessageBoxIcon.Error
+                DialogResult result1 = MessageBox.Show("Compressor controller not connected, do you wish to proceed",
+                                "Warning",
+                                MessageBoxButtons.YesNo,
+                                MessageBoxIcon.Warning
                                );
-                return;
+
+                if (result1 == DialogResult.No)
+                    return;
             }
             else
             {
@@ -2304,7 +2325,15 @@ namespace WindowsFormsApplication5
             }
 
             res =FindClientBrdId((int)BOARD_TYPE.LO_FLOW_CNTRL);
-
+            if (res == -1)
+            {
+                MessageBox.Show("Lo Flow Solenoid controller not connected, cannot proceed",
+                                "Error",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Error
+                               );
+                return;
+            }
             if (!BuildSerialMessage((int)PACKET.CMD_GET_PRESS_TEMP, res))
             {
                 timer1.Enabled = false;
@@ -2330,46 +2359,100 @@ namespace WindowsFormsApplication5
             ProfileGroupBox.Visible = false;
         }
 
-        private void GetPressBtn_Click(object sender, EventArgs e)
-        {
-            //BuildSerialMessage((int)PACKET.CMD_GET_PRESS_TEMP);
-            BuildSerialMessage((int)PACKET.CMD_GET_PRESS, 0);
-        }
 
         private void FileSystemWatcher_Changed(object sender, FileSystemEventArgs e)
         {
+            FolderSize = 0;
+            FileCnt = 0;
+
+            for (int j = 0; j < NbrCameras; j++)
+            {
+                //CameraFileSize[j] = 0;
+                CameraInfo[j].fileSize = 0;
+            }
+
+            foreach (string file in Directory.GetFiles("C:\\WinAMC\\capture"))
+            {
+                if (File.Exists(file))
+                {
+                    FileInfo finfo = new FileInfo(file);
+                    FolderSize += finfo.Length;
+
+                    if (finfo.FullName.Contains("c1_"))
+                    {
+                        //CameraFileSize[0] += finfo.Length;
+                        CameraInfo[0].fileSize += finfo.Length;
+                    }
+                    if (finfo.FullName.Contains("c2_"))
+                    {
+                        //CameraFileSize[1] += finfo.Length;
+                        CameraInfo[1].fileSize += finfo.Length;
+                    }
+                }
+
+
+                FileCnt++;
+            }            
+
+
             if (e.ChangeType == WatcherChangeTypes.Changed)
             {
                 var info = new FileInfo(e.FullPath);
                 var theSize = info.Length;
+
+                CapturedFileSize = FolderSize / 1000000;// theSize /1000;
+                CameraOperationLbl.Text = "Camera capture started " + CapturedFileSize.ToString("0.00") + "MB\nFile Count: " + FileCnt;
+/*
+                for (int j = 0; j < NbrCameras; j++)
+                {
+                    CameraDataGridView[1, j].Value = (CameraFileSize[j] / 1000000).ToString("0.00");
+                }
+                */
             }
+
         }
 
         private void StartPreviewBtn_Click(object sender, EventArgs e)
         {
-            //if (CameraState[0] == 0)
+            CaptureBtn.Enabled = true;
 
-            //if (MotorCntrl.voltage<10)
-            if (CheckError()) return;
+            if (CheckError())// return;
 
-            if ( CameraInfo[0].state ==0 )
+                //if (CameraInfo[NbrCameras].portName == "")
+            if (NbrCameras ==0 )
             {
-                cameraThread = new Thread(cameraDataThread);
+                MessageBox.Show("No Camera detected", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
 
-                cameraThread.Start(0);
-                //CameraState[0] = 1;
+            for (int camera = 0; camera <NbrCameras; camera++)
+            {
+                if (CameraInfo[camera].state == 0)
+                {                
+                    cameraThread[camera] = new Thread(cameraDataThread);
+                    cameraThread[camera].Start(camera);
+                    
+                    CameraInfo[camera].state = 1;
 
-                CameraInfo[0].state = 1;
+                    BleMsgTextBox.Clear();
 
+                    StartCapture = false;
+
+                    CameraOperationLbl.Visible = true;
+
+                    //CameraTimer.Enabled = true;
+                }
+
+                //CameraDataGridView[1, camera].Value = "0.00";
+            }
+
+            if (MotorCntrl.detected)
+            {
                 MotorThread = new Thread(MotorDataThread);
                 MotorThread.Start();
-
-                BleMsgTextBox.Clear();
-
-                StartCapture = false;
-
-                CameraOperationLbl.Visible = true;
             }
+
+            FileMonitorTimer.Enabled = true;
         }
 
         private void UploadFilesBtn_Click(object sender, EventArgs e)
@@ -2377,9 +2460,51 @@ namespace WindowsFormsApplication5
             var client = new WebClient();
             client.Credentials = new NetworkCredential("jclugston", "Trig2017");
 
+            string zipFileName = "C:\\WinAMC\\capture\\" + SnLoadComboBox.Text + ".zip";
+            //string ftpFileName = "ftp://ftp.drivehq.com//TestDir/" + SnLoadComboBox.Text + ".zip";
+            string ftpFileName = FtpServerTextBox.Text + SnLoadComboBox.Text + ".zip";
+
+            File.Delete(zipFileName);
+
+            ZipFile zip = new ZipFile();
+
+            foreach (string file in Directory.GetFiles("C:\\WinAMC\\capture"))
+            {
+                if (File.Exists(file))
+                {
+                    FileInfo finfo = new FileInfo(file);
+
+                    string result = Path.GetFileName(finfo.FullName);
+
+
+                    //using (ZipFile zip = new ZipFile())
+                    {
+                        // add this map file into the "images" directory in the zip archive
+                        zip.AddFile(finfo.FullName, "images");                        
+                    }
+                    /*
+                    try
+                    {
+                        client.UploadFile("ftp://ftp.drivehq.com//TestDir/"+ result, WebRequestMethods.Ftp.UploadFile, finfo.FullName);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("File upload failed", "FTP", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+                    */
+                }
+            }
+
+
+            zip.Save(zipFileName);
+
             try
             {
-                client.UploadFile("ftp://ftp.drivehq.com//TestDir/test.h264", WebRequestMethods.Ftp.UploadFile, "C:\\WinAMC\\camera\\video\\Test.h264");
+                FtpUploadTimer.Enabled = true;
+
+                //client.UploadFile(ftpFileName, WebRequestMethods.Ftp.UploadFile, zipFileName);
+                client.UploadFileTaskAsync(ftpFileName, WebRequestMethods.Ftp.UploadFile, zipFileName);
             }
             catch (Exception ex)
             {
@@ -2389,13 +2514,12 @@ namespace WindowsFormsApplication5
 
             MessageBox.Show("File uploaded", "FTP", MessageBoxButtons.OK, MessageBoxIcon.None);
 
-            //FtpWebRequest request = (FtpWebRequest)WebRequest.Create("ftp://www.contoso.com/test.htm");
         }
 
         private void BleConnectBtn_Click(object sender, EventArgs e)
         {
-            int j = 0; 
-
+            int j = 0;
+            
             if (lvDevices.SelectedItems.Count == 0)
                 MessageBox.Show("Select device", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             else
@@ -2528,10 +2652,6 @@ namespace WindowsFormsApplication5
             String s = "";
             if (Address != 0)
                 s = Address.ToString("X12");
-            //ListViewItem Item = lvEvents.Items.Add(s);
-            //Item.SubItems.Add(Event);
-            //Item.SubItems.Add(Param);
-            //Item.SubItems.Add(Value);
         }
 
 /*
@@ -2618,6 +2738,7 @@ namespace WindowsFormsApplication5
 
             TraceEvent(Address, "Device found", "", "");
         }
+
         void Client_OnDisconnect(object Sender, int Reason)
         {
             BleMsgTextBox.AppendText("Disconnect\r\n");
@@ -2645,11 +2766,20 @@ namespace WindowsFormsApplication5
             int res = FindClientInfoAddr(addrStr);
 
             if (ClientInfo[res].brdId == (int)BOARD_TYPE.HI_FLOW_CNTRL)
+            {
                 BrdTypeLbl.Text = "Board Type: Hi Flow   DISCONNECTED";
-            else if (ClientInfo[res].brdId == (int)BOARD_TYPE.HI_FLOW_CNTRL)
+                HiFlowInd.BackColor = Color.LightGray;
+            }
+            else if (ClientInfo[res].brdId == (int)BOARD_TYPE.LO_FLOW_CNTRL)
+            {
                 Brd2TypeLbl.Text = "Board Type: Lo Flow   DISCONNECTED";
+                LoFlowInd.BackColor = Color.LightGray;
+            }
             else if (ClientInfo[res].brdId == (int)BOARD_TYPE.COMPR_CNTRL)
+            {
                 Brd3TypeLbl.Text = "Board Type: Compr   DISCONNECTED";
+                ComprInd.BackColor = Color.LightGray;
+            }
 
             try
             {
@@ -2703,7 +2833,7 @@ namespace WindowsFormsApplication5
             }
 
 
-            server.character = BleGetCharacteristics(tclientIndex, "1e4d");
+            server.character = BleGetCharacteristics(tclientIndex, "1e4d"); //"6e400003");
 
             if (server.character == -1)
             {
@@ -2713,7 +2843,7 @@ namespace WindowsFormsApplication5
 
             server.txCharacteristic = FCharacteristics[server.character];
 
-            server.character = BleGetCharacteristics(tclientIndex, "1e4d");
+            server.character = BleGetCharacteristics(tclientIndex, "1e4d");//"6e400002");
             server.rxCharacteristic = FCharacteristics[server.character];
 
             ClientInfo.Add(server);
@@ -2844,6 +2974,7 @@ namespace WindowsFormsApplication5
                             else if (ClientInfo[boardClient].brdId == (int)BOARD_TYPE.COMPR_CNTRL)
                                 ComprNbr = DisplayComprGridData(CompressorCntrlGridView);
 
+
                             if (ClientInfo[boardClient].brdId == (int)BOARD_TYPE.COMPR_CNTRL)
                             {
                                 /* send compressor control board its message */
@@ -2869,14 +3000,31 @@ namespace WindowsFormsApplication5
                             ClientInfo[boardClient] = temp;
 
                             if (ClientInfo[boardClient].brdId == (int)BOARD_TYPE.HI_FLOW_CNTRL)
+                            {
                                 BrdTypeLbl.Text = "Board Type: Hi Flow   Addr: " + ((wclGattClient)Sender).Address.ToString("X");
-                            //BrdTypeLbl.Text =  "Board Type: " + BoardId.ToString() + "   Addr: " + ((wclGattClient)Sender).Address.ToString("X");
+                                HiFlowInd.BackColor =Color.Green;
+                            }
                             else if (ClientInfo[boardClient].brdId == (int)BOARD_TYPE.LO_FLOW_CNTRL)
+                            {
                                 Brd2TypeLbl.Text = "Board Type: Lo Flow   Addr: " + ((wclGattClient)Sender).Address.ToString("X");
-                            //Brd2TypeLbl.Text = "Board Type: " + BoardId.ToString() + "   Addr: " + ((wclGattClient)Sender).Address.ToString("X");
+                                LoFlowInd.BackColor = Color.Green;
+                            }
                             else if (ClientInfo[boardClient].brdId == (int)BOARD_TYPE.COMPR_CNTRL)
+                            {
                                 Brd3TypeLbl.Text = "Board Type: Compr   Addr: " + ((wclGattClient)Sender).Address.ToString("X");
+                                ComprInd.BackColor = Color.Green;
+                            }
                             break;
+                        case (int)PACKET_XLOAD.CMD_ACK:
+                        case (int)PACKET_XLOAD.CMD_ERASE_FLASH:
+                        case (int)PACKET_XLOAD.CMD_FW_UPDATE_COMPLETE:
+                        case (int)PACKET_XLOAD.CMD_FW_UPDATE_PACKET:
+                        case (int)PACKET_XLOAD.CMD_RESET:
+                            AckReceived = true;
+                            break;
+                        case (int)PACKET_XLOAD.CMD_MEASURE:
+                            //  AckReceived = true;
+                            break;							
                     }
                 }
             }
@@ -3024,43 +3172,10 @@ namespace WindowsFormsApplication5
 
                     characterNbr++;
                 }
-                /*
-                ListViewItem Item = lvCharacteristics.Items.Add(s);
-
-                Item.SubItems.Add(Character.Uuid.IsShortUuid.ToString());
-                Item.SubItems.Add(Character.ServiceHandle.ToString("X4"));
-                Item.SubItems.Add(Character.Handle.ToString("X4"));
-                Item.SubItems.Add(Character.ValueHandle.ToString("X4"));
-                Item.SubItems.Add(Character.IsBroadcastable.ToString());
-                Item.SubItems.Add(Character.IsReadable.ToString());
-                Item.SubItems.Add(Character.IsWritable.ToString());
-                Item.SubItems.Add(Character.IsWritableWithoutResponse.ToString());
-                Item.SubItems.Add(Character.IsSignedWritable.ToString());
-                Item.SubItems.Add(Character.IsNotifiable.ToString());
-                Item.SubItems.Add(Character.IsIndicatable.ToString());
-                Item.SubItems.Add(Character.HasExtendedProperties.ToString());
-                */
             }
 
 
             return -1;
-            /*
-            CLIENT_INFO server = new CLIENT_INFO();
-            server.addr = TClient[tclientIndex].Address.ToString("X12");
-            server.brdId = 1;
-            server.character = characterNbr;
-            server.tclientNbr = tclientIndex;
-            
-            server.TxCharacteristic = FCharacteristics[characterNbr];
-
-            ClientInfo.Add(server);
-            //ClientInfo[tclientIndex].character = characterNbr;
-          //  ClientInfo[tclientIndex].FCharacteristics = FCharacteristics[characterNbr]; ;
-
-            BleSubscribeCharacteristics(ClientInfo[tclientIndex]);// characterNbr, server.tclientNbr);
-
-            BleWriteCcd(ClientInfo[tclientIndex]);
-            */
         }
 
         private void BleSubscribeCharacteristics(CLIENT_INFO clientInfo)//int characterNbr,int tclientIndex)
@@ -3121,14 +3236,7 @@ namespace WindowsFormsApplication5
 
                 if (Str.Length % 2 != 0)
                     Str = "0" + Str;
-/*
-                Byte[] Val = new Byte[Str.Length / 2];
-                for (Int32 i = 0; i < Val.Length; i++)
-                {
-                    String b = Str.Substring(i * 2, 2);
-                    Val[i] = Convert.ToByte(b, 16);
-                }
-*/
+
                 Int32 Res = TClient[ClientInfo[clientIndex].tclientNbr].WriteCharacteristicValue(Characteristic, dataArray, wclGattProtectionLevel.plNone);// Protection());
                 if (Res != wclErrors.WCL_E_SUCCESS)
                     MessageBox.Show("Error: 0x" + Res.ToString("X8"), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -3277,7 +3385,7 @@ namespace WindowsFormsApplication5
         {
             ControlPanel.Top = 0;
             ControlPanel.Left = 10;
-            ControlPanel.Height = 630;
+            ControlPanel.Height = (int)MAIN_DIM.HEIGHT;
             ControlPanel.Width = 450;
             ControlPanel.Visible = true;
 
@@ -3290,38 +3398,65 @@ namespace WindowsFormsApplication5
         {
             OperationPanel.Top = 0;
             OperationPanel.Left = 5;
-            OperationPanel.Height = 630;
+            OperationPanel.Height = (int)MAIN_DIM.HEIGHT;
             OperationPanel.Width = 450;
             OperationPanel.Visible = true;
 
             MotorDetectLbl.Text = "Motor: ";
             CameraStatusLbl.Text = "Camera: ";
 
-            FitGroupBox.Top = 200;
-            CameraGroupBox.Top = FitGroupBox.Top + 120;
-            MotorGroupBox.Top = CameraGroupBox.Top + 120;
+            //ControllerGroupBox.Top = 150;
+            SettingsGroupBox.Top = SnLoadComboBox.Top + 25;
+            SettingsGroupBox.Left =15;
 
-            UploadFilesBtn.Top = MotorGroupBox.Top + 90;
+            FitGroupBox.Top = 225;
+
+            MotorGroupBox.Top = FitGroupBox.Top + 110;
+            CameraGroupBox.Top = MotorGroupBox.Top + 110;
+
+            UploadFilesBtn.Top = CameraGroupBox.Top + 230;
             UploadFilesBtn.Left = 15;
-            
-            OpCloseBtn.Top = MotorGroupBox.Top + 130;
-            OpCloseBtn.Left = 15;
+
+            OpCloseBtn.Top = UploadFilesBtn.Top;
+            OpCloseBtn.Left = UploadFilesBtn.Left +355;
+
+            FtpServerTextBox.Top = UploadFilesBtn.Top+2;
+            FtpServerTextBox.Left = UploadFilesBtn.Left +85;
 
             StartPreviewBtn.Visible = true;
-
+            
+            /* remove for now, add when system has motor */
             MotorCntrlTimer.Enabled = true;
             MotorCntrl.varId = (int)MC_VARS.GET_VOLTAGE;
             BuildMCSerialMessage((int)MC_PACKET.CMD_GET_VAR);
+            
 
             CameraOperationLbl.Text = "Camera: ";
             MotorStatusLbl.Text = "Mannequin: ";
 
+            var foldersFound = Directory.GetDirectories(ProfilePath);// "C:\\WinAMC\\Profile\\");
+            SnLoadComboBox.Items.Clear();
+            for (int j = 0; j < foldersFound.Length; j++)
+            {
+                string result = Path.GetFileName(foldersFound[j]);
+                SnLoadComboBox.Items.Add(result);
+            }
+
+            try
+            {
+                SnLoadComboBox.SelectedIndex = 0;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("No profiles found", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+
             //if (CameraState[0] == 0)
             if ( CameraInfo[0].state ==0 )
             {
-                cameraThread = new Thread(cameraDataThread);
+                cameraThread[0] = new Thread(cameraDataThread);
 
-                cameraThread.Start(0);
+                cameraThread[0].Start(0);
                 //CameraState[0] = 4;
                 CameraInfo[0].state = 4;
                 BleMsgTextBox.Clear();
@@ -3357,18 +3492,22 @@ namespace WindowsFormsApplication5
         {
             int profCnt = 0;
 
+            SnLoadTextBox.Text = SnLoadComboBox.Text;
+
             if (SnLoadTextBox.Text == "")
             {
                 MessageBox.Show("Please enter a serial number", "Profile", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
+        //    openFileDialog1.FileName = ProfilePath + SnLoadTextBox.Text + "\\" + SnLoadTextBox.Text + "_0.txt";
+         //   LoadProfileBtn_Click(null, null);
+
             OpLooseFitBtn.Enabled = false;
             OpNormalFitBtn.Enabled = false;
             OpTightFitBtn.Enabled = false;
 
-            //if (!System.IO.File.Exists("C:\\WinAMC\\Profile\\" + SnLoadTextBox.Text + "_" + FitTypeLoadComboBox.SelectedIndex.ToString() + ".txt"))
-            if (!System.IO.File.Exists("C:\\WinAMC\\Profile\\" + SnLoadTextBox.Text + "_0" + ".txt"))
+            if (!System.IO.File.Exists(ProfilePath + SnLoadTextBox.Text + "\\" + SnLoadTextBox.Text + "_0" + ".txt"))
             {
                 MessageBox.Show("Loose fit profile not found", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
@@ -3378,7 +3517,7 @@ namespace WindowsFormsApplication5
                 profCnt ++;
             }
 
-            if (!System.IO.File.Exists("C:\\WinAMC\\Profile\\" + SnLoadTextBox.Text + "_1" + ".txt"))
+            if (!System.IO.File.Exists(ProfilePath + SnLoadTextBox.Text + "\\" + SnLoadTextBox.Text + "_1" + ".txt"))
             {
                 MessageBox.Show("Normal fit profile not found", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
@@ -3388,7 +3527,7 @@ namespace WindowsFormsApplication5
                 profCnt++;
             }
 
-            if (!System.IO.File.Exists("C:\\WinAMC\\Profile\\" + SnLoadTextBox.Text + "_2" + ".txt"))
+            if (!System.IO.File.Exists(ProfilePath + SnLoadTextBox.Text + "\\" + SnLoadTextBox.Text + "_2" + ".txt"))
             {
                 MessageBox.Show("Tight fit profile not found", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
@@ -3398,10 +3537,6 @@ namespace WindowsFormsApplication5
                 profCnt++;
             }
 
-            //openFileDialog1.FileName = "C:\\WinAMC\\Profile\\" + SnLoadTextBox.Text + "_" + FitTypeLoadComboBox.SelectedIndex.ToString() + ".txt";
-
-            //LoadProfileBtn_Click(null, null);
-          
             MessageBox.Show(profCnt.ToString() + " of 3 profiles for " + SnLoadTextBox.Text +" succesfully loaded", "Profile", MessageBoxButtons.OK);
 
         }
@@ -3418,7 +3553,7 @@ namespace WindowsFormsApplication5
 
         private void OpLooseFitBtn_Click(object sender, EventArgs e)
         {
-            openFileDialog1.FileName = "C:\\WinAMC\\Profile\\" + SnLoadTextBox.Text + "_0.txt";
+            openFileDialog1.FileName = ProfilePath + SnLoadTextBox.Text + "\\" + SnLoadTextBox.Text + "_0.txt";
 
             LoadProfileBtn_Click(null, null);
 
@@ -3427,27 +3562,48 @@ namespace WindowsFormsApplication5
 
         private void OpNormalFitBtn_Click(object sender, EventArgs e)
         {
-            openFileDialog1.FileName = "C:\\WinAMC\\Profile\\" + SnLoadTextBox.Text + "_1.txt";
+            openFileDialog1.FileName = ProfilePath + SnLoadTextBox.Text + "\\" + SnLoadTextBox.Text + "_1.txt";
 
             LoadProfileBtn_Click(null, null);
         }
 
         private void OpTightFitBtn_Click(object sender, EventArgs e)
         {
-            openFileDialog1.FileName = "C:\\WinAMC\\Profile\\" + SnLoadTextBox.Text + "_2.txt";
+            openFileDialog1.FileName = ProfilePath + SnLoadTextBox.Text + "\\" + SnLoadTextBox.Text + "_2.txt";
 
             LoadProfileBtn_Click(null, null);
         }
 
-        private void timer2_Tick(object sender, EventArgs e)
+
+        private void SnComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-           // var dir = new DirectoryInfo("C:\\WinAMC\\camera\\video\\");            
-            DirectoryInfo DirNewFolder = new DirectoryInfo("C:\\WinAMC\\camera\\video\\" + fileName);
-            DirNewFolder.Refresh();
+            SnTextBox.Text = SnComboBox.Text;
         }
 
+        private void DefaultProfileBtn_Click(object sender, EventArgs e)
+        {
+            TorsoUpDown.Value = new decimal((double)1.1F);
+            RightArmUpDown.Value = new decimal((double)2.2F);
+            RightBreastUpDown.Value = new decimal((double)3.3F);
+            BellyUpDown.Value = new decimal((double)4.4F); ;
+            RightHipUpDown.Value = new decimal((double)5.5F); ;
+            RightButtockUpDown.Value = new decimal((double)6.6);
+            RightLegUpDown.Value = new decimal((double)7.7);
+
+            //row = 0;            
+            LeftArmUpDown.Value = new decimal((double)10.0);
+            LeftBreastUpDown.Value = new decimal((double)11.1);
+            LeftHipUpDown.Value = new decimal((double)12.2);
+            LeftButtockUpDown.Value = new decimal((double)13.4);
+            LeftLegUpDown.Value = new decimal((double)14.4);
+            LeftCalfUpDown.Value = new decimal((double)15.5);
+            RightCalfUpDown.Value = new decimal((double)16.6);
+        }
+
+        /* BOOTLOADER STUFF */
         private void button1_Click_3(object sender, EventArgs e)
         {
+			FirmwareUpdate(3,0,false);
             /*
             FrameSource frameSource;
            // frameSource = Cv2.CreateFrameSource_Camera(0);
@@ -3495,5 +3651,351 @@ namespace WindowsFormsApplication5
             }
             */
         }
-    }
+        private void FirmwareUpdate(int medium, UInt16 epAddr, bool withErase)
+        {
+            //openFileDialog1.Filter = "binary files (*.bin)|*.bin";
+            openFileDialog1.Filter = "intel hex files (*.hex)|*.hex";
+            openFileDialog1.FileName = "";
+
+            if (medium == 0)
+            {
+                openFileDialog1.InitialDirectory = "C:\\WinXLOAD\\Firmware\\Gateway";
+                openFileDialog1.FileName = "C:\\WinXLOAD\\Firmware\\Gateway\\gateway.hex";
+            }
+            else if (medium == 1)
+            {
+                openFileDialog1.InitialDirectory = "C:\\WinXLOAD\\Firmware\\HandHeldGateway";
+                openFileDialog1.FileName = "C:\\WinXLOAD\\Firmware\\HandHeldGateway\\HH_gateway.hex";
+            }
+            else
+            {
+                openFileDialog1.InitialDirectory = "C:\\WinXload\\firmware\\Xload";
+                openFileDialog1.FileName = "C:\\WinXload\\firmware\\xload\\Xload5.0_Ble_s112.hex";
+            }
+
+            openFileDialog1.Title = "Firmware file";
+
+            if (!StartFwUpdate(openFileDialog1.FileName, medium, 0, 0, "0", withErase))
+            {
+                MessageBox.Show("Image file invalid or does not exist",
+                                "Firmware Bootloader",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Error
+                               );
+
+                if (openFileDialog1.ShowDialog() != System.Windows.Forms.DialogResult.OK)
+                {
+                    //user has canceled open
+                    return;
+                }
+
+                if (!StartFwUpdate(openFileDialog1.FileName, medium, 0, 0, "0", withErase))
+                {
+                    MessageBox.Show("Image file invalid or does not exist",
+                                    "Firmware Bootloader",
+                                    MessageBoxButtons.OK,
+                                    MessageBoxIcon.Error
+                                   );
+                    return;
+                }
+            }
+       
+        }
+
+        class FW_UPDATE
+        {
+            public int machState;
+            public int prevmachState;
+            public int nextmachState;			
+            public float percentComplete;
+            public bool eraseComplete;
+            public bool uploadTimeout;
+            public bool uploadSuccess;
+            public UInt32 timeoutCnt;
+
+            public float fwVersion;
+
+            public int txStatus;
+
+            public bool erase;
+            public string binaryFilename;
+        }
+
+        static FileStream fStream = null;
+        cFileHandle fhandle = new cFileHandle();
+        static FW_UPDATE FwUpdate = new FW_UPDATE();
+
+        static System.Windows.Forms.Timer FwUpdateTimer = new System.Windows.Forms.Timer();
+        static System.Windows.Forms.Timer TimeoutTimer = new System.Windows.Forms.Timer();
+        static System.Threading.Thread SerialFwUpdateThread;
+        static System.Threading.Thread MlinkFwUpdateThread;
+        static System.Threading.Thread BleFwUpdateThread;
+        long fileLocation = 0;
+        UInt16 value = 0;
+        UInt16 fileChecksum = 0;
+		
+        private void BleFwUpdate()
+        {            
+            //cFwUpdate fwUpdate = new cFwUpdate();
+            while (true)
+            {
+                switch (FwUpdate.machState)
+                {
+                    case 0:
+                        BuildSerialMessage((int)PACKET_XLOAD.CMD_ERASE_FLASH, 0);
+
+                        FwUpdate.nextmachState = 2;
+                        FwUpdate.machState = 1;
+                        break;
+                    case 1:
+                        /* wait for ack */                         
+                        if (AckReceived)
+                            FwUpdate.machState = FwUpdate.nextmachState;
+                        break;
+                    case 2:
+                        {
+                            fhandle.Open(FwUpdate.binaryFilename, out fStream, 2);
+           //                 Payload = fwUpdate.HexToBin(10, fStream, out value);
+                            fileChecksum = value;
+
+                            while (Payload.Length != 0)
+                            {
+                  //              Payload = fwUpdate.hextobin(10, fStream, out value);
+                                fileChecksum += value;
+                            }
+                            fhandle.Close(fStream);
+
+                            fhandle.Open(FwUpdate.binaryFilename, out fStream, 2);
+                            // fhandle.Read(fStream, 0, Payload);
+
+                            fileLocation = fhandle.Tell(fStream);
+
+//                            Payload = fwUpdate.HexToBin(10, fStream, out value);
+
+                            BuildSerialMessage((int)PACKET_XLOAD.CMD_FW_UPDATE_PACKET, 0);
+
+                            FwUpdate.eraseComplete = true;
+
+                            FwUpdate.uploadTimeout = false;
+
+                            FwUpdate.machState = 1;
+                            FwUpdate.nextmachState = 4;
+                        }
+                        break;
+                    case 4:
+               //         Payload = fwUpdate.HexToBin(10, fStream, out value);
+
+                        if (Payload.Length == 0)
+                        {
+                            Array.Resize<byte>(ref Payload, (int)2);
+                            Payload[0] = (byte)((fileChecksum & 0xff00) >> 8);
+                            Payload[1] = (byte)((fileChecksum & 0x00ff));
+                            BuildSerialMessage((int)PACKET_XLOAD.CMD_FW_UPDATE_COMPLETE, 0);
+
+                            FwUpdate.machState = 1;
+                            FwUpdate.nextmachState = 5;
+
+                            fhandle.Close(fStream);
+                        }
+                        else
+                        {
+                            FwUpdate.machState = 1;
+                            FwUpdate.nextmachState = 4;
+
+                            BuildSerialMessage((int)PACKET_XLOAD.CMD_FW_UPDATE_PACKET, 0);
+                        }
+                        break;
+                    case 5:
+                        BuildSerialMessage((int)PACKET_XLOAD.CMD_RESET, 0);
+                        return;
+                        break;
+                    case 10:
+                        break;
+                }
+            }
+        }
+		
+        public bool StartFwUpdate(string filename, int medium, float fwVersion, int epAddr, string portname, bool withErase)
+        {
+            byte[] dataArray = new byte[128];
+
+            FwUpdate.binaryFilename = filename;
+            FwUpdate.fwVersion = fwVersion;
+
+            try
+            {
+                fhandle.Open(FwUpdate.binaryFilename, out fStream, 2);
+                fhandle.Read(fStream, dataArray.Length, dataArray);
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+
+            if (dataArray[0] != ':')
+                return false;
+
+            if (!FwUpdateTimer.Enabled)
+            {
+                /*                
+                                FwUpdateTimer.Interval = 10;
+                                FwUpdateTimer.Tick += new EventHandler(FwUpdateTimer_Tick);
+                                FwUpdateTimer.Start();
+
+                                FwUpdateTimer.Enabled = true;
+                  */
+
+                if (SerialFwUpdateThread != null)
+                {
+                    SerialFwUpdateThread.Suspend();
+                    SerialFwUpdateThread = null;
+                }
+
+                if (medium == 0 || medium == 1) // serial
+                {
+                   // SerialFwUpdateThread = new System.Threading.Thread(SerialFwUpdate);
+                    SerialFwUpdateThread.Start();
+                }
+                else if (medium == 2) // MLink
+                {
+                    if (MlinkFwUpdateThread != null)
+                    {
+                        MlinkFwUpdateThread.Suspend();
+                        MlinkFwUpdateThread = null;
+                    }
+
+                //    MlinkFwUpdateThread = new System.Threading.Thread(MlinkFwUpdate);
+                    MlinkFwUpdateThread.Start();
+                }
+                else if (medium == 3) // BLE
+                {
+                    if (BleFwUpdateThread != null)
+                    {
+                        BleFwUpdateThread.Abort();
+                        BleFwUpdateThread = null;
+                    }
+
+                    BleFwUpdateThread = new System.Threading.Thread(BleFwUpdate);
+                    BleFwUpdateThread.Start();
+                }
+            }
+
+
+            if (!TimeoutTimer.Enabled)
+            {
+                TimeoutTimer.Interval = 100;
+                TimeoutTimer.Tick += new EventHandler(TimeoutTimer_Tick);
+                TimeoutTimer.Start();
+
+                TimeoutTimer.Enabled = true;
+            }
+
+            FwUpdate.percentComplete = 0;
+
+            FwUpdate.erase = withErase;
+
+            FwUpdate.machState = 0;
+
+            return true;
+        }
+        private void TimeoutTimer_Tick(object sender, EventArgs e)
+        {
+            FwUpdate.timeoutCnt++;
+        }
+
+        private void FileMonitorTimer_Tick(object sender, EventArgs e)
+        {
+            FolderSize = 0;
+            FileCnt = 0;
+
+
+            for (int j = 0; j < NbrCameras; j++)
+            {
+                CameraInfo[j].fileSize =0;
+                CameraInfo[j].fileCnt =0;
+            }
+
+            foreach (string file in Directory.GetFiles("C:\\WinAMC\\capture"))
+            {
+                if (File.Exists(file))
+                {
+                    FileInfo finfo = new FileInfo(file);
+
+                    if (finfo.FullName.Contains(".png"))
+                    {
+                        FolderSize += finfo.Length;
+                    }
+
+                    if (finfo.FullName.Contains("c1_"))
+                    {
+                        CameraInfo[0].fileSize += finfo.Length;
+                        CameraInfo[0].fileCnt++;
+                    }
+                    if (finfo.FullName.Contains("c2_"))
+                    {
+                        CameraInfo[1].fileSize += finfo.Length;
+                        CameraInfo[1].fileCnt++;
+                    }
+                    if (finfo.FullName.Contains("c3_"))
+                    {
+                        CameraInfo[2].fileSize += finfo.Length;
+                        CameraInfo[2].fileCnt++;
+                    }
+                    if (finfo.FullName.Contains("c4_"))
+                    {
+                        //CameraFileSize[1] += finfo.Length;
+                        CameraInfo[3].fileSize += finfo.Length;
+                        CameraInfo[3].fileCnt++;
+                    }
+                }
+
+
+                FileCnt = CameraInfo[0].fileCnt + CameraInfo[1].fileCnt;
+            }
+
+            CapturedFileSize = FolderSize / 1000000;// theSize /1000;
+            CameraOperationLbl.Text = "Camera capture started " + CapturedFileSize.ToString("0.00") + "MB\nFile Count: " + FileCnt;
+
+            for (int j = 0; j < NbrCameras; j++)
+            {
+                CameraDataGridView[(int)CAMERA_GRID.DATA, j].Value = (CameraInfo[j].fileSize / 1000000).ToString("0.00");
+                CameraDataGridView[(int)CAMERA_GRID.FILE_CNT, j].Value = CameraInfo[j].fileCnt;
+            }
+                                
+        }
+
+        private void FtpUploadTimer_Tick(object sender, EventArgs e)
+        {
+            string ftpFileName = FtpServerTextBox.Text + SnLoadComboBox.Text + ".zip";
+            var request = (FtpWebRequest)FtpWebRequest.Create(ftpFileName);
+            request.Credentials = new NetworkCredential("jclugston", "Trig2017");
+            request.KeepAlive = false;
+            //Use the GetFileSize FILE SIZE Protocol method
+            request.Method = WebRequestMethods.Ftp.GetFileSize;
+            request.UseBinary = true;
+
+            int x = 0;
+            long fileSize = 0;
+
+            try
+            {
+                FtpWebResponse response = (FtpWebResponse)request.GetResponse();
+                fileSize = response.ContentLength;
+
+                if (fileSize > 0)
+                    x = 2;
+                response.Close();
+                request.Abort();
+            }
+            catch (Exception ex)
+            {
+                FtpUploadTimer.Enabled = false;
+
+                if( fileSize >0 )
+                    MessageBox.Show("File uploaded complete", "FTP", MessageBoxButtons.OK, MessageBoxIcon.None);
+                else
+                    MessageBox.Show("File uploaded failed", "FTP", MessageBoxButtons.OK, MessageBoxIcon.None);
+            }
+        }
+    }       
 }

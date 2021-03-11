@@ -56,6 +56,11 @@ namespace FileHandling //WindowsFormsApplication2
             fs.Seek(pos, SeekOrigin.Begin);
         }
 
+        public long Tell(FileStream fs)
+        {
+            return fs.Position;
+        }
+
         public void Close(FileStream fs)
         {
             fs.Close();

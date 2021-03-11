@@ -29,19 +29,20 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle11 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle12 = new System.Windows.Forms.DataGridViewCellStyle();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.button2 = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.GetPressBtn = new System.Windows.Forms.Button();
             this.StartPreviewBtn = new System.Windows.Forms.Button();
             this.CaptureBtn = new System.Windows.Forms.Button();
             this.StopCaptureBtn = new System.Windows.Forms.Button();
@@ -52,6 +53,7 @@
             this.OpNormalFitBtn = new System.Windows.Forms.Button();
             this.OpTightFitBtn = new System.Windows.Forms.Button();
             this.BleDiscoverBtn = new System.Windows.Forms.Button();
+            this.TestBtn = new System.Windows.Forms.Button();
             this.FwdLimitInd = new System.Windows.Forms.Button();
             this.RevLimitInd = new System.Windows.Forms.Button();
             this.DirFwdInd = new System.Windows.Forms.Button();
@@ -81,6 +83,16 @@
             this.MainPanel = new System.Windows.Forms.Panel();
             this.button1 = new System.Windows.Forms.Button();
             this.OperationPanel = new System.Windows.Forms.Panel();
+            this.SettingsGroupBox = new System.Windows.Forms.GroupBox();
+            this.label11 = new System.Windows.Forms.Label();
+            this.label24 = new System.Windows.Forms.Label();
+            this.label33 = new System.Windows.Forms.Label();
+            this.ModelTextBox2 = new System.Windows.Forms.TextBox();
+            this.SizeTextBox2 = new System.Windows.Forms.TextBox();
+            this.NameTextBox2 = new System.Windows.Forms.TextBox();
+            this.FtpServerTextBox = new System.Windows.Forms.TextBox();
+            this.CameraDataGridView = new System.Windows.Forms.DataGridView();
+            this.SnLoadComboBox = new System.Windows.Forms.ComboBox();
             this.CameraPortLbl = new System.Windows.Forms.Label();
             this.CameraStatusLbl = new System.Windows.Forms.Label();
             this.MotorGroupBox = new System.Windows.Forms.GroupBox();
@@ -112,6 +124,9 @@
             this.MotorRevBtn = new System.Windows.Forms.Button();
             this.MotorFwdBtn = new System.Windows.Forms.Button();
             this.ProfileGroupBox = new System.Windows.Forms.GroupBox();
+            this.DefaultProfileBtn = new System.Windows.Forms.Button();
+            this.label14 = new System.Windows.Forms.Label();
+            this.SnComboBox = new System.Windows.Forms.ComboBox();
             this.panel2 = new System.Windows.Forms.Panel();
             this.FitTypeComboBox = new System.Windows.Forms.ComboBox();
             this.label25 = new System.Windows.Forms.Label();
@@ -162,6 +177,13 @@
             this.textBox3 = new System.Windows.Forms.TextBox();
             this.Controller2GridView = new System.Windows.Forms.DataGridView();
             this.BleGroupBox = new System.Windows.Forms.GroupBox();
+            this.ControllerGroupBox = new System.Windows.Forms.GroupBox();
+            this.label20 = new System.Windows.Forms.Label();
+            this.label16 = new System.Windows.Forms.Label();
+            this.label15 = new System.Windows.Forms.Label();
+            this.ComprInd = new System.Windows.Forms.Button();
+            this.LoFlowInd = new System.Windows.Forms.Button();
+            this.HiFlowInd = new System.Windows.Forms.Button();
             this.BleMgsTextClear = new System.Windows.Forms.Button();
             this.BleMsgTextBox = new System.Windows.Forms.RichTextBox();
             this.RxTextBox = new System.Windows.Forms.TextBox();
@@ -182,21 +204,11 @@
             this.button13 = new System.Windows.Forms.Button();
             this.CommportComboBox = new System.Windows.Forms.ComboBox();
             this.FwBrd1VersionLbl = new System.Windows.Forms.Label();
-            this.TestBtn = new System.Windows.Forms.Button();
             this.FwBrd2VersionLbl = new System.Windows.Forms.Label();
+            this.CompressorCntrlGridView = new System.Windows.Forms.DataGridView();
             this.Brd2TypeLbl = new System.Windows.Forms.Label();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.radioButton3 = new System.Windows.Forms.RadioButton();
-            this.radioButton2 = new System.Windows.Forms.RadioButton();
-            this.V1RadioBtn = new System.Windows.Forms.RadioButton();
-            this.button20 = new System.Windows.Forms.Button();
-            this.button19 = new System.Windows.Forms.Button();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.label11 = new System.Windows.Forms.Label();
-            this.SenThresTextBox = new System.Windows.Forms.TextBox();
-            this.TemperatureTextBox = new System.Windows.Forms.TextBox();
-            this.PressureTextBox = new System.Windows.Forms.TextBox();
-            this.label9 = new System.Windows.Forms.Label();
+            this.FwBrd3VersionLbl = new System.Windows.Forms.Label();
+            this.Brd3TypeLbl = new System.Windows.Forms.Label();
             this.SerialMonitorTimer = new System.Windows.Forms.Timer(this.components);
             this.MotorCntrlTimer = new System.Windows.Forms.Timer(this.components);
             this.FtcStatusStrip = new System.Windows.Forms.StatusStrip();
@@ -204,12 +216,13 @@
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.FileSystemWatcher = new System.IO.FileSystemWatcher();
             this.FileMonitorTimer = new System.Windows.Forms.Timer(this.components);
-            this.CompressorCntrlGridView = new System.Windows.Forms.DataGridView();
-            this.FwBrd3VersionLbl = new System.Windows.Forms.Label();
-            this.Brd3TypeLbl = new System.Windows.Forms.Label();
+            this.CameraTimer = new System.Windows.Forms.Timer(this.components);
+            this.FtpUploadTimer = new System.Windows.Forms.Timer(this.components);
             this.menuStrip1.SuspendLayout();
             this.MainPanel.SuspendLayout();
             this.OperationPanel.SuspendLayout();
+            this.SettingsGroupBox.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.CameraDataGridView)).BeginInit();
             this.MotorGroupBox.SuspendLayout();
             this.CameraGroupBox.SuspendLayout();
             this.FitGroupBox.SuspendLayout();
@@ -237,41 +250,17 @@
             ((System.ComponentModel.ISupportInitialize)(this.ProfileGridView)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.Controller2GridView)).BeginInit();
             this.BleGroupBox.SuspendLayout();
+            this.ControllerGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ControllerGridView)).BeginInit();
             this.CommSelectPnl.SuspendLayout();
-            this.groupBox2.SuspendLayout();
-            this.groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.CompressorCntrlGridView)).BeginInit();
             this.FtcStatusStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.FileSystemWatcher)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.CompressorCntrlGridView)).BeginInit();
             this.SuspendLayout();
             // 
             // openFileDialog1
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
-            // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(560, 53);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 23);
-            this.button2.TabIndex = 3;
-            this.button2.Text = "Link DLL";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Visible = false;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
-            // 
-            // GetPressBtn
-            // 
-            this.GetPressBtn.Location = new System.Drawing.Point(326, 121);
-            this.GetPressBtn.Name = "GetPressBtn";
-            this.GetPressBtn.Size = new System.Drawing.Size(82, 23);
-            this.GetPressBtn.TabIndex = 49;
-            this.GetPressBtn.Text = "Get Press";
-            this.toolTip1.SetToolTip(this.GetPressBtn, "Get Setup Information from FTC");
-            this.GetPressBtn.UseVisualStyleBackColor = true;
-            this.GetPressBtn.Visible = false;
-            this.GetPressBtn.Click += new System.EventHandler(this.GetPressBtn_Click);
             // 
             // StartPreviewBtn
             // 
@@ -312,9 +301,9 @@
             // 
             this.UploadFilesBtn.BackColor = System.Drawing.Color.SkyBlue;
             this.UploadFilesBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.UploadFilesBtn.Location = new System.Drawing.Point(129, 315);
+            this.UploadFilesBtn.Location = new System.Drawing.Point(126, 372);
             this.UploadFilesBtn.Name = "UploadFilesBtn";
-            this.UploadFilesBtn.Size = new System.Drawing.Size(82, 23);
+            this.UploadFilesBtn.Size = new System.Drawing.Size(75, 23);
             this.UploadFilesBtn.TabIndex = 65;
             this.UploadFilesBtn.Text = "Upload";
             this.toolTip1.SetToolTip(this.UploadFilesBtn, "Upload video files to server");
@@ -324,9 +313,9 @@
             // OpCloseBtn
             // 
             this.OpCloseBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.OpCloseBtn.Location = new System.Drawing.Point(32, 315);
+            this.OpCloseBtn.Location = new System.Drawing.Point(18, 372);
             this.OpCloseBtn.Name = "OpCloseBtn";
-            this.OpCloseBtn.Size = new System.Drawing.Size(82, 23);
+            this.OpCloseBtn.Size = new System.Drawing.Size(75, 23);
             this.OpCloseBtn.TabIndex = 66;
             this.OpCloseBtn.Text = "Close";
             this.toolTip1.SetToolTip(this.OpCloseBtn, "Close screen");
@@ -336,12 +325,12 @@
             // OpLoadBtn
             // 
             this.OpLoadBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.OpLoadBtn.Location = new System.Drawing.Point(159, 78);
+            this.OpLoadBtn.Location = new System.Drawing.Point(159, 76);
             this.OpLoadBtn.Name = "OpLoadBtn";
-            this.OpLoadBtn.Size = new System.Drawing.Size(82, 23);
+            this.OpLoadBtn.Size = new System.Drawing.Size(82, 27);
             this.OpLoadBtn.TabIndex = 70;
             this.OpLoadBtn.Text = "Load";
-            this.toolTip1.SetToolTip(this.OpLoadBtn, "Stop camera");
+            this.toolTip1.SetToolTip(this.OpLoadBtn, "Load a profile");
             this.OpLoadBtn.UseVisualStyleBackColor = true;
             this.OpLoadBtn.Click += new System.EventHandler(this.OpLoadBtn_Click);
             // 
@@ -353,7 +342,7 @@
             this.OpLooseFitBtn.Size = new System.Drawing.Size(82, 23);
             this.OpLooseFitBtn.TabIndex = 73;
             this.OpLooseFitBtn.Text = "Loose";
-            this.toolTip1.SetToolTip(this.OpLooseFitBtn, "Stop camera");
+            this.toolTip1.SetToolTip(this.OpLooseFitBtn, "Load loose fit");
             this.OpLooseFitBtn.UseVisualStyleBackColor = true;
             this.OpLooseFitBtn.Click += new System.EventHandler(this.OpLooseFitBtn_Click);
             // 
@@ -365,7 +354,7 @@
             this.OpNormalFitBtn.Size = new System.Drawing.Size(82, 23);
             this.OpNormalFitBtn.TabIndex = 74;
             this.OpNormalFitBtn.Text = "Normal";
-            this.toolTip1.SetToolTip(this.OpNormalFitBtn, "Stop camera");
+            this.toolTip1.SetToolTip(this.OpNormalFitBtn, "Load normal fit");
             this.OpNormalFitBtn.UseVisualStyleBackColor = true;
             this.OpNormalFitBtn.Click += new System.EventHandler(this.OpNormalFitBtn_Click);
             // 
@@ -377,7 +366,7 @@
             this.OpTightFitBtn.Size = new System.Drawing.Size(82, 23);
             this.OpTightFitBtn.TabIndex = 75;
             this.OpTightFitBtn.Text = "Tight";
-            this.toolTip1.SetToolTip(this.OpTightFitBtn, "Stop camera");
+            this.toolTip1.SetToolTip(this.OpTightFitBtn, "Load tight fit");
             this.OpTightFitBtn.UseVisualStyleBackColor = true;
             this.OpTightFitBtn.Click += new System.EventHandler(this.OpTightFitBtn_Click);
             // 
@@ -393,6 +382,17 @@
             this.toolTip1.SetToolTip(this.BleDiscoverBtn, "Search for bluetooth devices");
             this.BleDiscoverBtn.UseVisualStyleBackColor = false;
             this.BleDiscoverBtn.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // TestBtn
+            // 
+            this.TestBtn.Location = new System.Drawing.Point(398, 32);
+            this.TestBtn.Name = "TestBtn";
+            this.TestBtn.Size = new System.Drawing.Size(75, 23);
+            this.TestBtn.TabIndex = 63;
+            this.TestBtn.Text = "Start";
+            this.toolTip1.SetToolTip(this.TestBtn, "Open main camera and motor control screen");
+            this.TestBtn.UseVisualStyleBackColor = true;
+            this.TestBtn.Click += new System.EventHandler(this.button1_Click_2);
             // 
             // FwdLimitInd
             // 
@@ -468,7 +468,7 @@
             // 
             // OpenSerialPortBtn
             // 
-            this.OpenSerialPortBtn.Location = new System.Drawing.Point(1153, 239);
+            this.OpenSerialPortBtn.Location = new System.Drawing.Point(1173, 55);
             this.OpenSerialPortBtn.Name = "OpenSerialPortBtn";
             this.OpenSerialPortBtn.Size = new System.Drawing.Size(75, 23);
             this.OpenSerialPortBtn.TabIndex = 15;
@@ -478,6 +478,7 @@
             // 
             // menuStrip1
             // 
+            this.menuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
             this.diagnosticToolStripMenuItem,
@@ -486,6 +487,7 @@
             this.helpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
+            this.menuStrip1.Padding = new System.Windows.Forms.Padding(4, 2, 0, 2);
             this.menuStrip1.Size = new System.Drawing.Size(1248, 24);
             this.menuStrip1.TabIndex = 21;
             this.menuStrip1.Text = "menuStrip1";
@@ -568,14 +570,12 @@
             this.fPCParametersToolStripMenuItem.Name = "fPCParametersToolStripMenuItem";
             this.fPCParametersToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
             this.fPCParametersToolStripMenuItem.Text = "FTC Parameters";
-            this.fPCParametersToolStripMenuItem.Click += new System.EventHandler(this.fPCParametersToolStripMenuItem_Click);
             // 
             // counterToolStripMenuItem
             // 
             this.counterToolStripMenuItem.Name = "counterToolStripMenuItem";
             this.counterToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
             this.counterToolStripMenuItem.Text = "Counter";
-            this.counterToolStripMenuItem.Click += new System.EventHandler(this.counterToolStripMenuItem_Click);
             // 
             // downloadToolStripMenuItem
             // 
@@ -585,7 +585,6 @@
             this.downloadToolStripMenuItem.Size = new System.Drawing.Size(73, 20);
             this.downloadToolStripMenuItem.Text = "&Download";
             this.downloadToolStripMenuItem.Visible = false;
-            this.downloadToolStripMenuItem.Click += new System.EventHandler(this.downloadToolStripMenuItem_Click);
             // 
             // fPCToolStripMenuItem
             // 
@@ -611,9 +610,6 @@
             // MainPanel
             // 
             this.MainPanel.BackColor = System.Drawing.Color.WhiteSmoke;
-            this.MainPanel.Controls.Add(this.Brd3TypeLbl);
-            this.MainPanel.Controls.Add(this.FwBrd3VersionLbl);
-            this.MainPanel.Controls.Add(this.CompressorCntrlGridView);
             this.MainPanel.Controls.Add(this.button1);
             this.MainPanel.Controls.Add(this.OperationPanel);
             this.MainPanel.Controls.Add(this.ControlPanel);
@@ -622,22 +618,24 @@
             this.MainPanel.Controls.Add(this.Controller2GridView);
             this.MainPanel.Controls.Add(this.BleGroupBox);
             this.MainPanel.Controls.Add(this.StartFitBtn1);
-            this.MainPanel.Controls.Add(this.GetPressBtn);
             this.MainPanel.Controls.Add(this.ControllerGridView);
             this.MainPanel.Controls.Add(this.BrdTypeLbl);
             this.MainPanel.Controls.Add(this.CommSelectPnl);
             this.MainPanel.Controls.Add(this.FwBrd1VersionLbl);
             this.MainPanel.Controls.Add(this.TestBtn);
             this.MainPanel.Controls.Add(this.FwBrd2VersionLbl);
+            this.MainPanel.Controls.Add(this.CompressorCntrlGridView);
             this.MainPanel.Controls.Add(this.Brd2TypeLbl);
+            this.MainPanel.Controls.Add(this.FwBrd3VersionLbl);
+            this.MainPanel.Controls.Add(this.Brd3TypeLbl);
             this.MainPanel.Location = new System.Drawing.Point(25, 40);
             this.MainPanel.Name = "MainPanel";
-            this.MainPanel.Size = new System.Drawing.Size(1086, 650);
+            this.MainPanel.Size = new System.Drawing.Size(1187, 650);
             this.MainPanel.TabIndex = 22;
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(333, 11);
+            this.button1.Location = new System.Drawing.Point(333, 0);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 64;
@@ -649,6 +647,10 @@
             // OperationPanel
             // 
             this.OperationPanel.BackColor = System.Drawing.Color.White;
+            this.OperationPanel.Controls.Add(this.SettingsGroupBox);
+            this.OperationPanel.Controls.Add(this.FtpServerTextBox);
+            this.OperationPanel.Controls.Add(this.CameraDataGridView);
+            this.OperationPanel.Controls.Add(this.SnLoadComboBox);
             this.OperationPanel.Controls.Add(this.CameraPortLbl);
             this.OperationPanel.Controls.Add(this.CameraStatusLbl);
             this.OperationPanel.Controls.Add(this.MotorGroupBox);
@@ -661,11 +663,141 @@
             this.OperationPanel.Controls.Add(this.MotorDetectLbl);
             this.OperationPanel.Controls.Add(this.OpCloseBtn);
             this.OperationPanel.Controls.Add(this.UploadFilesBtn);
-            this.OperationPanel.Location = new System.Drawing.Point(807, 217);
+            this.OperationPanel.Location = new System.Drawing.Point(816, 238);
             this.OperationPanel.Name = "OperationPanel";
-            this.OperationPanel.Size = new System.Drawing.Size(246, 341);
+            this.OperationPanel.Size = new System.Drawing.Size(341, 406);
             this.OperationPanel.TabIndex = 62;
             this.OperationPanel.Visible = false;
+            // 
+            // SettingsGroupBox
+            // 
+            this.SettingsGroupBox.Controls.Add(this.label11);
+            this.SettingsGroupBox.Controls.Add(this.label24);
+            this.SettingsGroupBox.Controls.Add(this.label33);
+            this.SettingsGroupBox.Controls.Add(this.ModelTextBox2);
+            this.SettingsGroupBox.Controls.Add(this.SizeTextBox2);
+            this.SettingsGroupBox.Controls.Add(this.NameTextBox2);
+            this.SettingsGroupBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.SettingsGroupBox.Location = new System.Drawing.Point(261, 85);
+            this.SettingsGroupBox.Name = "SettingsGroupBox";
+            this.SettingsGroupBox.Size = new System.Drawing.Size(224, 120);
+            this.SettingsGroupBox.TabIndex = 86;
+            this.SettingsGroupBox.TabStop = false;
+            this.SettingsGroupBox.Text = "Settings";
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label11.Location = new System.Drawing.Point(15, 85);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(45, 16);
+            this.label11.TabIndex = 60;
+            this.label11.Text = "Name";
+            // 
+            // label24
+            // 
+            this.label24.AutoSize = true;
+            this.label24.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label24.Location = new System.Drawing.Point(15, 55);
+            this.label24.Name = "label24";
+            this.label24.Size = new System.Drawing.Size(34, 16);
+            this.label24.TabIndex = 64;
+            this.label24.Text = "Size";
+            // 
+            // label33
+            // 
+            this.label33.AutoSize = true;
+            this.label33.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label33.Location = new System.Drawing.Point(15, 25);
+            this.label33.Name = "label33";
+            this.label33.Size = new System.Drawing.Size(46, 16);
+            this.label33.TabIndex = 63;
+            this.label33.Text = "Model";
+            // 
+            // ModelTextBox2
+            // 
+            this.ModelTextBox2.Location = new System.Drawing.Point(65, 24);
+            this.ModelTextBox2.Name = "ModelTextBox2";
+            this.ModelTextBox2.Size = new System.Drawing.Size(150, 22);
+            this.ModelTextBox2.TabIndex = 1;
+            // 
+            // SizeTextBox2
+            // 
+            this.SizeTextBox2.Location = new System.Drawing.Point(65, 54);
+            this.SizeTextBox2.Name = "SizeTextBox2";
+            this.SizeTextBox2.Size = new System.Drawing.Size(150, 22);
+            this.SizeTextBox2.TabIndex = 3;
+            // 
+            // NameTextBox2
+            // 
+            this.NameTextBox2.Location = new System.Drawing.Point(65, 84);
+            this.NameTextBox2.Name = "NameTextBox2";
+            this.NameTextBox2.Size = new System.Drawing.Size(150, 22);
+            this.NameTextBox2.TabIndex = 4;
+            // 
+            // FtpServerTextBox
+            // 
+            this.FtpServerTextBox.Location = new System.Drawing.Point(31, 337);
+            this.FtpServerTextBox.Name = "FtpServerTextBox";
+            this.FtpServerTextBox.Size = new System.Drawing.Size(265, 20);
+            this.FtpServerTextBox.TabIndex = 85;
+            this.FtpServerTextBox.Text = "ftp://ftp.drivehq.com//TestDir/";
+            // 
+            // CameraDataGridView
+            // 
+            this.CameraDataGridView.AllowUserToAddRows = false;
+            this.CameraDataGridView.AllowUserToDeleteRows = false;
+            this.CameraDataGridView.AllowUserToResizeColumns = false;
+            this.CameraDataGridView.AllowUserToResizeRows = false;
+            this.CameraDataGridView.BackgroundColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.Color.LightGray;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.CameraDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            this.CameraDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.CameraDataGridView.Cursor = System.Windows.Forms.Cursors.Default;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle2.ForeColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.Color.White;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.CameraDataGridView.DefaultCellStyle = dataGridViewCellStyle2;
+            this.CameraDataGridView.Enabled = false;
+            this.CameraDataGridView.EnableHeadersVisualStyles = false;
+            this.CameraDataGridView.Location = new System.Drawing.Point(274, 32);
+            this.CameraDataGridView.Name = "CameraDataGridView";
+            this.CameraDataGridView.ReadOnly = true;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.CameraDataGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            this.CameraDataGridView.RowHeadersWidth = 120;
+            this.CameraDataGridView.Size = new System.Drawing.Size(82, 41);
+            this.CameraDataGridView.TabIndex = 84;
+            // 
+            // SnLoadComboBox
+            // 
+            this.SnLoadComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.SnLoadComboBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.SnLoadComboBox.FormattingEnabled = true;
+            this.SnLoadComboBox.Items.AddRange(new object[] {
+            "",
+            ""});
+            this.SnLoadComboBox.Location = new System.Drawing.Point(55, 77);
+            this.SnLoadComboBox.Name = "SnLoadComboBox";
+            this.SnLoadComboBox.Size = new System.Drawing.Size(98, 24);
+            this.SnLoadComboBox.TabIndex = 83;
             // 
             // CameraPortLbl
             // 
@@ -750,7 +882,7 @@
             this.CameraGroupBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.CameraGroupBox.Location = new System.Drawing.Point(15, 163);
             this.CameraGroupBox.Name = "CameraGroupBox";
-            this.CameraGroupBox.Size = new System.Drawing.Size(285, 80);
+            this.CameraGroupBox.Size = new System.Drawing.Size(285, 90);
             this.CameraGroupBox.TabIndex = 79;
             this.CameraGroupBox.TabStop = false;
             this.CameraGroupBox.Text = "Camera Control";
@@ -1025,6 +1157,9 @@
             // ProfileGroupBox
             // 
             this.ProfileGroupBox.BackColor = System.Drawing.Color.White;
+            this.ProfileGroupBox.Controls.Add(this.DefaultProfileBtn);
+            this.ProfileGroupBox.Controls.Add(this.label14);
+            this.ProfileGroupBox.Controls.Add(this.SnComboBox);
             this.ProfileGroupBox.Controls.Add(this.panel2);
             this.ProfileGroupBox.Controls.Add(this.panel1);
             this.ProfileGroupBox.Controls.Add(this.groupBox3);
@@ -1034,13 +1169,46 @@
             this.ProfileGroupBox.Controls.Add(this.SaveProfileBtn);
             this.ProfileGroupBox.Controls.Add(this.textBox3);
             this.ProfileGroupBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ProfileGroupBox.Location = new System.Drawing.Point(18, 212);
+            this.ProfileGroupBox.Location = new System.Drawing.Point(32, 152);
             this.ProfileGroupBox.Name = "ProfileGroupBox";
-            this.ProfileGroupBox.Size = new System.Drawing.Size(512, 520);
+            this.ProfileGroupBox.Size = new System.Drawing.Size(471, 520);
             this.ProfileGroupBox.TabIndex = 47;
             this.ProfileGroupBox.TabStop = false;
             this.ProfileGroupBox.Text = "Profile";
             this.ProfileGroupBox.Visible = false;
+            // 
+            // DefaultProfileBtn
+            // 
+            this.DefaultProfileBtn.Location = new System.Drawing.Point(265, 163);
+            this.DefaultProfileBtn.Name = "DefaultProfileBtn";
+            this.DefaultProfileBtn.Size = new System.Drawing.Size(161, 23);
+            this.DefaultProfileBtn.TabIndex = 87;
+            this.DefaultProfileBtn.Text = "Default";
+            this.DefaultProfileBtn.UseVisualStyleBackColor = true;
+            this.DefaultProfileBtn.Click += new System.EventHandler(this.DefaultProfileBtn_Click);
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label14.Location = new System.Drawing.Point(262, 47);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(68, 16);
+            this.label14.TabIndex = 75;
+            this.label14.Text = "SN Select";
+            // 
+            // SnComboBox
+            // 
+            this.SnComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.SnComboBox.FormattingEnabled = true;
+            this.SnComboBox.Items.AddRange(new object[] {
+            "",
+            ""});
+            this.SnComboBox.Location = new System.Drawing.Point(338, 43);
+            this.SnComboBox.Name = "SnComboBox";
+            this.SnComboBox.Size = new System.Drawing.Size(88, 24);
+            this.SnComboBox.TabIndex = 74;
+            this.SnComboBox.SelectedIndexChanged += new System.EventHandler(this.SnComboBox_SelectedIndexChanged);
             // 
             // panel2
             // 
@@ -1061,7 +1229,7 @@
             this.panel2.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.panel2.Location = new System.Drawing.Point(230, 201);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(233, 252);
+            this.panel2.Size = new System.Drawing.Size(233, 256);
             this.panel2.TabIndex = 73;
             // 
             // FitTypeComboBox
@@ -1503,7 +1671,7 @@
             // 
             this.SizeTextBox.Location = new System.Drawing.Point(65, 84);
             this.SizeTextBox.Name = "SizeTextBox";
-            this.SizeTextBox.Size = new System.Drawing.Size(130, 22);
+            this.SizeTextBox.Size = new System.Drawing.Size(150, 22);
             this.SizeTextBox.TabIndex = 2;
             // 
             // label2
@@ -1520,21 +1688,21 @@
             // 
             this.ModelTextBox.Location = new System.Drawing.Point(65, 54);
             this.ModelTextBox.Name = "ModelTextBox";
-            this.ModelTextBox.Size = new System.Drawing.Size(130, 22);
+            this.ModelTextBox.Size = new System.Drawing.Size(150, 22);
             this.ModelTextBox.TabIndex = 1;
             // 
             // SnTextBox
             // 
             this.SnTextBox.Location = new System.Drawing.Point(65, 114);
             this.SnTextBox.Name = "SnTextBox";
-            this.SnTextBox.Size = new System.Drawing.Size(130, 22);
+            this.SnTextBox.Size = new System.Drawing.Size(150, 22);
             this.SnTextBox.TabIndex = 3;
             // 
             // NameTextBox
             // 
             this.NameTextBox.Location = new System.Drawing.Point(65, 144);
             this.NameTextBox.Name = "NameTextBox";
-            this.NameTextBox.Size = new System.Drawing.Size(130, 22);
+            this.NameTextBox.Size = new System.Drawing.Size(150, 22);
             this.NameTextBox.TabIndex = 4;
             // 
             // CloseProfileBtn
@@ -1628,13 +1796,14 @@
             dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
             this.Controller2GridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
             this.Controller2GridView.RowHeadersWidth = 120;
-            this.Controller2GridView.Size = new System.Drawing.Size(240, 75);
+            this.Controller2GridView.Size = new System.Drawing.Size(68, 75);
             this.Controller2GridView.TabIndex = 53;
             this.Controller2GridView.Visible = false;
             // 
             // BleGroupBox
             // 
             this.BleGroupBox.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.BleGroupBox.Controls.Add(this.ControllerGroupBox);
             this.BleGroupBox.Controls.Add(this.BleMgsTextClear);
             this.BleGroupBox.Controls.Add(this.BleMsgTextBox);
             this.BleGroupBox.Controls.Add(this.RxTextBox);
@@ -1647,10 +1816,83 @@
             this.BleGroupBox.Controls.Add(this.BleDiscoverBtn);
             this.BleGroupBox.Location = new System.Drawing.Point(460, 15);
             this.BleGroupBox.Name = "BleGroupBox";
-            this.BleGroupBox.Size = new System.Drawing.Size(341, 620);
+            this.BleGroupBox.Size = new System.Drawing.Size(350, 812);
             this.BleGroupBox.TabIndex = 52;
             this.BleGroupBox.TabStop = false;
             this.BleGroupBox.Text = "BLE";
+            // 
+            // ControllerGroupBox
+            // 
+            this.ControllerGroupBox.Controls.Add(this.label20);
+            this.ControllerGroupBox.Controls.Add(this.label16);
+            this.ControllerGroupBox.Controls.Add(this.label15);
+            this.ControllerGroupBox.Controls.Add(this.ComprInd);
+            this.ControllerGroupBox.Controls.Add(this.LoFlowInd);
+            this.ControllerGroupBox.Controls.Add(this.HiFlowInd);
+            this.ControllerGroupBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ControllerGroupBox.Location = new System.Drawing.Point(142, 329);
+            this.ControllerGroupBox.Name = "ControllerGroupBox";
+            this.ControllerGroupBox.Size = new System.Drawing.Size(285, 66);
+            this.ControllerGroupBox.TabIndex = 85;
+            this.ControllerGroupBox.TabStop = false;
+            this.ControllerGroupBox.Text = "Controller";
+            // 
+            // label20
+            // 
+            this.label20.AutoSize = true;
+            this.label20.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label20.Location = new System.Drawing.Point(175, 22);
+            this.label20.Name = "label20";
+            this.label20.Size = new System.Drawing.Size(25, 16);
+            this.label20.TabIndex = 90;
+            this.label20.Text = "Co";
+            // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label16.Location = new System.Drawing.Point(90, 22);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(23, 16);
+            this.label16.TabIndex = 89;
+            this.label16.Text = "Lo";
+            // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label15.Location = new System.Drawing.Point(10, 22);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(21, 16);
+            this.label15.TabIndex = 88;
+            this.label15.Text = "Hi";
+            // 
+            // ComprInd
+            // 
+            this.ComprInd.BackColor = System.Drawing.Color.LightGray;
+            this.ComprInd.Location = new System.Drawing.Point(205, 20);
+            this.ComprInd.Name = "ComprInd";
+            this.ComprInd.Size = new System.Drawing.Size(20, 20);
+            this.ComprInd.TabIndex = 87;
+            this.ComprInd.UseVisualStyleBackColor = false;
+            // 
+            // LoFlowInd
+            // 
+            this.LoFlowInd.BackColor = System.Drawing.Color.LightGray;
+            this.LoFlowInd.Location = new System.Drawing.Point(120, 20);
+            this.LoFlowInd.Name = "LoFlowInd";
+            this.LoFlowInd.Size = new System.Drawing.Size(20, 20);
+            this.LoFlowInd.TabIndex = 86;
+            this.LoFlowInd.UseVisualStyleBackColor = false;
+            // 
+            // HiFlowInd
+            // 
+            this.HiFlowInd.BackColor = System.Drawing.Color.LightGray;
+            this.HiFlowInd.Location = new System.Drawing.Point(35, 20);
+            this.HiFlowInd.Name = "HiFlowInd";
+            this.HiFlowInd.Size = new System.Drawing.Size(20, 20);
+            this.HiFlowInd.TabIndex = 85;
+            this.HiFlowInd.UseVisualStyleBackColor = false;
             // 
             // BleMgsTextClear
             // 
@@ -1799,7 +2041,7 @@
             dataGridViewCellStyle9.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
             this.ControllerGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle9;
             this.ControllerGridView.RowHeadersWidth = 120;
-            this.ControllerGridView.Size = new System.Drawing.Size(240, 75);
+            this.ControllerGridView.Size = new System.Drawing.Size(68, 75);
             this.ControllerGridView.TabIndex = 48;
             this.ControllerGridView.Visible = false;
             // 
@@ -1820,7 +2062,7 @@
             this.CommSelectPnl.Controls.Add(this.button14);
             this.CommSelectPnl.Controls.Add(this.button13);
             this.CommSelectPnl.Controls.Add(this.CommportComboBox);
-            this.CommSelectPnl.Location = new System.Drawing.Point(1004, 502);
+            this.CommSelectPnl.Location = new System.Drawing.Point(1122, 482);
             this.CommSelectPnl.Name = "CommSelectPnl";
             this.CommSelectPnl.Size = new System.Drawing.Size(156, 70);
             this.CommSelectPnl.TabIndex = 37;
@@ -1874,16 +2116,6 @@
             this.FwBrd1VersionLbl.TabIndex = 28;
             this.FwBrd1VersionLbl.Text = "FW Version";
             // 
-            // TestBtn
-            // 
-            this.TestBtn.Location = new System.Drawing.Point(398, 32);
-            this.TestBtn.Name = "TestBtn";
-            this.TestBtn.Size = new System.Drawing.Size(75, 23);
-            this.TestBtn.TabIndex = 63;
-            this.TestBtn.Text = "button1";
-            this.TestBtn.UseVisualStyleBackColor = true;
-            this.TestBtn.Click += new System.EventHandler(this.button1_Click_2);
-            // 
             // FwBrd2VersionLbl
             // 
             this.FwBrd2VersionLbl.AutoSize = true;
@@ -1894,6 +2126,49 @@
             this.FwBrd2VersionLbl.TabIndex = 55;
             this.FwBrd2VersionLbl.Text = "FW Version";
             // 
+            // CompressorCntrlGridView
+            // 
+            this.CompressorCntrlGridView.AllowUserToAddRows = false;
+            this.CompressorCntrlGridView.AllowUserToDeleteRows = false;
+            this.CompressorCntrlGridView.AllowUserToResizeColumns = false;
+            this.CompressorCntrlGridView.AllowUserToResizeRows = false;
+            this.CompressorCntrlGridView.BackgroundColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle10.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle10.BackColor = System.Drawing.SystemColors.Info;
+            dataGridViewCellStyle10.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle10.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle10.SelectionBackColor = System.Drawing.Color.LightGray;
+            dataGridViewCellStyle10.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle10.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.CompressorCntrlGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle10;
+            this.CompressorCntrlGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.CompressorCntrlGridView.Cursor = System.Windows.Forms.Cursors.Default;
+            dataGridViewCellStyle11.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle11.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle11.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle11.ForeColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle11.SelectionBackColor = System.Drawing.Color.White;
+            dataGridViewCellStyle11.SelectionForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle11.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.CompressorCntrlGridView.DefaultCellStyle = dataGridViewCellStyle11;
+            this.CompressorCntrlGridView.Enabled = false;
+            this.CompressorCntrlGridView.EnableHeadersVisualStyles = false;
+            this.CompressorCntrlGridView.Location = new System.Drawing.Point(104, 51);
+            this.CompressorCntrlGridView.Name = "CompressorCntrlGridView";
+            this.CompressorCntrlGridView.ReadOnly = true;
+            dataGridViewCellStyle12.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle12.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle12.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle12.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle12.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle12.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle12.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.CompressorCntrlGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle12;
+            this.CompressorCntrlGridView.RowHeadersWidth = 120;
+            this.CompressorCntrlGridView.Size = new System.Drawing.Size(82, 41);
+            this.CompressorCntrlGridView.TabIndex = 66;
+            this.CompressorCntrlGridView.Visible = false;
+            // 
             // Brd2TypeLbl
             // 
             this.Brd2TypeLbl.AutoSize = true;
@@ -1903,208 +2178,6 @@
             this.Brd2TypeLbl.Size = new System.Drawing.Size(96, 16);
             this.Brd2TypeLbl.TabIndex = 65;
             this.Brd2TypeLbl.Text = "Board type NA";
-            // 
-            // groupBox2
-            // 
-            this.groupBox2.Controls.Add(this.radioButton3);
-            this.groupBox2.Controls.Add(this.radioButton2);
-            this.groupBox2.Controls.Add(this.V1RadioBtn);
-            this.groupBox2.Controls.Add(this.button20);
-            this.groupBox2.Controls.Add(this.button19);
-            this.groupBox2.Location = new System.Drawing.Point(1162, 330);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(205, 110);
-            this.groupBox2.TabIndex = 33;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Solenoids";
-            this.groupBox2.Visible = false;
-            // 
-            // radioButton3
-            // 
-            this.radioButton3.AutoSize = true;
-            this.radioButton3.Location = new System.Drawing.Point(132, 29);
-            this.radioButton3.Name = "radioButton3";
-            this.radioButton3.Size = new System.Drawing.Size(38, 17);
-            this.radioButton3.TabIndex = 44;
-            this.radioButton3.Text = "V3";
-            this.radioButton3.UseVisualStyleBackColor = true;
-            // 
-            // radioButton2
-            // 
-            this.radioButton2.AutoSize = true;
-            this.radioButton2.Location = new System.Drawing.Point(65, 27);
-            this.radioButton2.Name = "radioButton2";
-            this.radioButton2.Size = new System.Drawing.Size(38, 17);
-            this.radioButton2.TabIndex = 43;
-            this.radioButton2.Text = "V2";
-            this.radioButton2.UseVisualStyleBackColor = true;
-            // 
-            // V1RadioBtn
-            // 
-            this.V1RadioBtn.AutoSize = true;
-            this.V1RadioBtn.Checked = true;
-            this.V1RadioBtn.Location = new System.Drawing.Point(15, 29);
-            this.V1RadioBtn.Name = "V1RadioBtn";
-            this.V1RadioBtn.Size = new System.Drawing.Size(38, 17);
-            this.V1RadioBtn.TabIndex = 42;
-            this.V1RadioBtn.TabStop = true;
-            this.V1RadioBtn.Text = "V1";
-            this.V1RadioBtn.UseVisualStyleBackColor = true;
-            // 
-            // button20
-            // 
-            this.button20.Location = new System.Drawing.Point(112, 78);
-            this.button20.Name = "button20";
-            this.button20.Size = new System.Drawing.Size(82, 23);
-            this.button20.TabIndex = 41;
-            this.button20.Text = "Close Valve";
-            this.button20.UseVisualStyleBackColor = true;
-            this.button20.Click += new System.EventHandler(this.button20_Click);
-            // 
-            // button19
-            // 
-            this.button19.Location = new System.Drawing.Point(15, 78);
-            this.button19.Name = "button19";
-            this.button19.Size = new System.Drawing.Size(82, 23);
-            this.button19.TabIndex = 40;
-            this.button19.Text = "Open Valve";
-            this.button19.UseVisualStyleBackColor = true;
-            this.button19.Click += new System.EventHandler(this.button19_Click);
-            // 
-            // groupBox1
-            // 
-            this.groupBox1.Controls.Add(this.label11);
-            this.groupBox1.Controls.Add(this.SenThresTextBox);
-            this.groupBox1.Controls.Add(this.TemperatureTextBox);
-            this.groupBox1.Controls.Add(this.PressureTextBox);
-            this.groupBox1.Controls.Add(this.label9);
-            this.groupBox1.Location = new System.Drawing.Point(1083, 40);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(205, 99);
-            this.groupBox1.TabIndex = 32;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Operation";
-            this.groupBox1.Visible = false;
-            // 
-            // label11
-            // 
-            this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(18, 53);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(106, 13);
-            this.label11.TabIndex = 37;
-            this.label11.Text = "Temperature (Deg C)";
-            // 
-            // SenThresTextBox
-            // 
-            this.SenThresTextBox.Location = new System.Drawing.Point(7075, 101);
-            this.SenThresTextBox.Name = "SenThresTextBox";
-            this.SenThresTextBox.Size = new System.Drawing.Size(70, 20);
-            this.SenThresTextBox.TabIndex = 33;
-            // 
-            // TemperatureTextBox
-            // 
-            this.TemperatureTextBox.Location = new System.Drawing.Point(130, 50);
-            this.TemperatureTextBox.Name = "TemperatureTextBox";
-            this.TemperatureTextBox.Size = new System.Drawing.Size(60, 20);
-            this.TemperatureTextBox.TabIndex = 31;
-            // 
-            // PressureTextBox
-            // 
-            this.PressureTextBox.Location = new System.Drawing.Point(130, 25);
-            this.PressureTextBox.Name = "PressureTextBox";
-            this.PressureTextBox.Size = new System.Drawing.Size(60, 20);
-            this.PressureTextBox.TabIndex = 30;
-            // 
-            // label9
-            // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(18, 28);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(76, 13);
-            this.label9.TabIndex = 29;
-            this.label9.Text = "Pressure (kPa)";
-            // 
-            // SerialMonitorTimer
-            // 
-            this.SerialMonitorTimer.Interval = 2000;
-            this.SerialMonitorTimer.Tick += new System.EventHandler(this.SerialMonitorTimer_Tick);
-            // 
-            // MotorCntrlTimer
-            // 
-            this.MotorCntrlTimer.Interval = 1000;
-            this.MotorCntrlTimer.Tick += new System.EventHandler(this.MotorCntrlTimer_Tick);
-            // 
-            // FtcStatusStrip
-            // 
-            this.FtcStatusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripStatusLabel1});
-            this.FtcStatusStrip.Location = new System.Drawing.Point(0, 694);
-            this.FtcStatusStrip.Name = "FtcStatusStrip";
-            this.FtcStatusStrip.Size = new System.Drawing.Size(1248, 22);
-            this.FtcStatusStrip.TabIndex = 26;
-            this.FtcStatusStrip.Text = "statusStrip1";
-            // 
-            // toolStripStatusLabel1
-            // 
-            this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            this.toolStripStatusLabel1.Size = new System.Drawing.Size(118, 17);
-            this.toolStripStatusLabel1.Text = "toolStripStatusLabel1";
-            // 
-            // FileSystemWatcher
-            // 
-            this.FileSystemWatcher.EnableRaisingEvents = true;
-            this.FileSystemWatcher.Filter = "\"*.h264\"";
-            this.FileSystemWatcher.SynchronizingObject = this;
-            this.FileSystemWatcher.Changed += new System.IO.FileSystemEventHandler(this.FileSystemWatcher_Changed);
-            // 
-            // FileMonitorTimer
-            // 
-            this.FileMonitorTimer.Interval = 500;
-            this.FileMonitorTimer.Tick += new System.EventHandler(this.timer2_Tick);
-            // 
-            // CompressorCntrlGridView
-            // 
-            this.CompressorCntrlGridView.AllowUserToAddRows = false;
-            this.CompressorCntrlGridView.AllowUserToDeleteRows = false;
-            this.CompressorCntrlGridView.AllowUserToResizeColumns = false;
-            this.CompressorCntrlGridView.AllowUserToResizeRows = false;
-            this.CompressorCntrlGridView.BackgroundColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Info;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.Color.LightGray;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.CompressorCntrlGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
-            this.CompressorCntrlGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.CompressorCntrlGridView.Cursor = System.Windows.Forms.Cursors.Default;
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle2.ForeColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.Color.White;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.CompressorCntrlGridView.DefaultCellStyle = dataGridViewCellStyle2;
-            this.CompressorCntrlGridView.Enabled = false;
-            this.CompressorCntrlGridView.EnableHeadersVisualStyles = false;
-            this.CompressorCntrlGridView.Location = new System.Drawing.Point(268, 157);
-            this.CompressorCntrlGridView.Name = "CompressorCntrlGridView";
-            this.CompressorCntrlGridView.ReadOnly = true;
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.CompressorCntrlGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
-            this.CompressorCntrlGridView.RowHeadersWidth = 120;
-            this.CompressorCntrlGridView.Size = new System.Drawing.Size(82, 41);
-            this.CompressorCntrlGridView.TabIndex = 66;
-            this.CompressorCntrlGridView.Visible = false;
             // 
             // FwBrd3VersionLbl
             // 
@@ -2126,19 +2199,64 @@
             this.Brd3TypeLbl.TabIndex = 67;
             this.Brd3TypeLbl.Text = "Board type NA";
             // 
+            // SerialMonitorTimer
+            // 
+            this.SerialMonitorTimer.Interval = 2000;
+            this.SerialMonitorTimer.Tick += new System.EventHandler(this.SerialMonitorTimer_Tick);
+            // 
+            // MotorCntrlTimer
+            // 
+            this.MotorCntrlTimer.Interval = 1000;
+            this.MotorCntrlTimer.Tick += new System.EventHandler(this.MotorCntrlTimer_Tick);
+            // 
+            // FtcStatusStrip
+            // 
+            this.FtcStatusStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.FtcStatusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripStatusLabel1});
+            this.FtcStatusStrip.Location = new System.Drawing.Point(0, 717);
+            this.FtcStatusStrip.Name = "FtcStatusStrip";
+            this.FtcStatusStrip.Size = new System.Drawing.Size(1248, 22);
+            this.FtcStatusStrip.TabIndex = 26;
+            this.FtcStatusStrip.Text = "statusStrip1";
+            // 
+            // toolStripStatusLabel1
+            // 
+            this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(118, 17);
+            this.toolStripStatusLabel1.Text = "toolStripStatusLabel1";
+            // 
+            // FileSystemWatcher
+            // 
+            this.FileSystemWatcher.EnableRaisingEvents = true;
+            this.FileSystemWatcher.Filter = "\"*.h264\"";
+            this.FileSystemWatcher.SynchronizingObject = this;
+            this.FileSystemWatcher.Changed += new System.IO.FileSystemEventHandler(this.FileSystemWatcher_Changed);
+            // 
+            // FileMonitorTimer
+            // 
+            this.FileMonitorTimer.Interval = 1000;
+            this.FileMonitorTimer.Tick += new System.EventHandler(this.FileMonitorTimer_Tick);
+            // 
+            // CameraTimer
+            // 
+            this.CameraTimer.Interval = 500;
+            // 
+            // FtpUploadTimer
+            // 
+            this.FtpUploadTimer.Interval = 500;
+            this.FtpUploadTimer.Tick += new System.EventHandler(this.FtpUploadTimer_Tick);
+            // 
             // TheMainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.WhiteSmoke;
-            this.ClientSize = new System.Drawing.Size(1248, 716);
+            this.ClientSize = new System.Drawing.Size(1248, 739);
             this.Controls.Add(this.FtcStatusStrip);
             this.Controls.Add(this.MainPanel);
             this.Controls.Add(this.OpenSerialPortBtn);
             this.Controls.Add(this.button8);
-            this.Controls.Add(this.groupBox2);
-            this.Controls.Add(this.groupBox1);
-            this.Controls.Add(this.button2);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "TheMainForm";
@@ -2151,6 +2269,9 @@
             this.MainPanel.PerformLayout();
             this.OperationPanel.ResumeLayout(false);
             this.OperationPanel.PerformLayout();
+            this.SettingsGroupBox.ResumeLayout(false);
+            this.SettingsGroupBox.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.CameraDataGridView)).EndInit();
             this.MotorGroupBox.ResumeLayout(false);
             this.MotorGroupBox.PerformLayout();
             this.CameraGroupBox.ResumeLayout(false);
@@ -2186,17 +2307,15 @@
             ((System.ComponentModel.ISupportInitialize)(this.Controller2GridView)).EndInit();
             this.BleGroupBox.ResumeLayout(false);
             this.BleGroupBox.PerformLayout();
+            this.ControllerGroupBox.ResumeLayout(false);
+            this.ControllerGroupBox.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ControllerGridView)).EndInit();
             this.CommSelectPnl.ResumeLayout(false);
             this.CommSelectPnl.PerformLayout();
-            this.groupBox2.ResumeLayout(false);
-            this.groupBox2.PerformLayout();
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.CompressorCntrlGridView)).EndInit();
             this.FtcStatusStrip.ResumeLayout(false);
             this.FtcStatusStrip.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.FileSystemWatcher)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.CompressorCntrlGridView)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -2204,7 +2323,6 @@
 
         #endregion
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
-        private System.Windows.Forms.Button button2;
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.Button button8;
@@ -2222,12 +2340,6 @@
         private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
         private System.Windows.Forms.Label FwBrd1VersionLbl;
         private System.Windows.Forms.ToolStripMenuItem fPCToolStripMenuItem;
-        private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.TextBox SenThresTextBox;
-        private System.Windows.Forms.TextBox PressureTextBox;
-        private System.Windows.Forms.Label label9;
-        private System.Windows.Forms.GroupBox groupBox2;
-        private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Timer SerialMonitorTimer;
         private System.Windows.Forms.Panel CommSelectPnl;
         private System.Windows.Forms.Button button14;
@@ -2243,21 +2355,14 @@
         private System.Windows.Forms.StatusStrip FtcStatusStrip;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
-        private System.Windows.Forms.Button button20;
-        private System.Windows.Forms.Button button19;
         private System.Windows.Forms.Label BrdTypeLbl;
-        private System.Windows.Forms.RadioButton radioButton3;
-        private System.Windows.Forms.RadioButton radioButton2;
-        private System.Windows.Forms.RadioButton V1RadioBtn;
         private System.Windows.Forms.GroupBox ProfileGroupBox;
         private System.Windows.Forms.Button SaveProfileBtn;
         private System.Windows.Forms.TextBox textBox3;
         private System.Windows.Forms.DataGridView ProfileGridView;
         private System.Windows.Forms.Button LoadProfileBtn;
-        private System.Windows.Forms.TextBox TemperatureTextBox;
         private System.Windows.Forms.DataGridView ControllerGridView;
         private System.Windows.Forms.Button StartFitBtn1;
-        private System.Windows.Forms.Button GetPressBtn;
         private System.Windows.Forms.Button BleDiscoverBtn;
         private System.Windows.Forms.GroupBox BleGroupBox;
         private System.Windows.Forms.Button BleConnectBtn;
@@ -2372,6 +2477,28 @@
         private System.Windows.Forms.DataGridView CompressorCntrlGridView;
         private System.Windows.Forms.Label Brd3TypeLbl;
         private System.Windows.Forms.Label FwBrd3VersionLbl;
+        private System.Windows.Forms.ComboBox SnComboBox;
+        private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.Button DefaultProfileBtn;
+        private System.Windows.Forms.ComboBox SnLoadComboBox;
+        private System.Windows.Forms.GroupBox ControllerGroupBox;
+        private System.Windows.Forms.Label label20;
+        private System.Windows.Forms.Label label16;
+        private System.Windows.Forms.Label label15;
+        private System.Windows.Forms.Button ComprInd;
+        private System.Windows.Forms.Button LoFlowInd;
+        private System.Windows.Forms.Button HiFlowInd;
+        private System.Windows.Forms.DataGridView CameraDataGridView;
+        private System.Windows.Forms.Timer CameraTimer;
+        private System.Windows.Forms.TextBox FtpServerTextBox;
+        private System.Windows.Forms.GroupBox SettingsGroupBox;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.Label label24;
+        private System.Windows.Forms.Label label33;
+        private System.Windows.Forms.TextBox ModelTextBox2;
+        private System.Windows.Forms.TextBox SizeTextBox2;
+        private System.Windows.Forms.TextBox NameTextBox2;
+        private System.Windows.Forms.Timer FtpUploadTimer;
         //private Gigasoft.ProEssentials.Pesgo GenericPlot;
     }
 }
