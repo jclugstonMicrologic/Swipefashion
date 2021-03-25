@@ -218,6 +218,7 @@
             this.FileMonitorTimer = new System.Windows.Forms.Timer(this.components);
             this.CameraTimer = new System.Windows.Forms.Timer(this.components);
             this.FtpUploadTimer = new System.Windows.Forms.Timer(this.components);
+            this.AutoConnectTimer = new System.Windows.Forms.Timer(this.components);
             this.menuStrip1.SuspendLayout();
             this.MainPanel.SuspendLayout();
             this.OperationPanel.SuspendLayout();
@@ -300,6 +301,7 @@
             // UploadFilesBtn
             // 
             this.UploadFilesBtn.BackColor = System.Drawing.Color.SkyBlue;
+            this.UploadFilesBtn.Enabled = false;
             this.UploadFilesBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.UploadFilesBtn.Location = new System.Drawing.Point(126, 372);
             this.UploadFilesBtn.Name = "UploadFilesBtn";
@@ -505,13 +507,13 @@
             // 
             this.openToolStripMenuItem.Enabled = false;
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(119, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.openToolStripMenuItem.Text = "Open";
             // 
             // connectToolStripMenuItem
             // 
             this.connectToolStripMenuItem.Name = "connectToolStripMenuItem";
-            this.connectToolStripMenuItem.Size = new System.Drawing.Size(119, 22);
+            this.connectToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.connectToolStripMenuItem.Text = "Connect";
             this.connectToolStripMenuItem.Click += new System.EventHandler(this.connectToolStripMenuItem_Click);
             // 
@@ -1976,6 +1978,7 @@
             this.lvDevices.TabIndex = 53;
             this.lvDevices.UseCompatibleStateImageBehavior = false;
             this.lvDevices.View = System.Windows.Forms.View.Details;
+            this.lvDevices.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.lvDevices_MouseDoubleClick);
             // 
             // columnHeader1
             // 
@@ -2247,6 +2250,11 @@
             this.FtpUploadTimer.Interval = 500;
             this.FtpUploadTimer.Tick += new System.EventHandler(this.FtpUploadTimer_Tick);
             // 
+            // AutoConnectTimer
+            // 
+            this.AutoConnectTimer.Interval = 500;
+            this.AutoConnectTimer.Tick += new System.EventHandler(this.AutoConnectTimer_Tick);
+            // 
             // TheMainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2499,6 +2507,7 @@
         private System.Windows.Forms.TextBox SizeTextBox2;
         private System.Windows.Forms.TextBox NameTextBox2;
         private System.Windows.Forms.Timer FtpUploadTimer;
+        private System.Windows.Forms.Timer AutoConnectTimer;
         //private Gigasoft.ProEssentials.Pesgo GenericPlot;
     }
 }

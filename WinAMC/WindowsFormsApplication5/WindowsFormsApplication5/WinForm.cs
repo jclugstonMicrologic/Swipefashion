@@ -136,7 +136,7 @@ namespace WindowsFormsApplication5
         [DllImport("UsbComms.dll", EntryPoint = "OpenUsbPort")]
         public static extern bool OpenUsbPort();
 
-        const string DeviceName = "Swipe Fashion";
+        const string DeviceName = "SwipeFashion";
         const string FileCapturePath = "C:\\WinAMC\\capture\\";
         const string ProfilePath = "C:\\WinAMC\\Profile\\";
 
@@ -261,6 +261,12 @@ namespace WindowsFormsApplication5
         float FolderSize = 0.0f;
         int FileCnt = 0;
 
+        int NbrProjectDevices = 0;
+        bool ProjectDeviceConnect=false;
+        int[] ProjectDevices = new int[4];
+        bool[] DeviceConnect = new bool[4];
+        int DeviceConnectState = 0;
+
         public Thread[] cameraThread =new Thread[MAX_NBR_CAMERAS];
         
         public TheMainForm()
@@ -356,9 +362,12 @@ namespace WindowsFormsApplication5
 
             if (!panelsForm.GetCommStatus())
             {
-                FtcStatusStrip.Items[0].Text = "Disconnected";
+                FtcStatusStrip.Items[0].Text = "Motor Controller Comm Disconnected";
+                FtcStatusStrip.BackColor = Color.Orange;
             }
-           
+            else
+                FtcStatusStrip.BackColor = Color.SkyBlue;
+
             /* init BTFramework stuff */
             Manager = new wclBluetoothManager();
             //Client = new wclGattClient();
@@ -1838,6 +1847,17 @@ namespace WindowsFormsApplication5
             PanelSelect = (int)SET_COMMANDS.SET_COMMPORT;
             PanelsFrm panelsForm = new PanelsFrm(this);
             panelsForm.ShowDialog();
+
+            if (!panelsForm.GetCommStatus())
+            {
+                FtcStatusStrip.Items[0].Text = "Motor Controller Comm Disconnected";
+                FtcStatusStrip.BackColor = Color.Orange;
+            }
+            else
+            {
+                FtcStatusStrip.BackColor = Color.SkyBlue;
+            }
+
         }
 
         private void button15_Click(object sender, EventArgs e)
@@ -2464,7 +2484,11 @@ namespace WindowsFormsApplication5
             //string ftpFileName = "ftp://ftp.drivehq.com//TestDir/" + SnLoadComboBox.Text + ".zip";
             string ftpFileName = FtpServerTextBox.Text + SnLoadComboBox.Text + ".zip";
 
-            File.Delete(zipFileName);
+            try
+            {
+                File.Delete(zipFileName);
+            }
+            catch (Exception ex) { }
 
             ZipFile zip = new ZipFile();
 
@@ -2496,8 +2520,11 @@ namespace WindowsFormsApplication5
                 }
             }
 
-
-            zip.Save(zipFileName);
+            try
+            {
+                zip.Save(zipFileName);
+            }
+            catch (Exception ex) { }
 
             try
             {
@@ -2512,7 +2539,7 @@ namespace WindowsFormsApplication5
                 return;
             }
 
-            MessageBox.Show("File uploaded", "FTP", MessageBoxButtons.OK, MessageBoxIcon.None);
+     //       MessageBox.Show("File uploaded", "FTP", MessageBoxButtons.OK, MessageBoxIcon.None);
 
         }
 
@@ -2525,7 +2552,7 @@ namespace WindowsFormsApplication5
             else
             {
                 ListViewItem Item = lvDevices.SelectedItems[0];
-
+                
                 for (j = 0; j < ClientInfo.Count; j++)
                 {
                     if (ClientInfo[j].addr == Item.SubItems[0].Text)
@@ -2538,7 +2565,7 @@ namespace WindowsFormsApplication5
                 { 
                     if (TClient[j].State == 0)
                     {
-                         TClient[j].Address = Convert.ToInt64(Item.Text, 16);
+                        TClient[j].Address = Convert.ToInt64(Item.Text, 16);
                         //Client.ConnectOnRead = cbConnectOnRead.Checked;
                         Int32 Res = TClient[j].Connect((wclBluetoothRadio)Item.Tag);
                         if (Res != wclErrors.WCL_E_SUCCESS)
@@ -2599,6 +2626,8 @@ namespace WindowsFormsApplication5
                 }
 
             }
+
+            NbrProjectDevices = 0;
         }
 
         int FindClientInfoAddr(String addrStr)
@@ -2683,26 +2712,24 @@ namespace WindowsFormsApplication5
                         Item.SubItems[1].Text = "Error: 0x" + Res.ToString("X8");
                     else
                         Item.SubItems[1].Text = DevName;
-/*
-                    if (DevName.Contains(DeviceName)) //connect to our ble device
+
+                    if (DevName.Contains(DeviceName)) //our ble device
                     {
-                        if (TClient[ClientInfo.Count].State == 0)
-                        {
-                            TClient[ClientInfo.Count].Address = Convert.ToInt64(Item.Text, 16);
-                            //Client.ConnectOnRead = cbConnectOnRead.Checked;
-                            Res = TClient[ClientInfo.Count].Connect((wclBluetoothRadio)Item.Tag);
-                            if (Res != wclErrors.WCL_E_SUCCESS)
-                                MessageBox.Show("Error: 0x" + Res.ToString("X8"), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        }
+                        ProjectDevices[NbrProjectDevices] =i;
+                        ProjectDeviceConnect = false;
+                        DeviceConnectState = 0;
+                        NbrProjectDevices++;
                     }
-*/
                 }
             }
 
-            //TraceEvent(0, "Discovering completed", "", "");
 
             BleMsgTextBox.AppendText("Discovering completed\r\n");
             BleMsgTextBox.ScrollToCaret();
+
+            MessageBox.Show(NbrProjectDevices + " Swipe Fashion Controllers Discovered", "SF", MessageBoxButtons.OK);
+
+            //AutoConnectTimer.Enabled = true;
         }
 
         void Manager_OnDeviceFound(object Sender, wclBluetoothRadio Radio, long Address)
@@ -2829,6 +2856,11 @@ namespace WindowsFormsApplication5
             if (!BleGetServices(tclientIndex))
             {
                 ClientInfo.Add(server);
+
+                MessageBox.Show("No Service Found", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                ProjectDeviceConnect = true;
+
                 return;
             }
 
@@ -2848,9 +2880,13 @@ namespace WindowsFormsApplication5
 
             ClientInfo.Add(server);
 
+            ProjectDeviceConnect = true;
+
             BleSubscribeCharacteristics(ClientInfo[ClientInfo.Count-1]);// ClientInfo[tclientIndex]);// characterNbr, server.tclientNbr);
 
-            BleWriteCcd(ClientInfo[ClientInfo.Count - 1]);// ClientInfo[tclientIndex]);            
+            //      Thread.Sleep(5000);
+
+            BleWriteCcd(ClientInfo[ClientInfo.Count - 1]);
 
             //BuildSerialMessage((int)PACKET.CMD_GET_BRD_ID, ClientInfo[ClientInfo.Count - 1].tclientNbr);
 
@@ -3200,7 +3236,7 @@ namespace WindowsFormsApplication5
                 MessageBox.Show("Error: 0x" + Res.ToString("X8"), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
-        private void BleWriteCcd(CLIENT_INFO clientInfo)
+        private int BleWriteCcd(CLIENT_INFO clientInfo)
         {
             BleMsgTextBox.AppendText("Write CCCD Subscribe\r\n");
             BleMsgTextBox.ScrollToCaret();
@@ -3218,6 +3254,8 @@ namespace WindowsFormsApplication5
             Int32 Res = TClient[clientInfo.tclientNbr].WriteClientConfiguration(Characteristic, true, wclGattOperationFlag.goNone, wclGattProtectionLevel.plNone);
             if (Res != wclErrors.WCL_E_SUCCESS)
                 MessageBox.Show("Error: 0x" + Res.ToString("X8"), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+            return Res;
         }
 
         private void BleSendData(int clientIndex)
@@ -3719,6 +3757,8 @@ namespace WindowsFormsApplication5
 
             public bool erase;
             public string binaryFilename;
+
+
         }
 
         static FileStream fStream = null;
@@ -3996,6 +4036,39 @@ namespace WindowsFormsApplication5
                 else
                     MessageBox.Show("File uploaded failed", "FTP", MessageBoxButtons.OK, MessageBoxIcon.None);
             }
+        }
+
+        private void AutoConnectTimer_Tick(object sender, EventArgs e)
+        {
+            switch (DeviceConnectState)
+            {
+                case 0:
+                    lvDevices.Items[ProjectDevices[ClientInfo.Count]].Selected = true;
+                    lvDevices.Select();
+
+                    BleConnectBtn_Click(null, null);
+
+                    ProjectDeviceConnect = false;
+                    DeviceConnectState = 1;
+                    break;
+                case 1:
+                    if (ProjectDeviceConnect)
+                    {
+                        if (ClientInfo.Count == NbrProjectDevices)
+                        {
+                            AutoConnectTimer.Enabled = false;
+                            DeviceConnectState = 2;
+                        }
+                        else
+                            DeviceConnectState = 0;
+                    }
+                    break;
+            }
+        }
+
+        private void lvDevices_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            BleConnectBtn_Click(null, null);
         }
     }       
 }

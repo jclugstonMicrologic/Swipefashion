@@ -21,7 +21,7 @@ namespace WindowsFormsApplication5
         {
             InitializeComponent();
 
-            SwVersion.version = "1.02 Mar 06, 2021";
+            SwVersion.version = "1.02 Mar 14, 2021";
 
             this.Text = String.Format("About {0}", AssemblyTitle);
             this.labelProductName.Text = AssemblyProduct;
