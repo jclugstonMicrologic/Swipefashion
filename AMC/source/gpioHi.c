@@ -205,13 +205,11 @@ void GpioSetOutput(void)
 
 void GpioGetBoardId(void)
 {
-    /* must make global, as readin thsi prot only avaaible out of reset,
-       it then becomes an output
-    */
-    //BoardId =BOARD_ID;
-    
+    /* must make global, as reading this port only available out of reset,
+       it then becomes an output for ble reset
+    */   
     BoardStatus.status.b.id =BOARD_ID;
-BoardStatus.status.b.id =0;
+//BoardStatus.status.b.id =0;
 }
 /*
 *|----------------------------------------------------------------------------

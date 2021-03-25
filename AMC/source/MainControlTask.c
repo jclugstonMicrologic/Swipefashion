@@ -208,7 +208,7 @@ UINT8 debounceCnt =0;
                 PressureTdr_ReadPT(sensor, &PSensorData[sensor].press, &PSensorData[sensor].temp);                    
             }            
         #endif
-            PressureTdr_GetPressTemp(PSensorData);
+       //     PressureTdr_GetPressTemp(PSensorData);
             
             if( (loopCnt %1000) ==0 )
             {

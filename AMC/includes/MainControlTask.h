@@ -20,7 +20,7 @@
 
 #include "types.h"
 
-#define FW_VERSION "0.05 " 
+#define FW_VERSION "0.06 " 
 
 
 BOOL MainControlTaskInit(void);

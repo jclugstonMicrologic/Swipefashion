@@ -401,20 +401,20 @@ BOOL Ble_Machine(void)
             BLE_RESET_ASSERT;
             
             msgNbr =1;
-                         
+               
             BleData.waitTimer =xTicks;
             
             Ble_StateProcess(&BleData,BLUETOOTH_WAIT_RESPONSE_STATE);
             break;
         case BLUETOOTH_WAIT_RESPONSE_STATE:
-            if( (xTicks -BleData.waitTimer ) >1000 )
+            if( (xTicks -BleData.waitTimer ) >500 )
             {                
                 if( msgNbr ==1 && Sci_GetAsciiString(0, "%REBOOT") ==1 )
                 {
                     msgPass =TRUE;
                     Ble_SendString("$$$");  //enter command mode
                 }
-                else if( msgNbr ==2 )
+                else if( msgNbr ==2 && Sci_GetAsciiString(0, "CMD>") ==1 )
                 {
                     msgPass =TRUE;
                     Ble_SendString("SS,C0\r\n"); // enable device information and UART transparent service
@@ -424,7 +424,7 @@ BOOL Ble_Machine(void)
                     msgPass =TRUE;
                     Ble_SendString("S-,SwipeFashion\r\n"); // enable device information and UART transparent service                
                 }
-                else if(msgNbr ==4 )
+                else if(msgNbr ==4 && Sci_GetAsciiString(0, "CMD>") ==1 )
                 {
                     msgPass =TRUE;
                     Ble_SendString("R,1\r\n"); // reboot the module                                      
@@ -437,18 +437,21 @@ BOOL Ble_Machine(void)
                     Ble_StateProcess(&BleData,BLUETOOTH_START_NOTIFY_STATE);;                  
                 }
                 
-                if(msgPass)                
-                {
+                if(msgPass)
+                {                  
                     msgPass =FALSE;
                     msgNbr++;
+                    
+                    BleData.waitTimer =xTicks;    
                 }
-                else
+                
+                if( (xTicks -BleData.waitTimer ) >5000 )
                 {
                     SciAsciiSendString(SCI_PC_COM, "ERROR BLE INIT FAIL\r\n");
                     Ble_StateProcess(&BleData,BLUETOOTH_INIT_STATE);
+                    
+                    BleData.waitTimer =xTicks;       
                 }
-                
-                BleData.waitTimer =xTicks;       
             }
             break;
         case BLUETOOTH_IDLE_STATE:

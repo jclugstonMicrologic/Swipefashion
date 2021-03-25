@@ -768,7 +768,7 @@
                 </option>
                 <option>
                     <name>IlinkIcfFile</name>
-                    <state>C:\Software\STM32L4_SPL\stm32l476xx_flash.icf</state>
+                    <state>C:\Software\ApparelSizeLtd\AMC\stm32l476xx_flash.icf</state>
                 </option>
                 <option>
                     <name>IlinkIcfFileSlave</name>

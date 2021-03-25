@@ -211,7 +211,7 @@ BOOL TargetHardwareInit(void)
     /*!!! need to find out how to disable during sleep(don't think it's possible)
      OR allow reset, then go to sleep out of reset without enabling wdt    
     */
-    //WdtInit();  
+    WdtInit();  
    
     return TRUE;    
 }
