@@ -102,8 +102,13 @@
 #define AC_DRIVE2_PORT         GPIOC
 #define AC_DRIVE3_PIN          GPIO_Pin_2
 #define AC_DRIVE3_PORT         GPIOC
-#define AC_DRIVE4_PIN          GPIO_Pin_10
-#define AC_DRIVE4_PORT         GPIOB
+//#define AC_DRIVE4_PIN          GPIO_Pin_10
+//#define AC_DRIVE4_PORT         GPIOB
+
+#define LIGHTING_PIN           GPIO_Pin_10
+#define LIGHTING_PORT          GPIOB
+#define LIGHTIN_PSOURCE        GPIO_PinSource10
+
 
 /* pressure sensor chipselects */
 #define PRESS_SENSOR1_CS_PIN   GPIO_Pin_11
@@ -206,8 +211,8 @@
 
 #define RELIEF_HI_ASSERT         GPIO_SetBits(AC_DRIVE3_PORT, AC_DRIVE3_PIN)
 #define RELIEF_HI_NEGATE         GPIO_ResetBits(AC_DRIVE3_PORT, AC_DRIVE3_PIN)
-#define RELIEF_LO_ASSERT         GPIO_SetBits(AC_DRIVE4_PORT, AC_DRIVE4_PIN)
-#define RELIEF_LO_NEGATE         GPIO_ResetBits(AC_DRIVE4_PORT, AC_DRIVE4_PIN)
+//#define RELIEF_LO_ASSERT         GPIO_SetBits(AC_DRIVE4_PORT, AC_DRIVE4_PIN)
+//#define RELIEF_LO_NEGATE         GPIO_ResetBits(AC_DRIVE4_PORT, AC_DRIVE4_PIN)
                            
 #define BLE_RESET_ASSERT         GPIO_SetBits(BRD_ID_BIT1_PORT, BRD_ID_BIT1_PIN)
 #define BLE_RESET_NEGATE         GPIO_ResetBits(BRD_ID_BIT1_PORT, BRD_ID_BIT1_PIN)

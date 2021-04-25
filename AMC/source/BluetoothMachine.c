@@ -187,6 +187,8 @@ void Ble_ProcessCommands
     UINT8 comprNbr =0;
     
     UINT16 nbrTxBytes =0;
+
+    UINT32 FlashPgmAddress =0;
     
     //ErrorStatus errStatus =SUCCESS;
     
@@ -346,6 +348,9 @@ void Ble_ProcessCommands
             memcpy(BleSerialTxBuffer, &BoardStatus, sizeof(BoardStatus));            
             nbrTxBytes =sizeof(BoardStatus);                
             break;
+        case CMD_ERASE_FLASH:                      
+            dfu_EraseFlash();
+            break;            
         default:            
             cmd =0x7fff;
             break;

@@ -227,7 +227,7 @@ void Solenoid_OpenReliefValve(uint8_t reliefValve)
     switch(reliefValve)
     {
         case RELIEF_LO:
-          RELIEF_LO_ASSERT;
+          //RELIEF_LO_ASSERT;
           BoardStatus.status.b.relief |= RELIEF_LO;
           break;  
         case RELIEF_HI:
@@ -249,7 +249,7 @@ void Solenoid_CloseReliefValve(uint8_t reliefValve)
     switch(reliefValve)
     {
         case RELIEF_LO:
-          RELIEF_LO_NEGATE;
+          //RELIEF_LO_NEGATE;
           BoardStatus.status.b.relief &= ~RELIEF_LO;
           break;  
         case RELIEF_HI:

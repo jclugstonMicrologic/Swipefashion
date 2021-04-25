@@ -27,7 +27,7 @@ board_status_t BoardStatus;
 
 /*
 *|----------------------------------------------------------------------------
-*|  Routine: GpioInit
+*|  Routine: Gpio_Init
 *|  Description:
 *|  Retval:
 *|----------------------------------------------------------------------------
@@ -125,8 +125,10 @@ void Gpio_Init
     GPIO_Init(AC_DRIVE2_PORT, &GPIO_InitStructure);  
     GPIO_InitStructure.GPIO_Pin = AC_DRIVE3_PIN;
     GPIO_Init(AC_DRIVE3_PORT, &GPIO_InitStructure);  
-    GPIO_InitStructure.GPIO_Pin = AC_DRIVE4_PIN;
-    GPIO_Init(AC_DRIVE4_PORT, &GPIO_InitStructure);      
+    
+    
+    GPIO_InitStructure.GPIO_Pin = LIGHTING_PIN;
+    GPIO_Init(LIGHTING_PORT, &GPIO_InitStructure);      
     
     /* configure the following GPIO pins as inputs */
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
@@ -180,11 +182,12 @@ void Gpio_Init
     GPIO_InitStructure.GPIO_Pin =GPIO_Pin_0;                                 
     GPIO_Init(GPIOB, &GPIO_InitStructure);		           
 #endif    
+
 }
 
 /*
 *|----------------------------------------------------------------------------
-*|  Routine: GpioSleep
+*|  Routine: GpioSetOutput
 *|  Description:
 *|  Retval:
 *|----------------------------------------------------------------------------
@@ -351,7 +354,3 @@ void EXTI15_10_IRQHandler(void)
     }  
 }
 
-
-      
-
-    

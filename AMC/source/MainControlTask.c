@@ -255,7 +255,7 @@ UINT8 debounceCnt =0;
                 sensor++;
             }
         }
-        
+                
     #ifdef DEV_BOARD
         if( valveState == 0)
         {

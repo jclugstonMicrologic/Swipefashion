@@ -2073,6 +2073,9 @@
             <name>$PROJ_DIR$\source\crc.c</name>
         </file>
         <file>
+            <name>$PROJ_DIR$\source\dfu.c</name>
+        </file>
+        <file>
             <name>$PROJ_DIR$\source\flash_if.c</name>
         </file>
         <file>
@@ -2092,6 +2095,9 @@
         </file>
         <file>
             <name>$PROJ_DIR$\source\PressureTdrHi.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\source\pwmHi.c</name>
         </file>
         <file>
             <name>$PROJ_DIR$\source\rtcHi.c</name>

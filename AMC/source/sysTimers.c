@@ -24,6 +24,8 @@
 //#include "timers.h"
 
 
+#define GENERIC_TIMER      TIM5
+#define GENERIC_TIM_CLCK   RCC_APB1Periph_TIM5
 /** Functions *****************************************************************/
 
 
@@ -41,11 +43,11 @@ BOOL TimerSetupUs( void )
 
     /* Timer 9 is a free running timer user to generate microsecond delays. */
 
-    TIM_DeInit( TIM2 );
+    TIM_DeInit( GENERIC_TIMER );
     TIM_TimeBaseStructInit( &TIM_TimeBaseStructure );
 
     /* Timer clock enable */
-    RCC_APB1PeriphClockCmd( RCC_APB1Periph_TIM2, ENABLE );
+    RCC_APB1PeriphClockCmd( GENERIC_TIM_CLCK, ENABLE );
 
     /* Time base configuration */
     TIM_TimeBaseStructure.TIM_Period = 0xffffffffUL;    /* free-run over full 32-bit range */
@@ -53,11 +55,11 @@ BOOL TimerSetupUs( void )
     TIM_TimeBaseStructure.TIM_ClockDivision = 0;
     TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
 
-    TIM_TimeBaseInit( TIM2, &TIM_TimeBaseStructure );
+    TIM_TimeBaseInit( GENERIC_TIMER, &TIM_TimeBaseStructure );
 
-    TIM_SetCounter( TIM2, 0 );
+    TIM_SetCounter( GENERIC_TIMER, 0 );
 
-    TIM_Cmd( TIM2, ENABLE );        /* Enable timer */
+    TIM_Cmd( GENERIC_TIMER, ENABLE );        /* Enable timer */
 
     return TRUE;
 }
@@ -75,9 +77,9 @@ void TimerDelayUs( UINT32 delayUL )
 {
     UINT32 startTimeUL;
     
-    startTimeUL = TIM2->CNT;
+    startTimeUL = GENERIC_TIMER->CNT;
     delayUL += 1; // make sure wait at least delayUL, even if timer ticks right away
-    while ((TIM2->CNT - startTimeUL) < delayUL)
+    while ((GENERIC_TIMER->CNT - startTimeUL) < delayUL)
     {}
 }
 

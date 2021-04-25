@@ -29,9 +29,9 @@
 #include "sysTimers.h"
 
 /* HI layer, to be moved when FD complete, here for testing */
+#include "pwmHi.h"
 #include "gpioHi.h"
 #include "rtcHi.h"
-//#include "dataFlashHi.h"
 #include "wdtHi.h"
 
 #include "AdcFd.h"
@@ -186,14 +186,16 @@ BOOL TargetHardwareInit(void)
     
     /* initialize all GPIO */
     Gpio_Init();
-      
+          
+    Pwm_Init();
+    
     /* initialize ADC */
     //Adc_Init();
   
     /* initialize internal RTC */
     RtcInit();
     
-   RtcInit();       
+    RtcInit();       
 
     PressureTdr_Init();
 
