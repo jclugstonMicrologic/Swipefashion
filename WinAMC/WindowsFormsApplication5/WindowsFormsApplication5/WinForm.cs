@@ -129,8 +129,7 @@ namespace WindowsFormsApplication5
         FILE_CNT = 2,
     }
 
-
-
+    
     public partial class TheMainForm : Form
     {
         [DllImport("UsbComms.dll", EntryPoint = "OpenUsbPort")]
@@ -238,7 +237,10 @@ namespace WindowsFormsApplication5
         private wclGattService[] FServices;
 
         bool StartCapture = false;
+        bool PhotoCaptureStarted = false;
+
         public int NbrCameras =0;
+        public int PrevFileCnt = 0;
 
         public struct camera_info_t
         {
@@ -268,7 +270,7 @@ namespace WindowsFormsApplication5
         int DeviceConnectState = 0;
 
         public Thread[] cameraThread =new Thread[MAX_NBR_CAMERAS];
-        
+
         public TheMainForm()
         {
             InitializeComponent();
@@ -286,10 +288,10 @@ namespace WindowsFormsApplication5
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            this.Top = 20;
+            this.Top = 5;
             this.Left = 20;
             this.Width = 850;
-            this.Height = 820;          
+            this.Height = 735;          
 
             MainPanel.Top = 40;
             MainPanel.Left = 10;
@@ -304,11 +306,11 @@ namespace WindowsFormsApplication5
 
             InitControllerGrid(ControllerGridView,20);
             //InitController2Grid(Controller2GridView);
-            InitControllerGrid(Controller2GridView,320);
+            InitControllerGrid(Controller2GridView,285);
 
-            InitCompressorGrid(CompressorCntrlGridView, 620);
+            InitCompressorGrid(CompressorCntrlGridView, 550);
 
-            InitCameraGrid(CameraDataGridView, 620);            
+            InitCameraGrid(CameraDataGridView, 480);            
 
             FwBrd1VersionLbl.Top = 0;
             FwBrd1VersionLbl.Left = 15;
@@ -316,28 +318,28 @@ namespace WindowsFormsApplication5
             BrdTypeLbl.Top = FwBrd1VersionLbl.Top;
             BrdTypeLbl.Left = 175;
 
-            FwBrd2VersionLbl.Top = 300;
+            FwBrd2VersionLbl.Top = 265;
             FwBrd2VersionLbl.Left = 15;
 
             Brd2TypeLbl.Top = FwBrd2VersionLbl.Top;
             Brd2TypeLbl.Left = 175;
 
-            FwBrd3VersionLbl.Top = 600;
+            FwBrd3VersionLbl.Top = 530;
             FwBrd3VersionLbl.Left = 15;
 
             Brd3TypeLbl.Top = FwBrd3VersionLbl.Top;
             Brd3TypeLbl.Left = 175;
 
-            StartFitBtn1.Top = 260;
-            StartFitBtn1.Left = 15;
+            StartFitBtn1.Top = 385;
+            StartFitBtn1.Left = 465;
 
-            StartFitBtn2.Top = 560;
-            StartFitBtn2.Left = StartFitBtn1.Left;
+            StartFitBtn2.Top = StartFitBtn1.Top;
+            StartFitBtn2.Left = StartFitBtn1.Left+ 82;
 
-            TestBtn.Top = 260;
-            TestBtn.Left = 150;
+            TestBtn.Top = StartFitBtn2.Top;
+            TestBtn.Left = StartFitBtn2.Left+82;
 
-            ControllerGroupBox.Top = 285;
+            ControllerGroupBox.Top = 300;
             ControllerGroupBox.Left = 5;
 
             ProfileGroupBox.Top = (int)MAIN_DIM.TOP;
@@ -353,7 +355,7 @@ namespace WindowsFormsApplication5
 
             //FitTypeLoadComboBox.SelectedIndex = 0;
 
-            //InitGenericPlot(GenericPlot, "1", "2", "3");
+            //InitGenericPlot(PEGraph, "1", "2", "3");
 
             PanelSelect = (int)SET_COMMANDS.SET_COMMPORT;
 
@@ -407,6 +409,7 @@ namespace WindowsFormsApplication5
             if (Res != wclErrors.WCL_E_SUCCESS)
                 MessageBox.Show("Error: 0x" + Res.ToString("X8"), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
+ 
         }
 
         private void InitProfileGrid(DataGridView gridView)
@@ -482,7 +485,7 @@ namespace WindowsFormsApplication5
         private void InitControllerGrid(DataGridView gridView, int top)
         {
             gridView.Width = 425;
-            gridView.Height = 240;
+            gridView.Height = 225;
             gridView.Left = 15;
             gridView.Top = top;
 
@@ -516,7 +519,7 @@ namespace WindowsFormsApplication5
         private void InitCompressorGrid(DataGridView gridView, int top)
         {
             gridView.Width = 425;
-            gridView.Height = 80;
+            gridView.Height = 72;
             gridView.Left = 15;
             gridView.Top = top;
 
@@ -550,7 +553,7 @@ namespace WindowsFormsApplication5
             gridView.Width = 355;
             gridView.Height = 115;
             gridView.Left = 15;
-            gridView.Top = 540;
+            gridView.Top = top;
 
             gridView.ColumnCount = 3;
             gridView.ColumnHeadersVisible = true;
@@ -575,7 +578,7 @@ namespace WindowsFormsApplication5
             gridView.Visible = true;
         }
 
-        /*
+   /*     
                 private void InitGenericPlot(Gigasoft.ProEssentials.Pesgo pePlot, string title_,          string xaxisLbl_,                    string yaxisLbl_            )
                 {
                     pePlot.PeFunction.Reset();
@@ -583,11 +586,11 @@ namespace WindowsFormsApplication5
                     //pePlot.PeGrid.GridBands = false;
 
                     pePlot.PeConfigure.PrepareImages = true;
-                    pePlot.Left = 620;// 20;
+                    pePlot.Left = 20;// 20;
                     pePlot.Top = 25;// 490;
                     pePlot.Width = 610;// 600;
                     pePlot.Height = 375;
-                    // PESGraph.BringToFront();
+                    pePlot.BringToFront();
 
                     pePlot.PeData.Subsets = 2;
                     pePlot.PeData.Points = 1000;
@@ -601,23 +604,23 @@ namespace WindowsFormsApplication5
                     pePlot.PeGrid.Configure.ManualMaxY = 10000;
 
                     pePlot.PeLegend.SubsetColors[0] = System.Drawing.Color.DarkBlue;
-                    pePlot.PeLegend.SubsetLineTypes[0] = LineType.MediumSolid;
+                    pePlot.PeLegend.SubsetLineTypes[0] =LineType.MediumSolid;
 
                     pePlot.PeLegend.SubsetColors[1] = System.Drawing.Color.Red;
                     pePlot.PeLegend.SubsetLineTypes[1] = LineType.ThinSolid;
 
-                    // Set Manual Y scale
-                    //pePlot.PeGrid.Configure.ManualScaleControlY = ManualScaleControl.MinMax;
+            // Set Manual Y scale
+            //pePlot.PeGrid.Configure.ManualScaleControlY = ManualScaleControl.MinMax;
 
                     pePlot.PeLegend.SubsetColors[2] = System.Drawing.Color.Red;
-                    pePlot.PeLegend.SubsetLineTypes[2] = LineType.ThickSolid;
+//                    pePlot.PeLegend.SubsetLineTypes[2] = LineType.ThickSolid;
 
 
                     pePlot.PeString.MainTitle = title_;
                     pePlot.PeString.SubTitle = "";
 
                     // Set Manual X scale
-                    pePlot.PeGrid.Configure.ManualScaleControlX = ManualScaleControl.MinMax;
+                //    pePlot.PeGrid.Configure.ManualScaleControlX = ManualScaleControl.MinMax;
                     pePlot.PeGrid.Configure.ManualMinX = 0;// DateTime.Now.ToOADate();
                     pePlot.PeGrid.Configure.ManualMaxX = pePlot.PeData.Points;// FluidLevelStripChart.PeGrid.Configure.ManualMinX + 0.021;// 0.0035;
 
@@ -638,35 +641,35 @@ namespace WindowsFormsApplication5
                     pePlot.PeData.UsingXDataii = false;
 
                     pePlot.PeUserInterface.Cursor.PromptTracking = true;
-                    pePlot.PeUserInterface.Cursor.PromptStyle = CursorPromptStyle.XYValues;
-                    pePlot.PeUserInterface.Menu.MultiAxisStyle = MenuControl.Show;
+           //         pePlot.PeUserInterface.Cursor.PromptStyle = CursorPromptStyle.XYValues;
+            //        pePlot.PeUserInterface.Menu.MultiAxisStyle = MenuControl.Show;
 
-                    pePlot.PeUserInterface.Allow.Zooming = AllowZooming.HorzAndVert;
-                    pePlot.PeUserInterface.Allow.ZoomStyle = ZoomStyle.Ro2Not;
+             //       pePlot.PeUserInterface.Allow.Zooming = AllowZooming.HorzAndVert;
+             //       pePlot.PeUserInterface.Allow.ZoomStyle = ZoomStyle.Ro2Not;
 
                     pePlot.PePlot.Option.GradientBars = 12;
 
                     pePlot.PeColor.BitmapGradientMode = false;
-                    pePlot.PeColor.QuickStyle = QuickStyle.LightInset;
-                    pePlot.PeLegend.Style = LegendStyle.OneLineTopOfAxis;
-                    pePlot.PeUserInterface.Menu.ShowLegend = MenuControl.Show;
-                    pePlot.PeUserInterface.Menu.LegendLocation = MenuControl.Show;
+             //       pePlot.PeColor.QuickStyle = QuickStyle.LightInset;
+               //     pePlot.PeLegend.Style = LegendStyle.OneLineTopOfAxis;
+               //     pePlot.PeUserInterface.Menu.ShowLegend = MenuControl.Show;
+               //     pePlot.PeUserInterface.Menu.LegendLocation = MenuControl.Show;
 
-                    pePlot.PeFont.FontSize = FontSize.Large;
+               //     pePlot.PeFont.FontSize = FontSize.Large;
 
                     pePlot.PeLegend.SimplePoint = true;
                     pePlot.PeLegend.SimpleLine = true;
-                    pePlot.PeLegend.Style = LegendStyle.OneLineInsideOverlap;
+               //     pePlot.PeLegend.Style = LegendStyle.OneLineInsideOverlap;
 
                     //    FuelLevelStripChart.PeColor.GraphForeground = Color.FromArgb(50, 0, 0, 0);
-                    pePlot.PeGrid.LineControl = GridLineControl.Both;
-                    pePlot.PeGrid.Style = GridStyle.Dot;
-                    pePlot.PeConfigure.BorderTypes = TABorder.SingleLine;
+                //    pePlot.PeGrid.LineControl = GridLineControl.Both;
+               //     pePlot.PeGrid.Style = GridStyle.Dot;
+               //     pePlot.PeConfigure.BorderTypes = TABorder.SingleLine;
 
                     pePlot.PeData.NullDataValueX = 0;
 
                     pePlot.PeUserInterface.HotSpot.Data = false;
-                    pePlot.PeUserInterface.HotSpot.Size = HotSpotSize.Large;
+                 //   pePlot.PeUserInterface.HotSpot.Size = HotSpotSize.Large;
 
                     // Improves Metafile Export 
                     pePlot.PeSpecial.DpiX = 600;
@@ -694,7 +697,7 @@ namespace WindowsFormsApplication5
                     pePlot.Refresh();
                 }
 
-
+        
                 private void UpdateGenericPlot(Gigasoft.ProEssentials.Pesgo pePlot, float fluidLvl, float fluidMass, float temperature)
                 {
                     float[] newY = new float[3];
@@ -736,7 +739,7 @@ namespace WindowsFormsApplication5
             uint response = 0;
             Int16 rxValue = 0;
 
-            float delatP = 0.0F;
+            //float delatP = 0.0F;
 
             while (true)
             {
@@ -942,7 +945,8 @@ namespace WindowsFormsApplication5
                         }
                         break;
                     case 1:
-                        if (CameraInfo[0].captureStarted)
+                        //if (CameraInfo[0].captureStarted)
+                        if( PhotoCaptureStarted )
                         {
                             if (MotorCntrl.fwdLimit)
                                 MotorRevBtn_Click(null, null);
@@ -957,15 +961,30 @@ namespace WindowsFormsApplication5
                                                 MessageBoxIcon.Error
                                                );
 
+                                return;
+
                             }
+
+                            MotorStatusLbl.Text = "Rotating mannequin";
 
                             motorState = 2;
                         }
                         break;
                     case 2:
+                        if (!MotorCntrl.fwdLimit && !MotorCntrl.revLimit)
+                        {
+                            motorState = 3;
+                        }
+                        break;
+                    case 3:
                         if (MotorCntrl.fwdLimit || MotorCntrl.revLimit)
                         {
                             motorState = 0;
+
+                            MotorStatusLbl.Text = "Limit reached";
+
+                            StopCaptureBtn_Click(null, null);
+
                             MotorThread.Abort();
                         }
                         break;
@@ -1040,7 +1059,7 @@ namespace WindowsFormsApplication5
             try
             {
                 //Proc[camera].Start();
-                CameraInfo[camera].proc.Start();
+                bool status =CameraInfo[camera].proc.Start();
 
                 CameraInfo[camera].proc.BeginOutputReadLine();
                 return true;
@@ -1152,6 +1171,7 @@ namespace WindowsFormsApplication5
                 switch (CameraInfo[cameraNbr].state)// CameraState[cameraNbr])
                 {
                     case 0:
+                        PhotoCaptureStarted = false;
                         CameraInfo[cameraNbr].captureStarted = false;                        
                         //cameraThread.Abort(cameraNbr);
                         // cameraThread.Suspend();
@@ -1164,44 +1184,9 @@ namespace WindowsFormsApplication5
                         CameraOperationLbl.Text = "Start Camera Preview";
                         CameraDataGridView[(int)CAMERA_GRID.STATUS, cameraNbr].Value = "Preview";
 
+                        PhotoCaptureStarted = false;
                         CameraInfo[cameraNbr].captureStarted = false;
 
-/*
-                        if (CameraInfo[cameraNbr].proc.StartInfo.RedirectStandardOutput)
-                        {
-                            while (!CameraInfo[cameraNbr].proc.StandardOutput.EndOfStream) //!Proc[0].StandardOutput.EndOfStream)
-                            {
-                                string line = CameraInfo[cameraNbr].proc.StandardOutput.ReadLine();// Proc[0].StandardOutput.ReadLine();
-                                if (line.Contains("Started thread for stream: previewout"))
-                                {
-                                    CaptureBtn.Enabled = true;
-                                    break;
-                                }
-                                if (line.Contains("Started thread for stream: video"))
-                                    break;
-                                if (line.Contains("Successfully opened stream out"))
-                                {
-                                    //BleMsgTextBox.Text += line;
-                                    CaptureBtn.Enabled = true;
-                                    CameraOperationLbl.Text = "Camera preview started";
-                                }
-                                if (line.Contains("Pipeline is not created"))
-                                {
-                                    CameraOperationLbl.Text = "Camera" + (cameraNbr+1).ToString() + " preview failed";
-                                }
-                                //if (line.Contains("[FOUND]"))
-                                //  BleMsgTextBox.Text += line;
-
-                                try
-                                { 
-                                    BleMsgTextBox.Text += line;                                    
-                                }
-                                catch(Exception ex){ }
-
-                                // do something with line
-                            }
-                        }
-*/
                         CameraInfo[cameraNbr].proc.WaitForExit();
                         if (StartCapture)
                             CameraInfo[cameraNbr].state = 2;// CameraState[cameraNbr] = 2;
@@ -1645,7 +1630,7 @@ namespace WindowsFormsApplication5
             int calculatedCRC = 0;
             int tempValue = 0;
 
-            if(rxBuffer.Length <=1 )
+            if(rxBuffer.Length <=6 )
             {
                 // not a proper serial message
                 response = 0;
@@ -1932,7 +1917,7 @@ namespace WindowsFormsApplication5
             }
             */
 
-            int row = 0;
+            //int row = 0;
             int i = 0;
 
             ProValues[i++] = (float)TorsoUpDown.Value;
@@ -2282,7 +2267,9 @@ namespace WindowsFormsApplication5
             {
                 MotorStopBtn_Click(null, null);
 
-                MotorThread.Abort();
+                MotorStatusLbl.Text = "Stop";
+
+          //      MotorThread.Abort();
             }
 
             for (int j = 0; j < NbrCameras; j++)
@@ -2290,6 +2277,10 @@ namespace WindowsFormsApplication5
                 try
                 {
                     CameraInfo[j].proc.Kill();
+
+                    CameraInfo[j].captureStarted = false;
+
+                    PhotoCaptureStarted = false;
 
                     CaptureBtn.Enabled = false;
                 }
@@ -2436,7 +2427,7 @@ namespace WindowsFormsApplication5
         {
             CaptureBtn.Enabled = true;
 
-            if (CheckError())// return;
+            if (CheckError()) return;
 
                 //if (CameraInfo[NbrCameras].portName == "")
             if (NbrCameras ==0 )
@@ -2546,7 +2537,9 @@ namespace WindowsFormsApplication5
         private void BleConnectBtn_Click(object sender, EventArgs e)
         {
             int j = 0;
-            
+
+            BleMsgTextBox.Clear();
+
             if (lvDevices.SelectedItems.Count == 0)
                 MessageBox.Show("Select device", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             else
@@ -2613,6 +2606,9 @@ namespace WindowsFormsApplication5
         private void button1_Click(object sender, EventArgs e)
         {
             wclBluetoothRadio Radio = GetRadio();
+
+            BleMsgTextBox.Clear();
+
             if (Radio != null)
             {
                 Int32 Res = Radio.Discover(10, wclBluetoothDiscoverKind.dkBle);
@@ -3348,6 +3344,11 @@ namespace WindowsFormsApplication5
             if (!MotorCntrl.detected)
             {
                 MessageBox.Show("No motor detected, please check comm port", "Motor", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                try
+                {
+                    MotorThread.Abort();
+                }
+                catch (Exception ex) { }
                 return true;
             }
             else
@@ -3436,7 +3437,7 @@ namespace WindowsFormsApplication5
         {
             OperationPanel.Top = 0;
             OperationPanel.Left = 5;
-            OperationPanel.Height = (int)MAIN_DIM.HEIGHT;
+            OperationPanel.Height = (int)MAIN_DIM.HEIGHT-60;
             OperationPanel.Width = 450;
             OperationPanel.Visible = true;
 
@@ -3449,10 +3450,10 @@ namespace WindowsFormsApplication5
 
             FitGroupBox.Top = 225;
 
-            MotorGroupBox.Top = FitGroupBox.Top + 110;
-            CameraGroupBox.Top = MotorGroupBox.Top + 110;
+            MotorGroupBox.Top = FitGroupBox.Top + 75;
+            CameraGroupBox.Top = MotorGroupBox.Top + 85;
 
-            UploadFilesBtn.Top = CameraGroupBox.Top + 230;
+            UploadFilesBtn.Top = CameraGroupBox.Top + 220;
             UploadFilesBtn.Left = 15;
 
             OpCloseBtn.Top = UploadFilesBtn.Top;
@@ -3462,13 +3463,14 @@ namespace WindowsFormsApplication5
             FtpServerTextBox.Left = UploadFilesBtn.Left +85;
 
             StartPreviewBtn.Visible = true;
-            
-            /* remove for now, add when system has motor */
-            MotorCntrlTimer.Enabled = true;
-            MotorCntrl.varId = (int)MC_VARS.GET_VOLTAGE;
-            BuildMCSerialMessage((int)MC_PACKET.CMD_GET_VAR);
-            
 
+            if (BuildMCSerialMessage((int)MC_PACKET.CMD_GET_VAR))
+            {
+                /* remove for now, add when system has motor */
+                MotorCntrlTimer.Enabled = true;
+                MotorCntrl.varId = (int)MC_VARS.GET_VOLTAGE;
+            }
+                       
             CameraOperationLbl.Text = "Camera: ";
             MotorStatusLbl.Text = "Mannequin: ";
 
@@ -3877,17 +3879,9 @@ namespace WindowsFormsApplication5
 
             if (!FwUpdateTimer.Enabled)
             {
-                /*                
-                                FwUpdateTimer.Interval = 10;
-                                FwUpdateTimer.Tick += new EventHandler(FwUpdateTimer_Tick);
-                                FwUpdateTimer.Start();
-
-                                FwUpdateTimer.Enabled = true;
-                  */
-
                 if (SerialFwUpdateThread != null)
                 {
-                    SerialFwUpdateThread.Suspend();
+                    SerialFwUpdateThread.Abort();
                     SerialFwUpdateThread = null;
                 }
 
@@ -3900,7 +3894,7 @@ namespace WindowsFormsApplication5
                 {
                     if (MlinkFwUpdateThread != null)
                     {
-                        MlinkFwUpdateThread.Suspend();
+                        MlinkFwUpdateThread.Abort();
                         MlinkFwUpdateThread = null;
                     }
 
@@ -3989,12 +3983,24 @@ namespace WindowsFormsApplication5
                     }
                 }
 
-
-                FileCnt = CameraInfo[0].fileCnt + CameraInfo[1].fileCnt;
             }
 
+            for (int j = 0; j < NbrCameras; j++)
+            {
+                FileCnt += CameraInfo[j].fileCnt;
+            }
+
+            if ((PrevFileCnt != FileCnt) &&
+                CameraInfo[0].captureStarted
+                )
+            {
+                PhotoCaptureStarted = true;
+            }
+
+            PrevFileCnt = FileCnt;
+
             CapturedFileSize = FolderSize / 1000000;// theSize /1000;
-            CameraOperationLbl.Text = "Camera capture started " + CapturedFileSize.ToString("0.00") + "MB\nFile Count: " + FileCnt;
+ //           CameraOperationLbl.Text = "Camera capture started " + CapturedFileSize.ToString("0.00") + "MB\nFile Count: " + FileCnt;
 
             for (int j = 0; j < NbrCameras; j++)
             {

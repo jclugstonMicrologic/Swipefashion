@@ -21,7 +21,7 @@ namespace WindowsFormsApplication5
         {
             InitializeComponent();
 
-            SwVersion.version = "1.02 Mar 14, 2021";
+            SwVersion.version = "1.03 May 31, 2021";
 
             this.Text = String.Format("About {0}", AssemblyTitle);
             this.labelProductName.Text = AssemblyProduct;
@@ -105,7 +105,7 @@ namespace WindowsFormsApplication5
                 }
                 return ((AssemblyCopyrightAttribute)attributes[0]).Copyright;
                  */
-                return "Copyright 2020";
+                return "Copyright 2021";
             }
         }
 
