@@ -11,6 +11,11 @@ version
 		  auto subscribe and write CCCD subscribe
 
 1.02	  Multiple camera support added (only two tested)
-03/dd/21  Multiple BLE peripherals functionality (Hi/LO/COMPR boards)
+03/14/21  Multiple BLE peripherals functionality (Hi/LO/COMPR boards)
 
+1.03	  Catch and fix rare serial message exception (rxBuffer sized incorrectly)
+05/31/21  Modify GUI to fit smaller screeen resloutions
+		  Fix camera capture only working once without GUI reset
+		  Do not start motor until camera1 has taken a photo 
+		  (may need to monitor all cameras before motor start)
 		  

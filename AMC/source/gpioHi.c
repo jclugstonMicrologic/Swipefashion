@@ -64,13 +64,7 @@ void Gpio_Init
     GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
 
-    //GPIO_InitStructure.GPIO_Pin =GREEN_LED_PIN;
-    //GPIO_Init(GREEN_LED_PORT, &GPIO_InitStructure);          
-    
-    //GPIO_InitStructure.GPIO_Pin = RED_LED_PIN;
-    //GPIO_Init(RED_LED_PORT, &GPIO_InitStructure);              
-                     
-    /* pressure sensor chipselects */
+     /* pressure sensor chipselects */
     GPIO_InitStructure.GPIO_Pin = PRESS_SENSOR1_CS_PIN;
     GPIO_Init(PRESS_SENSOR1_CS_PORT, &GPIO_InitStructure);        
     GPIO_InitStructure.GPIO_Pin = PRESS_SENSOR2_CS_PIN;
@@ -125,8 +119,7 @@ void Gpio_Init
     GPIO_Init(AC_DRIVE2_PORT, &GPIO_InitStructure);  
     GPIO_InitStructure.GPIO_Pin = AC_DRIVE3_PIN;
     GPIO_Init(AC_DRIVE3_PORT, &GPIO_InitStructure);  
-    
-    
+        
     GPIO_InitStructure.GPIO_Pin = LIGHTING_PIN;
     GPIO_Init(LIGHTING_PORT, &GPIO_InitStructure);      
     

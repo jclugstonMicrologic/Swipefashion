@@ -19,5 +19,12 @@ version
             
             
 0.05        Mods for real board, move to HSE (move from dev kit)
-02/dd/2021  BleMachine updates
-            
+02/16/2021  BleMachine updates
+
+
+0.06        Fix up bluetooth start up timing, 
+03/25/2021  previous version could miss some ASCII starup messages
+
+
+0.07        Add PWM channel for lighting (PB10/TIM2)
+04/dd/2021  

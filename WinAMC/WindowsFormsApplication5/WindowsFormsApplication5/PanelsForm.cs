@@ -216,7 +216,7 @@ namespace WindowsFormsApplication5
 
             if (this.theMainForm.serialThread != null)
             {
-                this.theMainForm.serialThread.Suspend();
+                this.theMainForm.serialThread.Abort();
                 this.theMainForm.serialThread = null;
             }
             //aStr = ComportBox.Items[ComportBox.SelectedIndex].ToString();

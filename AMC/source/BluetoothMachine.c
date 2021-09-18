@@ -398,7 +398,7 @@ BOOL Ble_Machine(void)
     switch( BleData.machState )
     {
         case BLUETOOTH_INIT_STATE:
-            /* dual pupose pin, was input on startupm, now needs to be output */
+            /* dual purpose pin, was input on startup, now needs to be output */
             GpioSetOutput();  
 
             BLE_RESET_NEGATE;
