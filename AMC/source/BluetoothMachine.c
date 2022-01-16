@@ -310,6 +310,11 @@ void Ble_ProcessCommands
             
             Solenoid_StartCompr(comprNbr);
             break;
+        case CMD_STOP_COMR:
+            comprNbr  =*pRxBuf++;
+            
+            Solenoid_StopCompr(comprNbr);
+            break;            
         case CMD_SET_COMR:                      
             /* turn on/off the compresssor */
             comprNbr  =*pRxBuf++;

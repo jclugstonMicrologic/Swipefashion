@@ -19,3 +19,5 @@ version
 		  Do not start motor until camera1 has taken a photo 
 		  (may need to monitor all cameras before motor start)
 		  
+1.04	  Add pump on/off control in motor diagnostic screen
+01/16/22  

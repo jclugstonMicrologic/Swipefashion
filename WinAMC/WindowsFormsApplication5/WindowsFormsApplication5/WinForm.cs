@@ -357,6 +357,8 @@ namespace WindowsFormsApplication5
 
             //InitGenericPlot(PEGraph, "1", "2", "3");
 
+            PumpSelectComboBox.SelectedIndex = 0;
+
             PanelSelect = (int)SET_COMMANDS.SET_COMMPORT;
 
             PanelsFrm panelsForm = new PanelsFrm(this);
@@ -1540,6 +1542,17 @@ namespace WindowsFormsApplication5
                     TxBuf[nbrBytes++] = Payload[0];
                     break;
                 case (int)PACKET.CMD_START_COMPR:
+                    // build the message here, then send
+
+                    ConvetToBuffer16((int)command, out tempBuf);
+                    tempBuf.CopyTo(TxBuf, (int)PACKET.SIZEOF_HEADER);
+                    nbrBytes = (int)PACKET.SIZEOF_HEADER + 2;
+
+                    Payload[0] = ComprNbr;
+
+                    TxBuf[nbrBytes++] = Payload[0];
+                    break;
+                case (int)PACKET.CMD_STOP_COMPR:
                     // build the message here, then send
                     ConvetToBuffer16((int)command, out tempBuf);
                     tempBuf.CopyTo(TxBuf, (int)PACKET.SIZEOF_HEADER);
@@ -4075,6 +4088,59 @@ namespace WindowsFormsApplication5
         private void lvDevices_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             BleConnectBtn_Click(null, null);
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            int res = 0;
+
+            res = FindClientBrdId((int)BOARD_TYPE.COMPR_CNTRL);
+            if (res == -1)
+            {
+                DialogResult result1 = MessageBox.Show("Compressor controller not connected, do you wish to proceed",
+                                "Warning",
+                                MessageBoxButtons.YesNo,
+                                MessageBoxIcon.Warning
+                               );
+
+                if (result1 == DialogResult.No)
+                    return;
+            }
+            else
+            {
+                if(PumpSelectComboBox.SelectedIndex == 0)
+                    ComprNbr = 0x01;
+                else
+                    ComprNbr = 0x02;
+
+                BuildSerialMessage((int)PACKET.CMD_START_COMPR, res);
+            }
+        }
+
+        private void button3_Click_2(object sender, EventArgs e)
+        {
+            int res = 0;
+
+            res = FindClientBrdId((int)BOARD_TYPE.COMPR_CNTRL);
+            if (res == -1)
+            {
+                DialogResult result1 = MessageBox.Show("Compressor controller not connected, do you wish to proceed",
+                                "Warning",
+                                MessageBoxButtons.YesNo,
+                                MessageBoxIcon.Warning
+                               );
+
+                if (result1 == DialogResult.No)
+                    return;
+            }
+            else
+            {
+                if (PumpSelectComboBox.SelectedIndex == 0)
+                    ComprNbr = 0x01;
+                else
+                    ComprNbr = 0x02;
+                BuildSerialMessage((int)PACKET.CMD_STOP_COMPR, res);
+            }
         }
     }       
 }

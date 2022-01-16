@@ -28,3 +28,9 @@ version
 
 0.07        Add PWM channel for lighting (PB10/TIM2)
 04/dd/2021  
+
+0.08        
+mm/dd/2021  
+
+0.09        Add stop compressor command to ble messages
+01/16/2022  
