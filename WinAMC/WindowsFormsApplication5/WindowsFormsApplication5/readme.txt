@@ -20,4 +20,6 @@ version
 		  (may need to monitor all cameras before motor start)
 		  
 1.04	  Add pump on/off control in motor diagnostic screen
-01/16/22  
+01/27/22  add focus option in motor diagnostic screen
+		  depthai_demo.py and arg_manager.py modifeid to accept focus values
+		  from WinAMC

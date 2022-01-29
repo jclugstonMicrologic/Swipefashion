@@ -28,8 +28,8 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>4</ApplicationRevision>
-    <ApplicationVersion>1.0.0.4</ApplicationVersion>
+    <ApplicationRevision>5</ApplicationRevision>
+    <ApplicationVersion>1.0.0.5</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
@@ -251,6 +251,8 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="depthai\arg_manager.py" />
+    <Content Include="depthai\depthai_demo.py" />
     <Content Include="PEGRP32E.DLL" />
     <Content Include="readme.txt" />
     <Content Include="TryVisualStudioProfessional.ico" />

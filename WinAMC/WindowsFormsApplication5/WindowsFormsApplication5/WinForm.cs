@@ -342,6 +342,12 @@ namespace WindowsFormsApplication5
             ControllerGroupBox.Top = 300;
             ControllerGroupBox.Left = 5;
 
+            FocusTextBox.Top = 415;
+            FocusTextBox.Left = 360;
+
+            FocusLbl.Top = FocusTextBox.Top;
+            FocusLbl.Left = 310;
+
             ProfileGroupBox.Top = (int)MAIN_DIM.TOP;
             ProfileGroupBox.Left = 5;
             ProfileGroupBox.Height =(int)MAIN_DIM.HEIGHT;
@@ -1018,17 +1024,18 @@ namespace WindowsFormsApplication5
             {
                 //cmdStr = "C:\\WinAMC\\camera\\depthai_demo.py";// -v C:\\WinAMC\\camera\\vid.h264";// -s jpegout"; //"C:\\temp\\camerastuff\\depthai_demo.py";
                 //cmdStr = "C:\\WinAMC\\camera\\depthai_demo.py -dev list";// -v C:\\WinAMC\\camera\\vid.h264";// -s jpegout"; //"C:\\temp\\camerastuff\\depthai_demo.py";                
-                
+
                 //cmdStr = "C:\\WinAMC\\camera\\depthai_demo.py";// -v C:\\WinAMC\\camera\\vid.h264";// -s jpegout"; //"C:\\temp\\camerastuff\\depthai_demo.py";
 
                 /* does not work on win10, but will need for multiple cameras */
-                cmdStr = "C:\\WinAMC\\camera\\depthai_demo.py -dev " + CameraInfo[camera].portName + " -pos " + (camera+1); //"1.6";// -v C:\\WinAMC\\camera\\vid.h264";// -s jpegout"; //"C:\\temp\\camerastuff\\depthai_demo.py";
+                //cmdStr = "C:\\WinAMC\\camera\\depthai_demo.py -dev " + CameraInfo[camera].portName + " -pos " + (camera+1); //"1.6";// -v C:\\WinAMC\\camera\\vid.h264";// -s jpegout"; //"C:\\temp\\camerastuff\\depthai_demo.py";
+                cmdStr = "C:\\WinAMC\\camera\\depthai_demo.py -dev " + CameraInfo[camera].portName + " -pos " + (camera + 1) + " -foc " + FocusTextBox.Text;// 129;
             }
             else if (request == 1)
             {
                 //cmdStr = "C:\\WinAMC\\camera\\depthai_demo.py -rgbr 3040 -s depth -dd -sh 2 -nce 1";// -v " + filePath + fileName;// C:\\WinAMC\\camera\\video\\" +DateTime.Now.ToString("MMM_dd_yyyy_hh_mm_ss") +".h264";
                 //cmdStr = "C:\\WinAMC\\camera\\depthai_demo.py -rgbr 3040 -s color -dd -sh 2 -nce 1";// + filePath + fileName;// C:\\WinAMC\\camera\\video\\" +DateTime.Now.ToString("MMM_dd_yyyy_hh_mm_ss") +".h264";
-                cmdStr = "C:\\WinAMC\\camera\\depthai_demo.py -rgbr 3040 -s color -dev " + CameraInfo[camera].portName + " -pos " + (camera + 1);
+                cmdStr = "C:\\WinAMC\\camera\\depthai_demo.py -rgbr 3040 -s color -dev " + CameraInfo[camera].portName + " -pos " + (camera + 1) + " -foc " + FocusTextBox.Text;// 129;
                 //cmdStr = "C:\\WinAMC\\camera\\depthai_demo.py -s depth_raw -o";// + filePath + fileName;// C:\\WinAMC\\camera\\video\\" +DateTime.Now.ToString("MMM_dd_yyyy_hh_mm_ss") +".h264";
                 //cmdStr = "C:\\WinAMC\\camera\\depthai_demo.py -v " + filePath + fileName;// C:\\WinAMC\\camera\\video\\" +DateTime.Now.ToString("MMM_dd_yyyy_hh_mm_ss") +".h264";
 
@@ -1097,6 +1104,10 @@ namespace WindowsFormsApplication5
                 {                
                     BleMsgTextBox.Text += line;
                 }
+                //if (line.Contains("RGB set focus:") )
+                //{
+                    //BleMsgTextBox.Text += line;
+                //}                
                 if (line.Contains("Detected"))
                 {
                     CameraStatusLbl.Text = "Camera: " + line;
@@ -3006,6 +3017,9 @@ namespace WindowsFormsApplication5
                             {
                                 ValveNbr = DisplayGridData(ControllerGridView, HiFlowBoardFitStart);
 
+                                /* only use this valve for testing (Jan 23, 2022) */
+                                ValveNbr &= 0x01;
+
                                 if (ValveNbr == 0)
                                     HiFlowBoardFitStart = false;
                             }
@@ -3415,13 +3429,14 @@ namespace WindowsFormsApplication5
             {
                 MotorCntrl.detected = true;
                 MotorCntrl.msgReceived = false;
+                MotorCntrl.msgErrCnt = 0;
             }
             else
             {
                 MotorCntrl.varId = (int)MC_VARS.GET_VOLTAGE;
                 BuildMCSerialMessage((int)MC_PACKET.CMD_GET_VAR);
 
-                if (++MotorCntrl.msgErrCnt > 2)
+                if (++MotorCntrl.msgErrCnt > 3)
                 {
                     MotorCntrl.msgErrCnt = 0;
                     MotorCntrlTimer.Enabled = false;

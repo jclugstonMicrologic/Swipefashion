@@ -297,13 +297,16 @@ void Ble_ProcessCommands
             /* open and close all valves */
             valveNbr  =*pRxBuf++;
             
+#if 0
+            valveNbr &= 0x01;           
+#endif
             for(int j=0;j<NBR_VALVES; j++)
             {
                 if( valveNbr&(0x01<<j) )
                     Solenoid_OpenValve(j+1);
                 else
                     Solenoid_CloseValve(j+1);
-            }
+            }            
             break; 
         case CMD_START_COMR:
             comprNbr  =*pRxBuf++;
