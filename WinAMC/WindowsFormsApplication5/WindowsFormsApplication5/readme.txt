@@ -23,3 +23,7 @@ version
 01/27/22  add focus option in motor diagnostic screen
 		  depthai_demo.py and arg_manager.py modifeid to accept focus values
 		  from WinAMC
+
+1.05	  Add drive space check before capture to ensure there is enough space (2GB)
+mm/dd/22  
+
