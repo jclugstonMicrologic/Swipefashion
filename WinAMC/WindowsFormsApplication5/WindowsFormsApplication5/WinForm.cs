@@ -258,6 +258,7 @@ namespace WindowsFormsApplication5
         }
 
         camera_info_t[] CameraInfo =new camera_info_t[MAX_NBR_CAMERAS];
+        public Thread[] cameraThread = new Thread[MAX_NBR_CAMERAS];
 
         float CapturedFileSize = 0;        
         float FolderSize = 0.0f;
@@ -269,8 +270,7 @@ namespace WindowsFormsApplication5
         bool[] DeviceConnect = new bool[4];
         int DeviceConnectState = 0;
 
-        public Thread[] cameraThread =new Thread[MAX_NBR_CAMERAS];
-
+ 
         public TheMainForm()
         {
             InitializeComponent();
@@ -291,7 +291,7 @@ namespace WindowsFormsApplication5
             this.Top = 5;
             this.Left = 20;
             this.Width = 850;
-            this.Height = 735;          
+            this.Height = 735;
 
             MainPanel.Top = 40;
             MainPanel.Left = 10;
@@ -302,15 +302,12 @@ namespace WindowsFormsApplication5
             CommSelectPnl.Left = 80;
 
             InitProfileGrid(ProfileGridView);
-            //InitProfileGrid2(ProfileGridView2);
-
-            InitControllerGrid(ControllerGridView,20);
-            //InitController2Grid(Controller2GridView);
-            InitControllerGrid(Controller2GridView,285);
+            InitControllerGrid(ControllerGridView, 20);
+            InitControllerGrid(Controller2GridView, 285);
 
             InitCompressorGrid(CompressorCntrlGridView, 550);
 
-            InitCameraGrid(CameraDataGridView, 480);            
+            InitCameraGrid(CameraDataGridView, 480);
 
             FwBrd1VersionLbl.Top = 0;
             FwBrd1VersionLbl.Left = 15;
@@ -334,10 +331,10 @@ namespace WindowsFormsApplication5
             StartFitBtn1.Left = 465;
 
             StartFitBtn2.Top = StartFitBtn1.Top;
-            StartFitBtn2.Left = StartFitBtn1.Left+ 82;
+            StartFitBtn2.Left = StartFitBtn1.Left + 82;
 
             TestBtn.Top = StartFitBtn2.Top;
-            TestBtn.Left = StartFitBtn2.Left+82;
+            TestBtn.Left = StartFitBtn2.Left + 82;
 
             ControllerGroupBox.Top = 300;
             ControllerGroupBox.Left = 5;
@@ -350,7 +347,7 @@ namespace WindowsFormsApplication5
 
             ProfileGroupBox.Top = (int)MAIN_DIM.TOP;
             ProfileGroupBox.Left = 5;
-            ProfileGroupBox.Height =(int)MAIN_DIM.HEIGHT;
+            ProfileGroupBox.Height = (int)MAIN_DIM.HEIGHT;
             ProfileGroupBox.Width = 455;
 
             FwBrd1VersionLbl.Visible = true;
@@ -412,12 +409,11 @@ namespace WindowsFormsApplication5
 
             // In real application you should always analize the result code.
             // In this demo we assume that all is always OK.
-            Int32 Res =Manager.Open();
+            Int32 Res = Manager.Open();
 
             if (Res != wclErrors.WCL_E_SUCCESS)
                 MessageBox.Show("Error: 0x" + Res.ToString("X8"), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
- 
         }
 
         private void InitProfileGrid(DataGridView gridView)
@@ -473,14 +469,11 @@ namespace WindowsFormsApplication5
             /* create the rows */
             for (int i = 1; i < 8; i++)
             {
-                //           ProfileGridView.Rows.Add("Parameter " + i.ToString(), "", "", "");
                 gridView.Rows.Add("", "", "");
                 gridView.Rows[i - 1].HeaderCell.Value = "Target P" + i.ToString();
             }
 
             gridView.Columns[0].HeaderText = "Press(psi)";
-            //gridView.Columns[1].HeaderText = "Press(psi)";
-            //ProfileGridView.Columns[1].HeaderText = "Value";
 
             foreach (DataGridViewColumn column in gridView.Columns)
             {
@@ -586,159 +579,8 @@ namespace WindowsFormsApplication5
             gridView.Visible = true;
         }
 
-   /*     
-                private void InitGenericPlot(Gigasoft.ProEssentials.Pesgo pePlot, string title_,          string xaxisLbl_,                    string yaxisLbl_            )
-                {
-                    pePlot.PeFunction.Reset();
-
-                    //pePlot.PeGrid.GridBands = false;
-
-                    pePlot.PeConfigure.PrepareImages = true;
-                    pePlot.Left = 20;// 20;
-                    pePlot.Top = 25;// 490;
-                    pePlot.Width = 610;// 600;
-                    pePlot.Height = 375;
-                    pePlot.BringToFront();
-
-                    pePlot.PeData.Subsets = 2;
-                    pePlot.PeData.Points = 1000;
-
-                    pePlot.PeString.SubsetLabels[0] = "G Vol";// "Range";
-                    pePlot.PeString.SubsetLabels[1] = "G Heel";
-                    //        pePlot.PeString.SubsetLabels[2] = "";
-
-                    pePlot.PeString.YAxisLabel = "Liters";
-                    pePlot.PeGrid.Configure.ManualMinY = 0;
-                    pePlot.PeGrid.Configure.ManualMaxY = 10000;
-
-                    pePlot.PeLegend.SubsetColors[0] = System.Drawing.Color.DarkBlue;
-                    pePlot.PeLegend.SubsetLineTypes[0] =LineType.MediumSolid;
-
-                    pePlot.PeLegend.SubsetColors[1] = System.Drawing.Color.Red;
-                    pePlot.PeLegend.SubsetLineTypes[1] = LineType.ThinSolid;
-
-            // Set Manual Y scale
-            //pePlot.PeGrid.Configure.ManualScaleControlY = ManualScaleControl.MinMax;
-
-                    pePlot.PeLegend.SubsetColors[2] = System.Drawing.Color.Red;
-//                    pePlot.PeLegend.SubsetLineTypes[2] = LineType.ThickSolid;
-
-
-                    pePlot.PeString.MainTitle = title_;
-                    pePlot.PeString.SubTitle = "";
-
-                    // Set Manual X scale
-                //    pePlot.PeGrid.Configure.ManualScaleControlX = ManualScaleControl.MinMax;
-                    pePlot.PeGrid.Configure.ManualMinX = 0;// DateTime.Now.ToOADate();
-                    pePlot.PeGrid.Configure.ManualMaxX = pePlot.PeData.Points;// FluidLevelStripChart.PeGrid.Configure.ManualMinX + 0.021;// 0.0035;
-
-                    // Enable Bar Glass Effect 
-                    //pePlot.PePlot.Option.BarGlassEffect = true;
-
-                    // Set X scale label stuff bottom
-                    // PESGraph.XAxisOnTop =false;
-                    pePlot.PeAnnotation.Line.XAxisColor[0] = System.Drawing.Color.Red;
-                    pePlot.PeString.XAxisLabel = "Data Point";
-
-                    pePlot.PePlot.MarkDataPoints = false;
-                    pePlot.Visible = true;
-
-                    // enable double precision which is usually 
-                    // required for date time handling 
-                    // This means we pass x data to XDataII
-                    pePlot.PeData.UsingXDataii = false;
-
-                    pePlot.PeUserInterface.Cursor.PromptTracking = true;
-           //         pePlot.PeUserInterface.Cursor.PromptStyle = CursorPromptStyle.XYValues;
-            //        pePlot.PeUserInterface.Menu.MultiAxisStyle = MenuControl.Show;
-
-             //       pePlot.PeUserInterface.Allow.Zooming = AllowZooming.HorzAndVert;
-             //       pePlot.PeUserInterface.Allow.ZoomStyle = ZoomStyle.Ro2Not;
-
-                    pePlot.PePlot.Option.GradientBars = 12;
-
-                    pePlot.PeColor.BitmapGradientMode = false;
-             //       pePlot.PeColor.QuickStyle = QuickStyle.LightInset;
-               //     pePlot.PeLegend.Style = LegendStyle.OneLineTopOfAxis;
-               //     pePlot.PeUserInterface.Menu.ShowLegend = MenuControl.Show;
-               //     pePlot.PeUserInterface.Menu.LegendLocation = MenuControl.Show;
-
-               //     pePlot.PeFont.FontSize = FontSize.Large;
-
-                    pePlot.PeLegend.SimplePoint = true;
-                    pePlot.PeLegend.SimpleLine = true;
-               //     pePlot.PeLegend.Style = LegendStyle.OneLineInsideOverlap;
-
-                    //    FuelLevelStripChart.PeColor.GraphForeground = Color.FromArgb(50, 0, 0, 0);
-                //    pePlot.PeGrid.LineControl = GridLineControl.Both;
-               //     pePlot.PeGrid.Style = GridStyle.Dot;
-               //     pePlot.PeConfigure.BorderTypes = TABorder.SingleLine;
-
-                    pePlot.PeData.NullDataValueX = 0;
-
-                    pePlot.PeUserInterface.HotSpot.Data = false;
-                 //   pePlot.PeUserInterface.HotSpot.Size = HotSpotSize.Large;
-
-                    // Improves Metafile Export 
-                    pePlot.PeSpecial.DpiX = 600;
-                    pePlot.PeSpecial.DpiY = 600;
-
-                    pePlot.PeData.DateTimeMode = false;
-
-                    for (int j = 0; j < 10; j++)
-                    {
-                        pePlot.PeData.X[0, j] = j;
-                        pePlot.PeData.Y[0, j] = 0;
-
-                        pePlot.PeData.X[1, j] = j;
-                        pePlot.PeData.Y[1, j] = 0;
-
-                        pePlot.PeData.X[1, j] = j;
-                        pePlot.PeData.Y[1, j] = 0;
-                    }
-
-                    pePlot.PeColor.Desk = System.Drawing.Color.WhiteSmoke;
-                    pePlot.PeColor.GraphBackground = System.Drawing.Color.White;
-
-                    // Update image and force paint 
-                    pePlot.PeFunction.ReinitializeResetImage();
-                    pePlot.Refresh();
-                }
-
-        
-                private void UpdateGenericPlot(Gigasoft.ProEssentials.Pesgo pePlot, float fluidLvl, float fluidMass, float temperature)
-                {
-                    float[] newY = new float[3];
-                    float[] newX = new float[3];
-
-                    newY[0] = fluidLvl;
-                    newY[1] = fluidMass;
-                    newY[2] = temperature;
-
-                    // New y value and x value
-                    newX[0] = dataPt;// DateTime.Now.ToOADate();
-                    newX[1] = newX[0];
-                    newX[2] = newX[0];
-
-                    Gigasoft.ProEssentials.Api.PEvset(pePlot.PeSpecial.HObject, Gigasoft.ProEssentials.DllProperties.AppendYData, newY, 1);
-                    Gigasoft.ProEssentials.Api.PEvset(pePlot.PeSpecial.HObject, Gigasoft.ProEssentials.DllProperties.AppendXData, newX, 1);
-
-                    dataPt++;
-
-                    if (dataPt == pePlot.PeData.Points)
-                        pePlot.PeGrid.Configure.ManualScaleControlX = ManualScaleControl.None;
-
-
-                    // Update image and force paint 
-                    pePlot.PeFunction.ReinitializeResetImage();
-                    pePlot.Refresh();
-                }
-        */
-
         /* threads */    
         public Thread serialThread;
-        //public Thread cameraThread;
-        //cameraThread = new Thread(cameraDataThread);
         public Thread MotorThread;
 
         public void rxDataThread()
@@ -758,66 +600,6 @@ namespace WindowsFormsApplication5
                 if (nbrBytesRx != 0)
                 {
                     SerialMonitorTimer.Enabled = false;
-
-                    /*
-                       if (ParseMessage(out response, nbrBytesRx, rxBuffer))
-                       {                     
-                            switch(response)
-                            { 
-                                case (int)PACKET.CMD_GET_PRESS_TEMP:                               
-                                    ValveNbr =0;
-
-                                    for (int j = 0; j < 8; j++)
-                                    {
-                                        delatP =(float)(PSensorData[j].press - PSensorData[7].press) / (float)6.89476;
-
-                                        if (PSensorData[j].press != -1)
-                                        {
-                                            ControllerGridView[0, j].Value = (PSensorData[j].press / 6.89476).ToString("0.000");
-                                            ControllerGridView[1, j].Value = (PSensorData[j].temp).ToString("0.0");
-
-                                            ControllerGridView[3, j].Value = delatP.ToString("0.000");
-
-                                            try
-                                            {
-                                                if (delatP >= Convert.ToSingle(ControllerGridView[2, j].Value))
-                                                    ValveNbr |= (byte)(0x01 << j);
-                                            }
-                                            catch (Exception ex)
-                                            {
-                                                MessageBox.Show(ex.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                                            }
-                                        }
-                                        else
-                                        {
-                                            ControllerGridView[0, j].Value = "FAULT";
-                                            ControllerGridView[1, j].Value = "FAULT";
-
-                                            ControllerGridView[3, j].Value = "FAULT";
-
-                                            ControllerGridView.Rows[j].Cells[0].Style.BackColor = Color.Orange;
-                                            ControllerGridView.Rows[j].Cells[1].Style.BackColor = Color.Orange;
-                                            ControllerGridView.Rows[j].Cells[2].Style.BackColor = Color.Orange;
-                                            ControllerGridView.Rows[j].Cells[3].Style.BackColor = Color.Orange;
-                                        }
-                                    }
-
-                                    if(ValveNbr !=0)
-                                        BuildSerialMessage((int)PACKET.CMD_CLOSE_VALVE,0);
-                                    break;
-                                case (int)PACKET.CMD_GET_PRESS:
-                                    break;
-                                case (int)PACKET.CMD_SET_AMC_SETUP:         
-                                   break;
-                               case (int)PACKET.CMD_GET_VERSION:
-                                   FwBrd1VersionLbl.Text = "AMC: v" + System.Text.Encoding.ASCII.GetString(Payload);
-                                   break;
-                               case (int)PACKET.CMD_GET_BRD_ID:
-                                   BrdTypeLbl.Text ="Board Type: " + BoardId.ToString();
-                                   break;                                
-                         }
-                    }
-                    */
                 }
 
                 if (nbrBytesRx == 2)
@@ -953,7 +735,6 @@ namespace WindowsFormsApplication5
                         }
                         break;
                     case 1:
-                        //if (CameraInfo[0].captureStarted)
                         if( PhotoCaptureStarted )
                         {
                             if (MotorCntrl.fwdLimit)
@@ -1004,7 +785,6 @@ namespace WindowsFormsApplication5
 
         bool StartCameraRequest(int request, int camera)
         {
-            //Proc[camera] = new Process();
             CameraInfo[camera].proc = new Process();            
 
             CapturedFileSize = 0;
@@ -1016,9 +796,6 @@ namespace WindowsFormsApplication5
                 System.IO.Directory.CreateDirectory(filePath);
 
             string cmdStr = "";
-
-            //p.StartInfo.FileName = "c:\\python3\\python.exe";
-            //p.StartInfo.WorkingDirectory = "C:\\Temp\\camerastuff";
 
             if (request == 0)
             {
@@ -1048,15 +825,10 @@ namespace WindowsFormsApplication5
                 */
             }
             else
+            {
                 cmdStr = "C:\\WinAMC\\camera\\depthai_demo.py -dev list";// -v C:\\WinAMC\\camera\\vid.h264";// -s jpegout"; //"C:\\temp\\camerastuff\\depthai_demo.py";\
-            /*
-            Proc[camera].StartInfo.UseShellExecute = false;
-            Proc[camera].StartInfo.CreateNoWindow = true;
-            Proc[camera].StartInfo.RedirectStandardOutput = true;
+            }
 
-            Proc[camera].StartInfo.FileName = "c:\\WinAMC\\camera\\py.exe";
-            Proc[camera].StartInfo.Arguments = cmdStr; // "C:\\WinAMC\\camera\\depthai_demo.py -v C:\\WinAMC\\camera\\vid.h264";// -s jpegout"; //"C:\\temp\\camerastuff\\depthai_demo.py";
-            */
             CameraInfo[camera].proc.StartInfo.UseShellExecute = false;
             CameraInfo[camera].proc.StartInfo.CreateNoWindow = true;
             CameraInfo[camera].proc.StartInfo.RedirectStandardOutput = true;
@@ -1067,7 +839,6 @@ namespace WindowsFormsApplication5
 
             try
             {
-                //Proc[camera].Start();
                 bool status =CameraInfo[camera].proc.Start();
 
                 CameraInfo[camera].proc.BeginOutputReadLine();
@@ -1212,7 +983,7 @@ namespace WindowsFormsApplication5
                         if (!StartCameraRequest(1, cameraNbr))
                             return false;
 
-                        Thread.Sleep(100);
+                        Thread.Sleep(500);
 
                         CameraOperationLbl.Text = "Start Camera Capture";
                         CameraDataGridView[(int)CAMERA_GRID.STATUS, cameraNbr].Value = "Start Capture";                       
@@ -1285,8 +1056,7 @@ namespace WindowsFormsApplication5
 
                         NbrCameras = 0;
                         CameraPortLbl.Text = "";
-
-                        //if (Proc[0].StartInfo.RedirectStandardOutput)
+        
                         if (CameraInfo[cameraNbr].proc.StartInfo.RedirectStandardOutput)
                         {
                             /*
@@ -1357,7 +1127,7 @@ namespace WindowsFormsApplication5
                     }
                     catch (Exception ex)
                     {
-                        //                     MessageBox.Show(ex.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        // MessageBox.Show(ex.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
                 else
@@ -1933,13 +1703,6 @@ namespace WindowsFormsApplication5
 
             if(!System.IO.Directory.Exists(saveFileDialog1.InitialDirectory))
                 System.IO.Directory.CreateDirectory(saveFileDialog1.InitialDirectory);
-            /*
-            if (saveFileDialog1.ShowDialog() != System.Windows.Forms.DialogResult.OK)
-            {
-                user has canceled save
-                return;
-            }
-            */
 
             //int row = 0;
             int i = 0;
@@ -2258,6 +2021,21 @@ namespace WindowsFormsApplication5
                 return;
             }
 
+            DriveInfo dDrive = new DriveInfo("C");
+
+            // When the drive is accessible..
+            if (dDrive.IsReady)
+            {
+                // Calculate the percentage free space
+                double freeSpacePerc =
+                    (dDrive.AvailableFreeSpace / (float)dDrive.TotalSize) * 100;
+
+                if (dDrive.AvailableFreeSpace < 4000000000)
+                {
+                    MessageBox.Show("Warning drive storge space is low, only " + dDrive.AvailableFreeSpace/1000000  + "MB available", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+            }
+
             for (int j = 0; j < NbrCameras; j++)
             {
                 try
@@ -2437,7 +2215,7 @@ namespace WindowsFormsApplication5
 
                 CapturedFileSize = FolderSize / 1000000;// theSize /1000;
                 CameraOperationLbl.Text = "Camera capture started " + CapturedFileSize.ToString("0.00") + "MB\nFile Count: " + FileCnt;
-/*
+                /*
                 for (int j = 0; j < NbrCameras; j++)
                 {
                     CameraDataGridView[1, j].Value = (CameraFileSize[j] / 1000000).ToString("0.00");
@@ -3017,7 +2795,7 @@ namespace WindowsFormsApplication5
                             {
                                 ValveNbr = DisplayGridData(ControllerGridView, HiFlowBoardFitStart);
 
-                                /* only use this valve for testing (Jan 23, 2022) */
+                                /* only use this value for testing (Jan 23, 2022) */
                                 ValveNbr &= 0x01;
 
                                 if (ValveNbr == 0)
@@ -3567,9 +3345,6 @@ namespace WindowsFormsApplication5
                 MessageBox.Show("Please enter a serial number", "Profile", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-
-        //    openFileDialog1.FileName = ProfilePath + SnLoadTextBox.Text + "\\" + SnLoadTextBox.Text + "_0.txt";
-         //   LoadProfileBtn_Click(null, null);
 
             OpLooseFitBtn.Enabled = false;
             OpNormalFitBtn.Enabled = false;
