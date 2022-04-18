@@ -147,7 +147,7 @@ namespace WindowsFormsApplication5
         public uint PayloadSize;
 
         public int PanelSelect = 0;
-
+/*
         public struct AMC_OP
         {
             public byte ioStates;
@@ -161,7 +161,7 @@ namespace WindowsFormsApplication5
    
             public UInt16 crc;
         }
-
+        */
         public struct CLIENT_INFO
         {
             public String addr;
@@ -238,6 +238,7 @@ namespace WindowsFormsApplication5
 
         bool StartCapture = false;
         bool PhotoCaptureStarted = false;
+        bool SecondCamerasetStarted = false;
 
         public int NbrCameras =0;
         public int PrevFileCnt = 0;
@@ -762,6 +763,7 @@ namespace WindowsFormsApplication5
                     case 2:
                         if (!MotorCntrl.fwdLimit && !MotorCntrl.revLimit)
                         {
+                            /* move state now that limit switches are not active */
                             motorState = 3;
                         }
                         break;
@@ -774,7 +776,15 @@ namespace WindowsFormsApplication5
 
                             StopCaptureBtn_Click(null, null);
 
-                            MotorThread.Abort();
+                            if (!SecondCamerasetStarted)
+                            {
+                                motorState = 0;
+                                CaptureBtn_Click(null, null);
+                            }
+                            else
+                            {
+                                MotorThread.Abort();
+                            }
                         }
                         break;
                 }
@@ -805,15 +815,15 @@ namespace WindowsFormsApplication5
                 //cmdStr = "C:\\WinAMC\\camera\\depthai_demo.py";// -v C:\\WinAMC\\camera\\vid.h264";// -s jpegout"; //"C:\\temp\\camerastuff\\depthai_demo.py";
 
                 /* does not work on win10, but will need for multiple cameras */
-                //cmdStr = "C:\\WinAMC\\camera\\depthai_demo.py -dev " + CameraInfo[camera].portName + " -pos " + (camera+1); //"1.6";// -v C:\\WinAMC\\camera\\vid.h264";// -s jpegout"; //"C:\\temp\\camerastuff\\depthai_demo.py";
-                cmdStr = "C:\\WinAMC\\camera\\depthai_demo.py -dev " + CameraInfo[camera].portName + " -pos " + (camera + 1) + " -foc " + FocusTextBox.Text;// 129;
+                //cmdStr = "C:\\WinAMC\\camera\\depthai_demo.py -dev " + CameraInfo[camera].portName + " -pos " + (camera + 1) + " -foc " + FocusTextBox.Text;// 129;
+                cmdStr = "C:\\WinAMC\\camera\\getdev_gen2.py"; 
             }
             else if (request == 1)
             {
                 //cmdStr = "C:\\WinAMC\\camera\\depthai_demo.py -rgbr 3040 -s depth -dd -sh 2 -nce 1";// -v " + filePath + fileName;// C:\\WinAMC\\camera\\video\\" +DateTime.Now.ToString("MMM_dd_yyyy_hh_mm_ss") +".h264";
                 //cmdStr = "C:\\WinAMC\\camera\\depthai_demo.py -rgbr 3040 -s color -dd -sh 2 -nce 1";// + filePath + fileName;// C:\\WinAMC\\camera\\video\\" +DateTime.Now.ToString("MMM_dd_yyyy_hh_mm_ss") +".h264";
                 cmdStr = "C:\\WinAMC\\camera\\depthai_demo.py -rgbr 3040 -s color -dev " + CameraInfo[camera].portName + " -pos " + (camera + 1) + " -foc " + FocusTextBox.Text;// 129;
-                //cmdStr = "C:\\WinAMC\\camera\\depthai_demo.py -s depth_raw -o";// + filePath + fileName;// C:\\WinAMC\\camera\\video\\" +DateTime.Now.ToString("MMM_dd_yyyy_hh_mm_ss") +".h264";
+                //cmdStr = "C:\\WinAMC\\camera\\depthai_demo.py -s depth_raw -dev " + CameraInfo[camera].portName + " -pos " + (camera + 1) + " -foc " + FocusTextBox.Text; // + filePath + fileName;// C:\\WinAMC\\camera\\video\\" +DateTime.Now.ToString("MMM_dd_yyyy_hh_mm_ss") +".h264";
                 //cmdStr = "C:\\WinAMC\\camera\\depthai_demo.py -v " + filePath + fileName;// C:\\WinAMC\\camera\\video\\" +DateTime.Now.ToString("MMM_dd_yyyy_hh_mm_ss") +".h264";
 
                 /*
@@ -826,7 +836,8 @@ namespace WindowsFormsApplication5
             }
             else
             {
-                cmdStr = "C:\\WinAMC\\camera\\depthai_demo.py -dev list";// -v C:\\WinAMC\\camera\\vid.h264";// -s jpegout"; //"C:\\temp\\camerastuff\\depthai_demo.py";\
+                //cmdStr = "C:\\WinAMC\\camera\\depthai_demo.py -dev list";
+                //cmdStr = "C:\\WinAMC\\camera\\getdev_gen2.py";
             }
 
             CameraInfo[camera].proc.StartInfo.UseShellExecute = false;
@@ -925,7 +936,7 @@ namespace WindowsFormsApplication5
                 {    
                     CameraDataGridView[(int)CAMERA_GRID.STATUS, cameraId].Value = "FAILED";
 
-                    BleMsgTextBox.Text += line;
+                    //BleMsgTextBox.Text += line;
                 }
                 if (line.Contains("Failed to boot"))
                 {
@@ -972,6 +983,7 @@ namespace WindowsFormsApplication5
                         CameraInfo[cameraNbr].captureStarted = false;
 
                         CameraInfo[cameraNbr].proc.WaitForExit();
+
                         if (StartCapture)
                             CameraInfo[cameraNbr].state = 2;// CameraState[cameraNbr] = 2;
                         else
@@ -987,43 +999,7 @@ namespace WindowsFormsApplication5
 
                         CameraOperationLbl.Text = "Start Camera Capture";
                         CameraDataGridView[(int)CAMERA_GRID.STATUS, cameraNbr].Value = "Start Capture";                       
-
-                        /*
-                        if (CameraInfo[cameraNbr].proc.StartInfo.RedirectStandardOutput)
-                        {
-                            while(!CameraInfo[cameraNbr].proc.StandardOutput.EndOfStream)
-                            {
-                                string line = CameraInfo[cameraNbr].proc.StandardOutput.ReadToEnd();// ReadLine();
-                                //if (line.Contains("Started thread for stream: previewout"))
-                                    //break;
-                                //if (line.Contains("Started thread for stream: video"))
-                                    //break;
-                                //if (line.Contains("Started thread for stream: color"))
-                                    //break;
-
-                                //            if (line.Contains("Successfully opened stream out"))
-                                //   break;
-                                //  BleMsgTextBox.Text += line;
-                                //if (line.Contains("[FOUND]"))
-                                //  BleMsgTextBox.Text += line;
-
-                                try
-                                {
-                                    BleMsgTextBox.Text += line;
-                                }
-                                catch (Exception ex) { }
-
-                                Thread.Sleep(1);
-                                // do something with line
-                            }
-                        }
-                        */
-
-                        //CameraOperationLbl.Text = "Camera capture started";
-                        //CameraDataGridView[0, cameraNbr].Value = "Capture started";
-
-                        //CameraMsgTextBox.Text += "Camera" + (cameraNbr + 1).ToString() + " capture started\n";
-
+                                                
                         CameraInfo[cameraNbr].captureStarted = true;
                         CameraInfo[cameraNbr].proc.WaitForExit();
                         CameraInfo[cameraNbr].state = 3;
@@ -2009,7 +1985,10 @@ namespace WindowsFormsApplication5
 
         private void CaptureBtn_Click(object sender, EventArgs e)
         {
-            if( MotorCntrl.speed !=0 )
+            int cameraStart = 0;
+            int cameraEnd = 0;
+
+            if ( MotorCntrl.speed !=0 )
             {
                 MessageBox.Show("Please wait for mannequin to be positioned", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
@@ -2036,7 +2015,28 @@ namespace WindowsFormsApplication5
                 }
             }
 
-            for (int j = 0; j < NbrCameras; j++)
+            if (NbrCameras < 2)
+            {
+                MessageBox.Show("Only one cmaera detected, cannot proceed", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            if (!StartCapture)
+            {
+                cameraStart = 0;
+                cameraEnd = 2;
+
+                SecondCamerasetStarted = false;
+            }
+            else
+            {
+                cameraStart =2;
+                cameraEnd = NbrCameras;
+
+                SecondCamerasetStarted = true;
+            }
+
+            for (int j = cameraStart; j < cameraEnd; j++)
             {
                 try
                 {
@@ -2231,7 +2231,7 @@ namespace WindowsFormsApplication5
 
             if (CheckError()) return;
 
-                //if (CameraInfo[NbrCameras].portName == "")
+            NbrCameras = 2;
             if (NbrCameras ==0 )
             {
                 MessageBox.Show("No Camera detected", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
