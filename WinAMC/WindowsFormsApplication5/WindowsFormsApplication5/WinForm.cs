@@ -1002,14 +1002,14 @@ namespace WindowsFormsApplication5
                         CameraInfo[cameraNbr].proc.WaitForExit();
 
                         if (StartCapture)
-                            CameraInfo[cameraNbr].state = 2;
+                            CameraInfo[cameraNbr].state = 20;
                         else
                             CameraInfo[cameraNbr].state = 5;
 
                         Thread.Sleep(100);
                         break;
                     case 2:
-                        Thread.Sleep(3000);
+                        //Thread.Sleep(3000);
                         if (!StartCameraRequest(1, cameraNbr))
                             return false;
 
@@ -1033,7 +1033,8 @@ namespace WindowsFormsApplication5
                         break;
                     case 5:
                         /* report file size/status */
-                        CameraOperationLbl.Text = "Camera" + (cameraNbr + 1).ToString() + " preview complete: " + CapturedFileSize;
+                        //CameraOperationLbl.Text = "Camera" + (cameraNbr + 1).ToString() + " preview complete: " + CapturedFileSize;
+                        CameraOperationLbl.Text = "Camera preview complete: " + CapturedFileSize;
                         //CameraMsgTextBox.Text += "Camera" + (cameraNbr + 1).ToString() + " preview complete\n";
                         CameraInfo[cameraNbr].state = 10;
                         break;
@@ -1089,6 +1090,12 @@ namespace WindowsFormsApplication5
                        // CameraInfo[cameraNbr].proc.WaitForExit();
 
                         CameraInfo[cameraNbr].state = 6;
+                        break;
+                    case 20:
+                        CameraInfo[cameraNbr].state = 2;
+
+                        //if( cameraNbr ==1 )
+                        Thread.Sleep( (cameraNbr+1)*3000);
                         break;
                 }
             }
@@ -2040,7 +2047,7 @@ namespace WindowsFormsApplication5
                 MessageBox.Show(NbrCameras + " camera detected, cannot proceed", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-
+/*
             if (!StartCapture)
             {
                 cameraStart = 0;
@@ -2055,6 +2062,7 @@ namespace WindowsFormsApplication5
 
                 SecondCamerasetStarted = true;
             }
+            */
 /*            
             for (int j = cameraStart; j < 4; j++)
             {
@@ -2081,6 +2089,32 @@ namespace WindowsFormsApplication5
                 MessageBox.Show("There is no process running for camera " + (1) + "\ndid you forget to perform a preview check", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
                 //                return;
+            }
+
+            StartCapture = true;
+
+            for (int camera = 1; camera < 4; camera++) 
+            {
+                if (CameraInfo[camera].state == 0)
+                {
+                    //Thread.Sleep(camera*2000);
+
+                    cameraThread[camera] = new Thread(cameraDataThread);
+                    cameraThread[camera].Start(camera);
+
+                    CameraInfo[camera].state = 20;
+
+                    BleMsgTextBox.Clear();
+
+                    StartCapture = true;
+
+                    CameraOperationLbl.Visible = true;
+
+                    NbrGen2Instances++;
+                    //CameraTimer.Enabled = true;
+                }
+
+                //CameraDataGridView[1, camera].Value = "0.00";
             }
 
             StartCapture = true;
