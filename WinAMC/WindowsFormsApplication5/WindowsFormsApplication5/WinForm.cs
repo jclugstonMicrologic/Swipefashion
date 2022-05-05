@@ -851,7 +851,7 @@ namespace WindowsFormsApplication5
             CameraInfo[camera].proc.StartInfo.Arguments = cmdStr; // "C:\\WinAMC\\camera\\depthai_demo.py -v C:\\WinAMC\\camera\\vid.h264";// -s jpegout"; //"C:\\temp\\camerastuff\\depthai_demo.py";
 
             CameraInfo[camera].proc.OutputDataReceived += SortOutputHandler;
-
+            
             try
             {
                 bool status =CameraInfo[camera].proc.Start();
@@ -910,6 +910,10 @@ namespace WindowsFormsApplication5
                 {
                     CameraStatusLbl.Text = "Camera: " + line;
 
+                    BleMsgTextBox.Text += line;
+                }
+                if (line.Contains("depthai"))
+                {
                     BleMsgTextBox.Text += line;
                 }
                 if (line.Contains("on USB port:"))
