@@ -33,6 +33,8 @@ SKD for download:
 https://www.pololu.com/docs/0J41
 */
 
+
+
 namespace WindowsFormsApplication5
 {
     enum SERIAL_COMMS
@@ -238,11 +240,12 @@ namespace WindowsFormsApplication5
 
         bool StartCapture = false;
         bool PhotoCaptureStarted = false;
+        bool PhotosCleared = false;
         bool SecondCamerasetStarted = false;
 
-        public int NbrCameras =0;
-        public int PrevFileCnt = 0;
+        public int NbrCameras =0;        
         public int NbrGen2Instances = 0;
+        public int[] PrevFileCnt = new int[4];
 
         public struct camera_info_t
         {
@@ -272,7 +275,8 @@ namespace WindowsFormsApplication5
         bool[] DeviceConnect = new bool[4];
         int DeviceConnectState = 0;
 
- 
+        int[] Pid = new int[4];
+
         public TheMainForm()
         {
             InitializeComponent();
@@ -847,16 +851,20 @@ namespace WindowsFormsApplication5
             CameraInfo[camera].proc.StartInfo.UseShellExecute = false;
             CameraInfo[camera].proc.StartInfo.CreateNoWindow = true;
             CameraInfo[camera].proc.StartInfo.RedirectStandardOutput = true;
+            CameraInfo[camera].proc.StartInfo.RedirectStandardInput = true;
+            CameraInfo[camera].proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
             CameraInfo[camera].proc.StartInfo.FileName = "c:\\WinAMC\\camera\\py.exe";
             CameraInfo[camera].proc.StartInfo.Arguments = cmdStr; // "C:\\WinAMC\\camera\\depthai_demo.py -v C:\\WinAMC\\camera\\vid.h264";// -s jpegout"; //"C:\\temp\\camerastuff\\depthai_demo.py";
 
             CameraInfo[camera].proc.OutputDataReceived += SortOutputHandler;
-            
+
             try
             {
                 bool status =CameraInfo[camera].proc.Start();
 
                 CameraInfo[camera].proc.BeginOutputReadLine();
+
+                Pid[camera] = CameraInfo[camera].proc.Id;
                 return true;
             }
             catch (Exception ex)
@@ -987,6 +995,8 @@ namespace WindowsFormsApplication5
                 {
                     case 0:
                         PhotoCaptureStarted = false;
+                        PhotosCleared = false;
+
                         CameraInfo[cameraNbr].captureStarted = false;                        
                         //cameraThread.Abort(cameraNbr);
                         // cameraThread.Suspend();
@@ -1001,6 +1011,8 @@ namespace WindowsFormsApplication5
                         CameraDataGridView[(int)CAMERA_GRID.STATUS, cameraNbr].Value = "Preview";
 
                         PhotoCaptureStarted = false;
+                        PhotosCleared = false;
+
                         CameraInfo[cameraNbr].captureStarted = false;
 
                         CameraInfo[cameraNbr].proc.WaitForExit();
@@ -2097,7 +2109,7 @@ namespace WindowsFormsApplication5
 
             StartCapture = true;
 
-            for (int camera = 1; camera < 4; camera++) 
+            for (int camera = 1; camera < NbrCameras; camera++) 
             {
                 if (CameraInfo[camera].state == 0)
                 {
@@ -2153,6 +2165,7 @@ namespace WindowsFormsApplication5
                     CameraInfo[j].captureStarted = false;
 
                     PhotoCaptureStarted = false;
+                    PhotosCleared = false;
 
                     CaptureBtn.Enabled = false;
                 }
@@ -3825,8 +3838,8 @@ namespace WindowsFormsApplication5
 
             for (int j = 0; j < NbrCameras; j++)
             {
-                CameraInfo[j].fileSize =0;
-                CameraInfo[j].fileCnt =0;
+                CameraInfo[j].fileSize = 0;
+                CameraInfo[j].fileCnt = 0;
             }
 
             foreach (string file in Directory.GetFiles("C:\\WinAMC\\capture"))
@@ -3871,15 +3884,62 @@ namespace WindowsFormsApplication5
                 FileCnt += CameraInfo[j].fileCnt;
             }
 
+            int startCount = 0;
+
+            /*
             if ((PrevFileCnt != FileCnt) &&
                 CameraInfo[0].captureStarted
-                )
+               )
+            {
+                for (int j = 0;  j < NbrCameras; j++)
+                {
+                    if (!CameraInfo[j].captureStarted)
+                        continue;
+
+                    startCount++;
+                }                
+            }
+            */
+            for (int j = 0; j < NbrCameras; j++)
+            {
+                if (PrevFileCnt[j] != CameraInfo[j].fileCnt)
+                    startCount++;
+
+                PrevFileCnt[j] = CameraInfo[j].fileCnt;
+            }
+
+            if (startCount == NbrCameras &&
+                NbrCameras >1 &&
+                StartCapture
+               )
             {
                 PhotoCaptureStarted = true;
             }
+            if (PhotoCaptureStarted && !PhotosCleared )
+            {
+                DirectoryInfo di = new DirectoryInfo("C:\\WinAMC\\capture");
 
-            PrevFileCnt = FileCnt;
+                foreach (FileInfo file in di.EnumerateFiles())
+                {
+                    try
+                    {
+                        file.Delete();
 
+                        PhotosCleared = true;
+                    }
+                    catch (Exception ex) { }
+                }
+
+                PrevFileCnt[0] = 0;
+                PrevFileCnt[1] = 0;
+                PrevFileCnt[2] = 0;
+                PrevFileCnt[3] = 0;
+
+            }
+
+            //PrevFileCnt = FileCnt;
+
+                
             CapturedFileSize = FolderSize / 1000000;// theSize /1000;
  //           CameraOperationLbl.Text = "Camera capture started " + CapturedFileSize.ToString("0.00") + "MB\nFile Count: " + FileCnt;
 
@@ -4011,8 +4071,60 @@ namespace WindowsFormsApplication5
             }
         }
 
-        private void ControlPanel_Paint(object sender, PaintEventArgs e)
+        [DllImport("User32.dll")]
+        static extern int SetForegroundWindow(IntPtr point);
+
+        private void button4_Click(object sender, EventArgs e)
         {
+            for (int j = 0; j < 4; j++)
+            {
+                try
+                {
+                    //Process proc1 = Process.GetProcessesByName("py")[0];
+                    var proc1 = Process.GetProcessById(Pid[j]);                     
+
+                    if (proc1 != null)
+                    {
+                        IntPtr h = proc1.MainWindowHandle;
+                        SetForegroundWindow(CameraInfo[j].proc.MainWindowHandle);// h                                             
+                        SendKeys.Send("c");
+                    }
+
+                }
+                catch (Exception ex) { }
+            }
+            
+            for (int j = 0;  j < 4; j++)
+                {
+                using (var streamWriter = CameraInfo[j].proc.StandardInput)
+                {
+                    var message = "c";
+                  //  streamWriter.WriteLine(message);
+                    //streamWriter.WriteLine(message);
+                    //streamWriter.WriteLine(message);
+                    //streamWriter.WriteLine(message);
+                    //streamWriter.Close();
+
+                }
+            }
+            
+            /*
+            IntPtr q = CameraInfo[0].proc.MainWindowHandle;
+            SetForegroundWindow(q);
+            SendKeys.SendWait("c");
+
+            q = CameraInfo[1].proc.MainWindowHandle;
+            SetForegroundWindow(q);
+            SendKeys.SendWait("c");
+
+            q = CameraInfo[2].proc.MainWindowHandle;
+            SetForegroundWindow(q);
+            SendKeys.SendWait("c");
+
+            q = CameraInfo[3].proc.MainWindowHandle;
+            SetForegroundWindow(q);
+            SendKeys.SendWait("c");
+            */
 
         }
     }       

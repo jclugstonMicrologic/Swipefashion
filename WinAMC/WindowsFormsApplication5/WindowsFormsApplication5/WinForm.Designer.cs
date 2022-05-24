@@ -56,6 +56,7 @@
             this.TestBtn = new System.Windows.Forms.Button();
             this.StartFitBtn1 = new System.Windows.Forms.Button();
             this.StartFitBtn2 = new System.Windows.Forms.Button();
+            this.button4 = new System.Windows.Forms.Button();
             this.FwdLimitInd = new System.Windows.Forms.Button();
             this.RevLimitInd = new System.Windows.Forms.Button();
             this.DirFwdInd = new System.Windows.Forms.Button();
@@ -423,6 +424,19 @@
             this.StartFitBtn2.UseVisualStyleBackColor = true;
             this.StartFitBtn2.Click += new System.EventHandler(this.StartFitBtn2_Click);
             // 
+            // button4
+            // 
+            this.button4.BackColor = System.Drawing.Color.LightGreen;
+            this.button4.Location = new System.Drawing.Point(89, 15);
+            this.button4.Name = "button4";
+            this.button4.Size = new System.Drawing.Size(82, 23);
+            this.button4.TabIndex = 89;
+            this.button4.Text = "KEY";
+            this.toolTip1.SetToolTip(this.button4, "Capture camera data");
+            this.button4.UseVisualStyleBackColor = false;
+            this.button4.Visible = false;
+            this.button4.Click += new System.EventHandler(this.button4_Click);
+            // 
             // FwdLimitInd
             // 
             this.FwdLimitInd.BackColor = System.Drawing.Color.LightGray;
@@ -656,6 +670,7 @@
             // OperationPanel
             // 
             this.OperationPanel.BackColor = System.Drawing.Color.White;
+            this.OperationPanel.Controls.Add(this.button4);
             this.OperationPanel.Controls.Add(this.FocusLbl);
             this.OperationPanel.Controls.Add(this.FocusTextBox);
             this.OperationPanel.Controls.Add(this.SettingsGroupBox);
@@ -1014,7 +1029,6 @@
             this.ControlPanel.Size = new System.Drawing.Size(264, 389);
             this.ControlPanel.TabIndex = 61;
             this.ControlPanel.Visible = false;
-            this.ControlPanel.Paint += new System.Windows.Forms.PaintEventHandler(this.ControlPanel_Paint);
             // 
             // PumpSelectComboBox
             // 
@@ -2579,6 +2593,7 @@
         private System.Windows.Forms.ComboBox PumpSelectComboBox;
         private System.Windows.Forms.TextBox FocusTextBox;
         private System.Windows.Forms.Label FocusLbl;
+        private System.Windows.Forms.Button button4;
         //private Gigasoft.ProEssentials.Pesgo GenericPlot;
     }
 }
