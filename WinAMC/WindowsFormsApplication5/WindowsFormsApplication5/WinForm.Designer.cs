@@ -84,6 +84,7 @@
             this.MainPanel = new System.Windows.Forms.Panel();
             this.button1 = new System.Windows.Forms.Button();
             this.OperationPanel = new System.Windows.Forms.Panel();
+            this.LedLevelScrollBar = new System.Windows.Forms.HScrollBar();
             this.FocusLbl = new System.Windows.Forms.Label();
             this.FocusTextBox = new System.Windows.Forms.TextBox();
             this.SettingsGroupBox = new System.Windows.Forms.GroupBox();
@@ -670,6 +671,7 @@
             // OperationPanel
             // 
             this.OperationPanel.BackColor = System.Drawing.Color.White;
+            this.OperationPanel.Controls.Add(this.LedLevelScrollBar);
             this.OperationPanel.Controls.Add(this.button4);
             this.OperationPanel.Controls.Add(this.FocusLbl);
             this.OperationPanel.Controls.Add(this.FocusTextBox);
@@ -694,6 +696,14 @@
             this.OperationPanel.Size = new System.Drawing.Size(341, 390);
             this.OperationPanel.TabIndex = 62;
             this.OperationPanel.Visible = false;
+            // 
+            // LedLevelScrollBar
+            // 
+            this.LedLevelScrollBar.Location = new System.Drawing.Point(279, 61);
+            this.LedLevelScrollBar.Name = "LedLevelScrollBar";
+            this.LedLevelScrollBar.Size = new System.Drawing.Size(100, 17);
+            this.LedLevelScrollBar.TabIndex = 86;
+            this.LedLevelScrollBar.Scroll += new System.Windows.Forms.ScrollEventHandler(this.LedLevelScrollBar_Scroll);
             // 
             // FocusLbl
             // 
@@ -816,7 +826,7 @@
             this.CameraDataGridView.DefaultCellStyle = dataGridViewCellStyle2;
             this.CameraDataGridView.Enabled = false;
             this.CameraDataGridView.EnableHeadersVisualStyles = false;
-            this.CameraDataGridView.Location = new System.Drawing.Point(274, 32);
+            this.CameraDataGridView.Location = new System.Drawing.Point(279, 12);
             this.CameraDataGridView.Name = "CameraDataGridView";
             this.CameraDataGridView.ReadOnly = true;
             dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
@@ -2594,6 +2604,7 @@
         private System.Windows.Forms.TextBox FocusTextBox;
         private System.Windows.Forms.Label FocusLbl;
         private System.Windows.Forms.Button button4;
+        private System.Windows.Forms.HScrollBar LedLevelScrollBar;
         //private Gigasoft.ProEssentials.Pesgo GenericPlot;
     }
 }

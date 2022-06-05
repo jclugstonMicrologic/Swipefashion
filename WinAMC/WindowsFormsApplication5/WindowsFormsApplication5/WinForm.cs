@@ -33,7 +33,9 @@ SKD for download:
 https://www.pololu.com/docs/0J41
 */
 
-
+/* update luxonis requirements 
+    py -m pip install -r requirements.txt 
+*/
 
 namespace WindowsFormsApplication5
 {
@@ -65,6 +67,8 @@ namespace WindowsFormsApplication5
         CMD_START_COMPR = 0x0213,
         CMD_STOP_COMPR = 0x0214,
         CMD_SET_COMPR = 0x0215,
+
+        CMD_SET_LED_LEVEL =0x0216,
 
         CMD_ACK =0x9999,
     }
@@ -218,6 +222,7 @@ namespace WindowsFormsApplication5
 
         public byte ValveNbr = 0;
         public byte ComprNbr = 0;
+        public byte LedLevel= 0;
 
         public bool AckReceived = false;
 		
@@ -350,6 +355,9 @@ namespace WindowsFormsApplication5
 
             FocusLbl.Top = FocusTextBox.Top;
             FocusLbl.Left = 310;
+
+            LedLevelScrollBar.Top = 450;
+            LedLevelScrollBar.Left = 310;
 
             ProfileGroupBox.Top = (int)MAIN_DIM.TOP;
             ProfileGroupBox.Left = 5;
@@ -1400,6 +1408,16 @@ namespace WindowsFormsApplication5
                         TxBuf[nbrBytes++] = Payload[j];
                     }
                     break;
+                case (int)PACKET.CMD_SET_LED_LEVEL:
+                    // build the message here, then send
+                    ConvetToBuffer16((int)command, out tempBuf);
+                    tempBuf.CopyTo(TxBuf, (int)PACKET.SIZEOF_HEADER);
+                    nbrBytes = (int)PACKET.SIZEOF_HEADER + 2;
+
+                    Payload[0] = LedLevel;
+
+                    TxBuf[nbrBytes++] = Payload[0];
+                    break;
             }
 
             // do this now because it needs to go through the CRC calc
@@ -2060,8 +2078,8 @@ namespace WindowsFormsApplication5
 
             if (NbrCameras < 2)
             {
-                MessageBox.Show(NbrCameras + " camera detected, cannot proceed", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
+           //     MessageBox.Show(NbrCameras + " camera detected, cannot proceed", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            //    return;
             }
 /*
             if (!StartCapture)
@@ -3909,7 +3927,7 @@ namespace WindowsFormsApplication5
             }
 
             if (startCount == NbrCameras &&
-                NbrCameras >1 &&
+                NbrCameras >0 &&
                 StartCapture
                )
             {
@@ -4126,6 +4144,35 @@ namespace WindowsFormsApplication5
             SendKeys.SendWait("c");
             */
 
+        }
+
+        private void LedLevelScrollBar_Scroll(object sender, ScrollEventArgs e)
+        {
+            LedLevel = (byte)e.NewValue;
+
+            int res = 0;
+
+            res = FindClientBrdId((int)BOARD_TYPE.COMPR_CNTRL);
+            if (res == -1)
+            {
+                DialogResult result1 = MessageBox.Show("Compressor controller not connected, do you wish to proceed",
+                                "Warning",
+                                MessageBoxButtons.YesNo,
+                                MessageBoxIcon.Warning
+                               );
+
+                if (result1 == DialogResult.No)
+                    return;
+            }
+
+            if (!BuildSerialMessage((int)PACKET.CMD_SET_LED_LEVEL, res))
+            {
+                timer1.Enabled = false;
+                return;
+            }
+
+
+            Refresh();
         }
     }       
 }
