@@ -351,8 +351,8 @@
                     <state>C:\software\STM32L4xx_StdPeriph_Driver\inc</state>
                     <state>C:\software\STM32F4xx_StdPeriph_Driver\inc</state>
                     <state>C:\software\FreeRTOS\Source\portable\IAR\ARM_CM4F</state>
-                    <state>C:\Software\ApparelSizeLtd\AMC\includes\core</state>
-                    <state>C:\Software\ApparelSizeLtd\AMC\includes</state>
+                    <state>C:\Software\SwipeFashion\AMC\includes\core</state>
+                    <state>C:\Software\SwipeFashion\AMC\includes</state>
                     <state>C:\software\common\includes</state>
                 </option>
                 <option>
@@ -615,7 +615,8 @@
                 </option>
                 <option>
                     <name>AUserIncludes</name>
-                    <state>C:\Software\ApparelSizeLtd\AMC\includes</state>
+                    <state>C:\Software\SwipeFashion\AMC\includes
+</state>
                 </option>
                 <option>
                     <name>AExtraOptionsCheckV2</name>
@@ -768,7 +769,7 @@
                 </option>
                 <option>
                     <name>IlinkIcfFile</name>
-                    <state>C:\Software\ApparelSizeLtd\AMC\stm32l476xx_flash.icf</state>
+                    <state>C:\Software\SwipeFashion\AMC\stm32l476xx_flash.icf</state>
                 </option>
                 <option>
                     <name>IlinkIcfFileSlave</name>

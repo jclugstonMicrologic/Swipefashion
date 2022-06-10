@@ -27,6 +27,7 @@
 #include "rtcHi.h"
 #include "solenoidHi.h" 
 #include "gpioHi.h"
+#include "pwmHi.h"
 
 #include "SciBinaryMachine.h"
 #include "SciAsciiMachine.h"
@@ -186,9 +187,11 @@ void Ble_ProcessCommands
     UINT8 valveNbr =0;
     UINT8 comprNbr =0;
     
+    UINT8 ledLevel =0;
+    
     UINT16 nbrTxBytes =0;
 
-    UINT32 FlashPgmAddress =0;
+    //UINT32 FlashPgmAddress =0;
     
     //ErrorStatus errStatus =SUCCESS;
     
@@ -356,8 +359,12 @@ void Ble_ProcessCommands
             memcpy(BleSerialTxBuffer, &BoardStatus, sizeof(BoardStatus));            
             nbrTxBytes =sizeof(BoardStatus);                
             break;
+        case CMD_SET_LED_LEVEL:
+            ledLevel =*pRxBuf++;
+            InitializePWMChannel(ledLevel);
+            break;
         case CMD_ERASE_FLASH:                      
-            dfu_EraseFlash();
+            //dfu_EraseFlash();
             break;            
         default:            
             cmd =0x7fff;

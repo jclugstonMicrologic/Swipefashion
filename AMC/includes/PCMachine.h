@@ -66,7 +66,9 @@
 #define CMD_STOP_COMR                           0x0214
 #define CMD_SET_COMR                            0x0215
 
-#define CMD_ERASE_FLASH                         0x0216
+#define CMD_SET_LED_LEVEL                       0x0216
+
+#define CMD_ERASE_FLASH                         0x0217
 
 
 #define CMD_GW_LAST                             0x02ff

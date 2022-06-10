@@ -34,3 +34,6 @@ mm/dd/2021
 
 0.09        Add stop compressor command to ble messages
 01/16/2022  
+
+0.10        Add pwm (led) dimming command
+06/05/2022  
