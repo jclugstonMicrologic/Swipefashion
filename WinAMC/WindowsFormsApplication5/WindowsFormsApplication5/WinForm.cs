@@ -2076,10 +2076,10 @@ namespace WindowsFormsApplication5
                 }
             }
 
-            if (NbrCameras < 2)
+            if (NbrCameras < 1)
             {
-           //     MessageBox.Show(NbrCameras + " camera detected, cannot proceed", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            //    return;
+                MessageBox.Show(NbrCameras + " camera detected, cannot proceed", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
             }
 /*
             if (!StartCapture)

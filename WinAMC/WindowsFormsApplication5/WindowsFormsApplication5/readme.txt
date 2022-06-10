@@ -27,3 +27,6 @@ version
 1.05	  Add drive space check before capture to ensure there is enough space (2GB)
 mm/dd/22  
 
+1.06	  Add led dimmer slider bar
+06/06/22  
+
