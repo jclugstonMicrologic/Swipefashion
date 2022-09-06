@@ -789,6 +789,9 @@ namespace WindowsFormsApplication5
 
                             StopCaptureBtn_Click(null, null);
 
+                            motorState = 0;
+
+                            /*
                             if (!SecondCamerasetStarted)
                             {
                                 motorState = 0;
@@ -797,7 +800,8 @@ namespace WindowsFormsApplication5
                             else
                             {
                                 MotorThread.Abort();
-                            }
+                            }*/
+
                         }
                         break;
                 }
@@ -1069,6 +1073,13 @@ namespace WindowsFormsApplication5
                         break;
                     case 10:
                         CameraInfo[cameraNbr].state = 0;
+
+                        if ((cameraNbr + 1) < NbrCameras)
+                        {
+                            StartCapture = true;
+                            CameraInfo[cameraNbr + 1].state = 20;
+                        }
+
                         cameraThread[cameraNbr].Abort(cameraNbr);
                         break;
                     case 4:
@@ -2136,7 +2147,7 @@ namespace WindowsFormsApplication5
                     cameraThread[camera] = new Thread(cameraDataThread);
                     cameraThread[camera].Start(camera);
 
-                    CameraInfo[camera].state = 20;
+                    CameraInfo[camera].state = 50;
 
                     BleMsgTextBox.Clear();
 
@@ -2176,27 +2187,30 @@ namespace WindowsFormsApplication5
 
             for (int j = 0; j < NbrGen2Instances; j++)
             {
-                try
+                if (CameraInfo[j].captureStarted)
                 {
-                    CameraInfo[j].proc.Kill();
+                    try
+                    {
+                        CameraInfo[j].proc.Kill();
 
-                    CameraInfo[j].captureStarted = false;
+                        CameraInfo[j].captureStarted = false;
 
-                    PhotoCaptureStarted = false;
-                    PhotosCleared = false;
+                        PhotoCaptureStarted = false;
+                        //PhotosCleared = false;
 
-                    CaptureBtn.Enabled = false;
-                }
-                catch (Exception ex)
-                {
-                    //MessageBox.Show(ex.ToString(), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    MessageBox.Show("There is no process running for camera " + (j+1), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        CaptureBtn.Enabled = false;
+                    }
+                    catch (Exception ex)
+                    {
+                        //MessageBox.Show(ex.ToString(), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        MessageBox.Show("There is no process running for camera " + (j + 1), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
-                    //return;
+                        //return;
+                    }
                 }
             }
 
-            FileMonitorTimer.Enabled = false;
+       //     FileMonitorTimer.Enabled = false;
         }
 
 
@@ -3926,8 +3940,9 @@ namespace WindowsFormsApplication5
                 PrevFileCnt[j] = CameraInfo[j].fileCnt;
             }
 
-            if (startCount == NbrCameras &&
-                NbrCameras >0 &&
+            if (//startCount == NbrCameras &&
+                startCount == 1 &&
+                NbrCameras > 0 &&
                 StartCapture
                )
             {

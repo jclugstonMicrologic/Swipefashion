@@ -30,3 +30,5 @@ mm/dd/22
 1.06	  Add led dimmer slider bar
 06/06/22  
 
+1.07	  Caopture photos one camera at a time
+09/06/22 
