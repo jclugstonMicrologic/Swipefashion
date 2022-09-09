@@ -247,10 +247,13 @@ namespace WindowsFormsApplication5
         bool PhotoCaptureStarted = false;
         bool PhotosCleared = false;
         bool SecondCamerasetStarted = false;
+        bool StartPreview= false;
 
         public int NbrCameras =0;        
         public int NbrGen2Instances = 0;
         public int[] PrevFileCnt = new int[4];
+
+        public string[] Mxid =new string[4];
 
         public struct camera_info_t
         {
@@ -265,6 +268,8 @@ namespace WindowsFormsApplication5
             public int fileCnt;
 
             public string portName;
+
+            public string mxid;
         }
 
         camera_info_t[] CameraInfo =new camera_info_t[MAX_NBR_CAMERAS];
@@ -837,22 +842,22 @@ namespace WindowsFormsApplication5
             }
             else if (request == 1)
             {
+                if (String.IsNullOrEmpty(CameraInfo[camera].mxid))
+                {
+                    MessageBox.Show("No MXID for camera " + camera+1, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return false;
+                }
+
                 //cmdStr = "C:\\WinAMC\\camera\\depthai_demo.py -rgbr 3040 -s depth -dd -sh 2 -nce 1";// -v " + filePath + fileName;// C:\\WinAMC\\camera\\video\\" +DateTime.Now.ToString("MMM_dd_yyyy_hh_mm_ss") +".h264";
                 //cmdStr = "C:\\WinAMC\\camera\\depthai_demo.py -rgbr 3040 -s color -dd -sh 2 -nce 1";// + filePath + fileName;// C:\\WinAMC\\camera\\video\\" +DateTime.Now.ToString("MMM_dd_yyyy_hh_mm_ss") +".h264";
 
                 //cmdStr = "C:\\WinAMC\\camera\\depthai_demo.py -rgbr 3040 -s color -dev " + CameraInfo[camera].portName + " -pos " + (camera + 1) + " -foc " + FocusTextBox.Text;// 129;
-                cmdStr = "C:\\WinAMC\\camera\\CameraCapture_gen2.py -raw -cam " + (camera + 1);
+                //cmdStr = "C:\\WinAMC\\camera\\CameraCapture_gen2.py -raw -cam " + (camera + 1) + " -mxid " + CameraInfo[camera].mxid; //14442C10F1F890CD00
+                cmdStr = "C:\\WinAMC\\camera\\CameraCapture_gen2.py -cam " + (camera + 1) + " -mxid " + CameraInfo[camera].mxid; //14442C10F1F890CD00
 
                 //cmdStr = "C:\\WinAMC\\camera\\depthai_demo.py -s depth_raw -dev " + CameraInfo[camera].portName + " -pos " + (camera + 1) + " -foc " + FocusTextBox.Text; // + filePath + fileName;// C:\\WinAMC\\camera\\video\\" +DateTime.Now.ToString("MMM_dd_yyyy_hh_mm_ss") +".h264";
                 //cmdStr = "C:\\WinAMC\\camera\\depthai_demo.py -v " + filePath + fileName;// C:\\WinAMC\\camera\\video\\" +DateTime.Now.ToString("MMM_dd_yyyy_hh_mm_ss") +".h264";
 
-                /*
-                FileSystemWatcher.Path = filePath;
-                FileSystemWatcher.Filter = "*.png";
-                FileSystemWatcher.NotifyFilter = NotifyFilters.Size;
-
-                FileMonitorTimer.Enabled = true;
-                */
             }
             else
             {
@@ -914,6 +919,22 @@ namespace WindowsFormsApplication5
                     CameraStatusLbl.Text = "Camera: " + line; // NbrCameras;
 
                     BleMsgTextBox.Text += line;
+                }
+                if (line.Contains("MXID"))
+                {
+                    int index = line.IndexOf(": ");
+                    //String mxid = line.Substring(index +2, 18);
+
+                    for (cameraId = 0; cameraId < NbrCameras; cameraId++)
+                    {
+                        if( String.IsNullOrEmpty(CameraInfo[cameraId].mxid))
+                        {
+                            CameraInfo[cameraId].mxid = line.Substring(index + 2, 18);
+                            break;
+                        }
+                    }
+
+                    BleMsgTextBox.Text += line;                    
                 }
 
                 if (line.Contains("required")||
@@ -1131,6 +1152,8 @@ namespace WindowsFormsApplication5
 
                         //if( cameraNbr ==1 )
                         Thread.Sleep( (cameraNbr+1)*3000);
+
+                        //FileMonitorTimer.Enabled = true;
                         break;
                 }
             }
@@ -2187,7 +2210,7 @@ namespace WindowsFormsApplication5
 
             for (int j = 0; j < NbrGen2Instances; j++)
             {
-                if (CameraInfo[j].captureStarted)
+                if (CameraInfo[j].captureStarted || StartPreview )
                 {
                     try
                     {
@@ -2195,10 +2218,13 @@ namespace WindowsFormsApplication5
 
                         CameraInfo[j].captureStarted = false;
 
+                        StartPreview = false;
+
                         PhotoCaptureStarted = false;
                         //PhotosCleared = false;
 
                         CaptureBtn.Enabled = false;
+                        
                     }
                     catch (Exception ex)
                     {
@@ -2210,7 +2236,7 @@ namespace WindowsFormsApplication5
                 }
             }
 
-       //     FileMonitorTimer.Enabled = false;
+            //FileMonitorTimer.Enabled = false;
         }
 
 
@@ -2386,6 +2412,8 @@ namespace WindowsFormsApplication5
                 MotorThread = new Thread(MotorDataThread);
                 MotorThread.Start();
             }
+
+            StartPreview = true;
 
             FileMonitorTimer.Enabled = true;
         }
@@ -3934,11 +3962,21 @@ namespace WindowsFormsApplication5
             */
             for (int j = 0; j < NbrCameras; j++)
             {
-                if (PrevFileCnt[j] != CameraInfo[j].fileCnt)
+                if (PrevFileCnt[j] != CameraInfo[j].fileCnt &&
+                    CameraInfo[j].captureStarted
+                   )
+                {
                     startCount++;
+                }
 
                 PrevFileCnt[j] = CameraInfo[j].fileCnt;
             }
+            /*
+            if (PhotoCaptureStarted)
+                CameraStatusLbl.Text = "TRUE";
+            else
+                CameraStatusLbl.Text = "FALSE";
+            */
 
             if (//startCount == NbrCameras &&
                 startCount == 1 &&
@@ -4126,7 +4164,7 @@ namespace WindowsFormsApplication5
                 }
                 catch (Exception ex) { }
             }
-            
+            /*
             for (int j = 0;  j < 4; j++)
                 {
                 using (var streamWriter = CameraInfo[j].proc.StandardInput)
@@ -4139,7 +4177,7 @@ namespace WindowsFormsApplication5
                     //streamWriter.Close();
 
                 }
-            }
+            }*/
             
             /*
             IntPtr q = CameraInfo[0].proc.MainWindowHandle;

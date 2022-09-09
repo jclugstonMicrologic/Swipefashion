@@ -30,5 +30,8 @@ mm/dd/22
 1.06	  Add led dimmer slider bar
 06/06/22  
 
-1.07	  Caopture photos one camera at a time
+1.07	  Capture photos one camera at a time
 09/06/22 
+
+1.08	  Start camera using MXID.  
+09/09/22  Fix up mannquin rotating before 2nd, 3rd, etc cmaera has started
