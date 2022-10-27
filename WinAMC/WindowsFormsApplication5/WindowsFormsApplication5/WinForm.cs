@@ -356,10 +356,15 @@ namespace WindowsFormsApplication5
             ControllerGroupBox.Left = 5;
 
             FocusTextBox.Top = 415;
-            FocusTextBox.Left = 360;
+            FocusTextBox.Left = 380;
 
             FocusLbl.Top = FocusTextBox.Top;
             FocusLbl.Left = 310;
+
+            LedLevelSelect.Top = 450;
+            LedLevelSelect.Left = 380;
+            LightingLbl.Top = 450;
+            LightingLbl.Left = 310;
 
             LedLevelScrollBar.Top = 450;
             LedLevelScrollBar.Left = 310;
@@ -788,8 +793,6 @@ namespace WindowsFormsApplication5
                     case 3:
                         if (MotorCntrl.fwdLimit || MotorCntrl.revLimit)
                         {
-                            motorState = 0;
-
                             MotorStatusLbl.Text = "Limit reached";
 
                             StopCaptureBtn_Click(null, null);
@@ -3430,7 +3433,11 @@ namespace WindowsFormsApplication5
             CameraOperationLbl.Text = "Camera: ";
             MotorStatusLbl.Text = "Mannequin: ";
 
+            if (!System.IO.Directory.Exists(ProfilePath))
+                System.IO.Directory.CreateDirectory(ProfilePath);
+
             var foldersFound = Directory.GetDirectories(ProfilePath);// "C:\\WinAMC\\Profile\\");
+
             SnLoadComboBox.Items.Clear();
             for (int j = 0; j < foldersFound.Length; j++)
             {
@@ -3908,8 +3915,8 @@ namespace WindowsFormsApplication5
                 {
                     FileInfo finfo = new FileInfo(file);
 
-                    //if (finfo.FullName.Contains(".png"))
-                    if (finfo.FullName.Contains(".bw"))
+                    if (finfo.FullName.Contains(".png"))
+                    //if (finfo.FullName.Contains(".bw"))
                     {
                         FolderSize += finfo.Length;
                     }
@@ -4227,5 +4234,35 @@ namespace WindowsFormsApplication5
 
             Refresh();
         }
+
+        private void LedLevelSelect_Click(object sender, EventArgs e)
+        {
+            LedLevel = (byte)LedLevelSelect.Value; // (byte)e.NewValue;
+
+            int res = 0;
+
+            res = FindClientBrdId((int)BOARD_TYPE.COMPR_CNTRL);
+            if (res == -1)
+            {
+                DialogResult result1 = MessageBox.Show("Compressor controller not connected, do you wish to proceed",
+                                "Warning",
+                                MessageBoxButtons.YesNo,
+                                MessageBoxIcon.Warning
+                               );
+
+                if (result1 == DialogResult.No)
+                    return;
+            }
+
+            if (!BuildSerialMessage((int)PACKET.CMD_SET_LED_LEVEL, res))
+            {
+                timer1.Enabled = false;
+                return;
+            }
+
+
+            Refresh();
+        }
+
     }       
 }

@@ -34,4 +34,7 @@ mm/dd/22
 09/06/22 
 
 1.08	  Start camera using MXID.  
-09/09/22  Fix up mannquin rotating before 2nd, 3rd, etc cmaera has started
+09/09/22  Fix up mannequin rotating before 2nd, 3rd, etc camera has started
+
+1.09	  Ensure Profile and Camera directories exist
+10/dd/22  Change lighting control from scroll bar to text box (up/down select)
