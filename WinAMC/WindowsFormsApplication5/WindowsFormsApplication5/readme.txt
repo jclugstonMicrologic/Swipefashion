@@ -27,3 +27,20 @@ version
 1.05	  Add drive space check before capture to ensure there is enough space (2GB)
 mm/dd/22  
 
+1.06	  Add led dimmer slider bar
+06/06/22  
+
+1.07	  Capture photos one camera at a time
+09/06/22 
+
+1.08	  Start camera using MXID.  
+09/09/22  Fix up mannequin rotating before 2nd, 3rd, etc camera has started
+
+1.09	  Ensure Profile and Camera directories exist
+10/28/22  Change lighting control from scroll bar to text box (up/down select)
+
+1.10	  add some limit switch debounce
+12/27/22  if capture stops on its own(unknown reason) restart the process
+		  remove "there is no process running for camera x" message
+		  if main directory deleted or removed, handle exception better
+		  reverse lighting values

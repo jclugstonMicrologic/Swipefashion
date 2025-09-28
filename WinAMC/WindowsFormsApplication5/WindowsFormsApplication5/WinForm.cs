@@ -33,6 +33,10 @@ SKD for download:
 https://www.pololu.com/docs/0J41
 */
 
+/* update luxonis requirements 
+    py -m pip install -r requirements.txt 
+*/
+
 namespace WindowsFormsApplication5
 {
     enum SERIAL_COMMS
@@ -63,6 +67,8 @@ namespace WindowsFormsApplication5
         CMD_START_COMPR = 0x0213,
         CMD_STOP_COMPR = 0x0214,
         CMD_SET_COMPR = 0x0215,
+
+        CMD_SET_LED_LEVEL =0x0216,
 
         CMD_ACK =0x9999,
     }
@@ -216,6 +222,7 @@ namespace WindowsFormsApplication5
 
         public byte ValveNbr = 0;
         public byte ComprNbr = 0;
+        public byte LedLevel= 0;
 
         public bool AckReceived = false;
 		
@@ -238,10 +245,15 @@ namespace WindowsFormsApplication5
 
         bool StartCapture = false;
         bool PhotoCaptureStarted = false;
+        bool PhotosCleared = false;
         bool SecondCamerasetStarted = false;
+        bool StartPreview= false;
 
-        public int NbrCameras =0;
-        public int PrevFileCnt = 0;
+        public int NbrCameras =0;        
+        public int NbrGen2Instances = 0;
+        public int[] PrevFileCnt = new int[4];
+
+        public string[] Mxid =new string[4];
 
         public struct camera_info_t
         {
@@ -256,6 +268,8 @@ namespace WindowsFormsApplication5
             public int fileCnt;
 
             public string portName;
+
+            public string mxid;
         }
 
         camera_info_t[] CameraInfo =new camera_info_t[MAX_NBR_CAMERAS];
@@ -271,7 +285,8 @@ namespace WindowsFormsApplication5
         bool[] DeviceConnect = new bool[4];
         int DeviceConnectState = 0;
 
- 
+        int[] Pid = new int[4];
+
         public TheMainForm()
         {
             InitializeComponent();
@@ -341,10 +356,18 @@ namespace WindowsFormsApplication5
             ControllerGroupBox.Left = 5;
 
             FocusTextBox.Top = 415;
-            FocusTextBox.Left = 360;
+            FocusTextBox.Left = 380;
 
             FocusLbl.Top = FocusTextBox.Top;
             FocusLbl.Left = 310;
+
+            LedLevelSelect.Top = 450;
+            LedLevelSelect.Left = 380;
+            LightingLbl.Top = 450;
+            LightingLbl.Left = 310;
+
+            LedLevelScrollBar.Top = 450;
+            LedLevelScrollBar.Left = 310;
 
             ProfileGroupBox.Top = (int)MAIN_DIM.TOP;
             ProfileGroupBox.Left = 5;
@@ -726,6 +749,7 @@ namespace WindowsFormsApplication5
                         if (MotorCntrl.fwdLimit || MotorCntrl.revLimit)
                         {
                             motorState = 1;
+                            FileMonitorTimer.Enabled = true;
                             CameraOperationLbl.Text = "";
                             MotorStatusLbl.Text = "Mannequin ready";
                         }
@@ -755,27 +779,43 @@ namespace WindowsFormsApplication5
 
                             }
 
-                            MotorStatusLbl.Text = "Rotating mannequin";
+                            MotorStatusLbl.Text = "Mannequin started";
 
                             motorState = 2;
+                        }
+                        if(!MotorCntrl.fwdLimit && !MotorCntrl.revLimit)
+                        {
+                            motorState = 0;
                         }
                         break;
                     case 2:
                         if (!MotorCntrl.fwdLimit && !MotorCntrl.revLimit)
                         {
                             /* move state now that limit switches are not active */
+                            MotorStatusLbl.Text = "Rotating mannequin";
                             motorState = 3;
                         }
                         break;
                     case 3:
                         if (MotorCntrl.fwdLimit || MotorCntrl.revLimit)
                         {
-                            motorState = 0;
-
+                            MotorCntrl.msgReceived = false;
+                            //BleMsgTextBox.Text += "Confirm Limit";
+                            motorState = 4;
+                        }
+                        break;
+                    case 4:
+                        if (MotorCntrl.fwdLimit || MotorCntrl.revLimit && MotorCntrl.msgReceived )
+                        { 
                             MotorStatusLbl.Text = "Limit reached";
+
+                            //BleMsgTextBox.Text += "Limit reached ";
 
                             StopCaptureBtn_Click(null, null);
 
+                            motorState = 0;
+
+                            /*
                             if (!SecondCamerasetStarted)
                             {
                                 motorState = 0;
@@ -784,7 +824,8 @@ namespace WindowsFormsApplication5
                             else
                             {
                                 MotorThread.Abort();
-                            }
+                            }*/
+
                         }
                         break;
                 }
@@ -820,19 +861,22 @@ namespace WindowsFormsApplication5
             }
             else if (request == 1)
             {
+                if (String.IsNullOrEmpty(CameraInfo[camera].mxid))
+                {
+                    MessageBox.Show("No MXID for camera " + camera+1, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return false;
+                }
+
                 //cmdStr = "C:\\WinAMC\\camera\\depthai_demo.py -rgbr 3040 -s depth -dd -sh 2 -nce 1";// -v " + filePath + fileName;// C:\\WinAMC\\camera\\video\\" +DateTime.Now.ToString("MMM_dd_yyyy_hh_mm_ss") +".h264";
                 //cmdStr = "C:\\WinAMC\\camera\\depthai_demo.py -rgbr 3040 -s color -dd -sh 2 -nce 1";// + filePath + fileName;// C:\\WinAMC\\camera\\video\\" +DateTime.Now.ToString("MMM_dd_yyyy_hh_mm_ss") +".h264";
-                cmdStr = "C:\\WinAMC\\camera\\depthai_demo.py -rgbr 3040 -s color -dev " + CameraInfo[camera].portName + " -pos " + (camera + 1) + " -foc " + FocusTextBox.Text;// 129;
+
+                //cmdStr = "C:\\WinAMC\\camera\\depthai_demo.py -rgbr 3040 -s color -dev " + CameraInfo[camera].portName + " -pos " + (camera + 1) + " -foc " + FocusTextBox.Text;// 129;
+                //cmdStr = "C:\\WinAMC\\camera\\CameraCapture_gen2.py -raw -cam " + (camera + 1) + " -mxid " + CameraInfo[camera].mxid; //14442C10F1F890CD00
+                cmdStr = "C:\\WinAMC\\camera\\CameraCapture_gen2.py -cam " + (camera + 1) + " -mxid " + CameraInfo[camera].mxid; //14442C10F1F890CD00
+
                 //cmdStr = "C:\\WinAMC\\camera\\depthai_demo.py -s depth_raw -dev " + CameraInfo[camera].portName + " -pos " + (camera + 1) + " -foc " + FocusTextBox.Text; // + filePath + fileName;// C:\\WinAMC\\camera\\video\\" +DateTime.Now.ToString("MMM_dd_yyyy_hh_mm_ss") +".h264";
                 //cmdStr = "C:\\WinAMC\\camera\\depthai_demo.py -v " + filePath + fileName;// C:\\WinAMC\\camera\\video\\" +DateTime.Now.ToString("MMM_dd_yyyy_hh_mm_ss") +".h264";
 
-                /*
-                FileSystemWatcher.Path = filePath;
-                FileSystemWatcher.Filter = "*.png";
-                FileSystemWatcher.NotifyFilter = NotifyFilters.Size;
-
-                FileMonitorTimer.Enabled = true;
-                */
             }
             else
             {
@@ -843,7 +887,9 @@ namespace WindowsFormsApplication5
             CameraInfo[camera].proc.StartInfo.UseShellExecute = false;
             CameraInfo[camera].proc.StartInfo.CreateNoWindow = true;
             CameraInfo[camera].proc.StartInfo.RedirectStandardOutput = true;
-            CameraInfo[camera].proc.StartInfo.FileName = "c:\\WinAMC\\camera\\py.exe";
+            CameraInfo[camera].proc.StartInfo.RedirectStandardInput = true;
+            CameraInfo[camera].proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+            CameraInfo[camera].proc.StartInfo.FileName = "py.exe";// "c:\\WinAMC\\camera\\py.exe";
             CameraInfo[camera].proc.StartInfo.Arguments = cmdStr; // "C:\\WinAMC\\camera\\depthai_demo.py -v C:\\WinAMC\\camera\\vid.h264";// -s jpegout"; //"C:\\temp\\camerastuff\\depthai_demo.py";
 
             CameraInfo[camera].proc.OutputDataReceived += SortOutputHandler;
@@ -853,12 +899,14 @@ namespace WindowsFormsApplication5
                 bool status =CameraInfo[camera].proc.Start();
 
                 CameraInfo[camera].proc.BeginOutputReadLine();
-                return true;
+
+                Pid[camera] = CameraInfo[camera].proc.Id;
+                return status;
             }
             catch (Exception ex)
             {
                 //MessageBox.Show(ex.ToString(), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                MessageBox.Show("Camera app failed to start", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Camera app failed to start\nEnsure Python in installed and the PATH is set correctly", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return false;
             }
 
@@ -880,6 +928,34 @@ namespace WindowsFormsApplication5
                         break;
                 }
 
+                if (line.Contains("Found"))
+                {
+                    int index = line.IndexOf(": ");
+
+                    //String x = line.Substring(index + 2, 1);
+                    NbrCameras = Int32.Parse(line.Substring(index + 2, 1));
+
+                    CameraStatusLbl.Text = "Camera: " + line; // NbrCameras;
+
+                    BleMsgTextBox.Text += line;
+                }
+                if (line.Contains("MXID"))
+                {
+                    int index = line.IndexOf(": ");
+                    //String mxid = line.Substring(index +2, 18);
+
+                    for (cameraId = 0; cameraId < NbrCameras; cameraId++)
+                    {
+                        if( String.IsNullOrEmpty(CameraInfo[cameraId].mxid))
+                        {
+                            CameraInfo[cameraId].mxid = line.Substring(index + 2, 18);
+                            break;
+                        }
+                    }
+
+                    BleMsgTextBox.Text += line;                    
+                }
+
                 if (line.Contains("required")||
                     line.Contains("installed") 
                    )
@@ -894,6 +970,10 @@ namespace WindowsFormsApplication5
                 {
                     CameraStatusLbl.Text = "Camera: " + line;
 
+                    BleMsgTextBox.Text += line;
+                }
+                if (line.Contains("depthai"))
+                {
                     BleMsgTextBox.Text += line;
                 }
                 if (line.Contains("on USB port:"))
@@ -947,12 +1027,12 @@ namespace WindowsFormsApplication5
                     CameraStatusLbl.ForeColor = Color.Red;
                 else
                     CameraStatusLbl.ForeColor = Color.Black;
-
-               // try
+/*
+                try
                 {
-                 //   BleMsgTextBox.Text += line;
+                    BleMsgTextBox.Text += line;
                 }
-                //catch(Exception ex){ }
+                catch(Exception ex){ }*/
             }
 
         }
@@ -967,31 +1047,41 @@ namespace WindowsFormsApplication5
                 {
                     case 0:
                         PhotoCaptureStarted = false;
+                        PhotosCleared = false;
+
                         CameraInfo[cameraNbr].captureStarted = false;                        
                         //cameraThread.Abort(cameraNbr);
                         // cameraThread.Suspend();
                         break;
                     case 1:
+                        Thread.Sleep(3000);
                         if (!StartCameraRequest(0, cameraNbr))
                             return false;
 
                         Thread.Sleep(250);
                         CameraOperationLbl.Text = "Start Camera Preview";
-                        CameraDataGridView[(int)CAMERA_GRID.STATUS, cameraNbr].Value = "Preview";
+
+                        CameraDataGridView[(int)CAMERA_GRID.STATUS, 0].Value = "Preview";
+                        CameraDataGridView[(int)CAMERA_GRID.STATUS, 1].Value = "";
+                        CameraDataGridView[(int)CAMERA_GRID.STATUS, 2].Value = "";
+                        CameraDataGridView[(int)CAMERA_GRID.STATUS, 3].Value = "";
 
                         PhotoCaptureStarted = false;
+                        PhotosCleared = false;
+
                         CameraInfo[cameraNbr].captureStarted = false;
 
                         CameraInfo[cameraNbr].proc.WaitForExit();
 
                         if (StartCapture)
-                            CameraInfo[cameraNbr].state = 2;// CameraState[cameraNbr] = 2;
+                            CameraInfo[cameraNbr].state = 20;
                         else
                             CameraInfo[cameraNbr].state = 5;
 
                         Thread.Sleep(100);
                         break;
                     case 2:
+                        //Thread.Sleep(3000);
                         if (!StartCameraRequest(1, cameraNbr))
                             return false;
 
@@ -1001,8 +1091,16 @@ namespace WindowsFormsApplication5
                         CameraDataGridView[(int)CAMERA_GRID.STATUS, cameraNbr].Value = "Start Capture";                       
                                                 
                         CameraInfo[cameraNbr].captureStarted = true;
+
                         CameraInfo[cameraNbr].proc.WaitForExit();
-                        CameraInfo[cameraNbr].state = 3;
+
+                        if (CameraInfo[cameraNbr].captureStarted == false)
+                            CameraInfo[cameraNbr].state = 3;
+                        else
+                        {
+                            /* camera process has stopped on it's own for unknown reason, re-launch */
+                            CameraInfo[cameraNbr].state = 2;
+                        }
                         break;
                     case 3:
                         /* report file size/status */
@@ -1013,7 +1111,8 @@ namespace WindowsFormsApplication5
                         break;
                     case 5:
                         /* report file size/status */
-                        CameraOperationLbl.Text = "Camera" + (cameraNbr + 1).ToString() + " preview complete: " + CapturedFileSize;
+                        //CameraOperationLbl.Text = "Camera" + (cameraNbr + 1).ToString() + " preview complete: " + CapturedFileSize;
+                        CameraOperationLbl.Text = "Camera preview complete: " + CapturedFileSize;
                         //CameraMsgTextBox.Text += "Camera" + (cameraNbr + 1).ToString() + " preview complete\n";
                         CameraInfo[cameraNbr].state = 10;
                         break;
@@ -1024,6 +1123,13 @@ namespace WindowsFormsApplication5
                         break;
                     case 10:
                         CameraInfo[cameraNbr].state = 0;
+
+                        if ((cameraNbr + 1) < NbrCameras)
+                        {
+                            StartCapture = true;
+                            CameraInfo[cameraNbr + 1].state = 20;
+                        }
+
                         cameraThread[cameraNbr].Abort(cameraNbr);
                         break;
                     case 4:
@@ -1066,9 +1172,20 @@ namespace WindowsFormsApplication5
                         else
                             CameraStatusLbl.ForeColor = Color.Black;
 
-                        CameraInfo[cameraNbr].proc.WaitForExit();
+                       // CameraInfo[cameraNbr].proc.WaitForExit();
 
                         CameraInfo[cameraNbr].state = 6;
+                        break;
+                    case 20:
+                        CameraInfo[cameraNbr].state = 2;
+
+                        if( cameraNbr !=0 )
+                            Thread.Sleep( (cameraNbr+1)*3000);
+
+                        FileMonitorTimer.Enabled = true;
+                        break;
+                    case 50:
+                        /* do nothing, waiting for turn to start */
                         break;
                 }
             }
@@ -1356,6 +1473,16 @@ namespace WindowsFormsApplication5
                     {
                         TxBuf[nbrBytes++] = Payload[j];
                     }
+                    break;
+                case (int)PACKET.CMD_SET_LED_LEVEL:
+                    // build the message here, then send
+                    ConvetToBuffer16((int)command, out tempBuf);
+                    tempBuf.CopyTo(TxBuf, (int)PACKET.SIZEOF_HEADER);
+                    nbrBytes = (int)PACKET.SIZEOF_HEADER + 2;
+
+                    Payload[0] = LedLevel;
+
+                    TxBuf[nbrBytes++] = Payload[0];
                     break;
             }
 
@@ -1990,7 +2117,7 @@ namespace WindowsFormsApplication5
 
             if ( MotorCntrl.speed !=0 )
             {
-                MessageBox.Show("Please wait for mannequin to be positioned", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Please wait for mannequin to be positioned speed: "  + MotorCntrl.speed, "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -2015,43 +2142,49 @@ namespace WindowsFormsApplication5
                 }
             }
 
-            if (NbrCameras < 2)
+            if (NbrCameras < 1)
             {
-                MessageBox.Show("Only one cmaera detected, cannot proceed", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(NbrCameras + " camera detected, cannot proceed", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
-            if (!StartCapture)
+            try
             {
-                cameraStart = 0;
-                cameraEnd = 2;
-
-                SecondCamerasetStarted = false;
+                CameraInfo[0].proc.Kill();
             }
-            else
+            catch (Exception ex)
             {
-                cameraStart =2;
-                cameraEnd = NbrCameras;
-
-                SecondCamerasetStarted = true;
-            }
-
-            for (int j = cameraStart; j < cameraEnd; j++)
-            {
-                try
-                {
-                    CameraInfo[j].proc.Kill();
-                }
-                catch (Exception ex)
-                {
-                    //MessageBox.Show(ex.ToString(), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    MessageBox.Show("There is no process running for camera " + (j+1) + "\ndid you forget to perform a preview check", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-
-                    //                return;
-                }
+                //MessageBox.Show(ex.ToString(), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("There is no process running for camera " + (1) + "\ndid you forget to perform a preview check", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
 
             StartCapture = true;
+
+            for (int camera = 1; camera < NbrCameras; camera++) 
+            {
+                if (CameraInfo[camera].state == 0)
+                {
+                    //Thread.Sleep(camera*2000);
+
+                    cameraThread[camera] = new Thread(cameraDataThread);
+                    cameraThread[camera].Start(camera);
+
+                    CameraInfo[camera].state = 50;
+
+                    BleMsgTextBox.Clear();
+
+                    //StartCapture = true;
+
+                    CameraOperationLbl.Visible = true;
+
+                    NbrGen2Instances++;
+                    //CameraTimer.Enabled = true;
+                }
+
+                //CameraDataGridView[1, camera].Value = "0.00";
+            }
+
+            //StartCapture = true;
 
             BleMsgTextBox.Clear();
 
@@ -2074,28 +2207,34 @@ namespace WindowsFormsApplication5
           //      MotorThread.Abort();
             }
 
-            for (int j = 0; j < NbrCameras; j++)
+            for (int j = 0; j < NbrGen2Instances; j++)
             {
-                try
+                if (CameraInfo[j].captureStarted || StartPreview )
                 {
-                    CameraInfo[j].proc.Kill();
+                    try
+                    {
+                        CameraInfo[j].captureStarted = false;
 
-                    CameraInfo[j].captureStarted = false;
+                        StartPreview = false;
 
-                    PhotoCaptureStarted = false;
+                        PhotoCaptureStarted = false;
+                        //PhotosCleared = false;
 
-                    CaptureBtn.Enabled = false;
-                }
-                catch (Exception ex)
-                {
-                    //MessageBox.Show(ex.ToString(), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    MessageBox.Show("There is no process running for camera " + (j+1), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        CaptureBtn.Enabled = false;
 
-                    //return;
+                        CameraInfo[j].proc.Kill();
+                    }
+                    catch (Exception ex)
+                    {
+                        //MessageBox.Show(ex.ToString(), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        //MessageBox.Show("There is no process running for camera " + (j + 1), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                        //return;
+                    }
                 }
             }
 
-            FileMonitorTimer.Enabled = false;
+            //FileMonitorTimer.Enabled = false;
         }
 
 
@@ -2227,18 +2366,23 @@ namespace WindowsFormsApplication5
 
         private void StartPreviewBtn_Click(object sender, EventArgs e)
         {
-            CaptureBtn.Enabled = true;
-
             if (CheckError()) return;
 
-            NbrCameras = 2;
+            NbrCameras = 0;
+            /*
             if (NbrCameras ==0 )
             {
                 MessageBox.Show("No Camera detected", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
+            */
 
-            for (int camera = 0; camera <NbrCameras; camera++)
+            NbrGen2Instances = 1;
+
+            CameraStatusLbl.Text = "Camera: Searching for devices, please wait...";
+
+            //for (int camera = 0; camera <NbrCameras; camera++)
+            for (int camera = 0; camera < NbrGen2Instances; camera++) // only launch one instance as the py script will launch all previews
             {
                 if (CameraInfo[camera].state == 0)
                 {                
@@ -2265,7 +2409,11 @@ namespace WindowsFormsApplication5
                 MotorThread.Start();
             }
 
+            StartPreview = true;
+
             FileMonitorTimer.Enabled = true;
+
+            CaptureBtn.Enabled = true;
         }
 
         private void UploadFilesBtn_Click(object sender, EventArgs e)
@@ -3280,7 +3428,11 @@ namespace WindowsFormsApplication5
             CameraOperationLbl.Text = "Camera: ";
             MotorStatusLbl.Text = "Mannequin: ";
 
+            if (!System.IO.Directory.Exists(ProfilePath))
+                System.IO.Directory.CreateDirectory(ProfilePath);
+
             var foldersFound = Directory.GetDirectories(ProfilePath);// "C:\\WinAMC\\Profile\\");
+
             SnLoadComboBox.Items.Clear();
             for (int j = 0; j < foldersFound.Length; j++)
             {
@@ -3748,44 +3900,53 @@ namespace WindowsFormsApplication5
 
             for (int j = 0; j < NbrCameras; j++)
             {
-                CameraInfo[j].fileSize =0;
-                CameraInfo[j].fileCnt =0;
+                CameraInfo[j].fileSize = 0;
+                CameraInfo[j].fileCnt = 0;
             }
 
-            foreach (string file in Directory.GetFiles("C:\\WinAMC\\capture"))
+            try
             {
-                if (File.Exists(file))
+                foreach (string file in Directory.GetFiles("C:\\WinAMC\\capture"))
                 {
-                    FileInfo finfo = new FileInfo(file);
+                    if (File.Exists(file))
+                    {
+                        FileInfo finfo = new FileInfo(file);
 
-                    if (finfo.FullName.Contains(".png"))
-                    {
-                        FolderSize += finfo.Length;
+                        if (finfo.FullName.Contains(".png"))
+                        //if (finfo.FullName.Contains(".bw"))
+                        {
+                            FolderSize += finfo.Length;
+                        }
+
+                        if (finfo.FullName.Contains("c1_"))
+                        {
+                            CameraInfo[0].fileSize += finfo.Length;
+                            CameraInfo[0].fileCnt++;
+                        }
+                        if (finfo.FullName.Contains("c2_"))
+                        {
+                            CameraInfo[1].fileSize += finfo.Length;
+                            CameraInfo[1].fileCnt++;
+                        }
+                        if (finfo.FullName.Contains("c3_"))
+                        {
+                            CameraInfo[2].fileSize += finfo.Length;
+                            CameraInfo[2].fileCnt++;
+                        }
+                        if (finfo.FullName.Contains("c4_"))
+                        {
+                            //CameraFileSize[1] += finfo.Length;
+                            CameraInfo[3].fileSize += finfo.Length;
+                            CameraInfo[3].fileCnt++;
+                        }
                     }
 
-                    if (finfo.FullName.Contains("c1_"))
-                    {
-                        CameraInfo[0].fileSize += finfo.Length;
-                        CameraInfo[0].fileCnt++;
-                    }
-                    if (finfo.FullName.Contains("c2_"))
-                    {
-                        CameraInfo[1].fileSize += finfo.Length;
-                        CameraInfo[1].fileCnt++;
-                    }
-                    if (finfo.FullName.Contains("c3_"))
-                    {
-                        CameraInfo[2].fileSize += finfo.Length;
-                        CameraInfo[2].fileCnt++;
-                    }
-                    if (finfo.FullName.Contains("c4_"))
-                    {
-                        //CameraFileSize[1] += finfo.Length;
-                        CameraInfo[3].fileSize += finfo.Length;
-                        CameraInfo[3].fileCnt++;
-                    }
                 }
-
+            }
+            catch (Exception)
+            {
+                //FileMonitorTimer.Enabled = false;
+                //MessageBox.Show("Capture directory has moved or been renamed", "FTP", MessageBoxButtons.OK, MessageBoxIcon.None);
             }
 
             for (int j = 0; j < NbrCameras; j++)
@@ -3793,15 +3954,73 @@ namespace WindowsFormsApplication5
                 FileCnt += CameraInfo[j].fileCnt;
             }
 
+            int startCount = 0;
+
+            /*
             if ((PrevFileCnt != FileCnt) &&
                 CameraInfo[0].captureStarted
-                )
+               )
+            {
+                for (int j = 0;  j < NbrCameras; j++)
+                {
+                    if (!CameraInfo[j].captureStarted)
+                        continue;
+
+                    startCount++;
+                }                
+            }
+            */
+            for (int j = 0; j < NbrCameras; j++)
+            {
+                if (PrevFileCnt[j] != CameraInfo[j].fileCnt &&
+                    CameraInfo[j].captureStarted
+                   )
+                {
+                    startCount++;
+                }
+
+                PrevFileCnt[j] = CameraInfo[j].fileCnt;
+            }
+            /*
+            if (PhotoCaptureStarted)
+                CameraStatusLbl.Text = "TRUE";
+            else
+                CameraStatusLbl.Text = "FALSE";
+            */
+
+            if (//startCount == NbrCameras &&
+                startCount == 1 &&
+                NbrCameras > 0 &&
+                StartCapture
+               )
             {
                 PhotoCaptureStarted = true;
             }
+            if (PhotoCaptureStarted && !PhotosCleared )
+            {
+                DirectoryInfo di = new DirectoryInfo("C:\\WinAMC\\capture");
 
-            PrevFileCnt = FileCnt;
+                foreach (FileInfo file in di.EnumerateFiles())
+                {
+                    try
+                    {
+                        file.Delete();
 
+                        PhotosCleared = true;
+                    }
+                    catch (Exception ex) { }
+                }
+
+                PrevFileCnt[0] = 0;
+                PrevFileCnt[1] = 0;
+                PrevFileCnt[2] = 0;
+                PrevFileCnt[3] = 0;
+
+            }
+
+            //PrevFileCnt = FileCnt;
+
+                
             CapturedFileSize = FolderSize / 1000000;// theSize /1000;
  //           CameraOperationLbl.Text = "Camera capture started " + CapturedFileSize.ToString("0.00") + "MB\nFile Count: " + FileCnt;
 
@@ -3932,5 +4151,122 @@ namespace WindowsFormsApplication5
                 BuildSerialMessage((int)PACKET.CMD_STOP_COMPR, res);
             }
         }
+
+        [DllImport("User32.dll")]
+        static extern int SetForegroundWindow(IntPtr point);
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            for (int j = 0; j < 4; j++)
+            {
+                try
+                {
+                    //Process proc1 = Process.GetProcessesByName("py")[0];
+                    var proc1 = Process.GetProcessById(Pid[j]);                     
+
+                    if (proc1 != null)
+                    {
+                        IntPtr h = proc1.MainWindowHandle;
+                        SetForegroundWindow(CameraInfo[j].proc.MainWindowHandle);// h                                             
+                        SendKeys.Send("c");
+                    }
+
+                }
+                catch (Exception ex) { }
+            }
+            /*
+            for (int j = 0;  j < 4; j++)
+                {
+                using (var streamWriter = CameraInfo[j].proc.StandardInput)
+                {
+                    var message = "c";
+                  //  streamWriter.WriteLine(message);
+                    //streamWriter.WriteLine(message);
+                    //streamWriter.WriteLine(message);
+                    //streamWriter.WriteLine(message);
+                    //streamWriter.Close();
+
+                }
+            }*/
+            
+            /*
+            IntPtr q = CameraInfo[0].proc.MainWindowHandle;
+            SetForegroundWindow(q);
+            SendKeys.SendWait("c");
+
+            q = CameraInfo[1].proc.MainWindowHandle;
+            SetForegroundWindow(q);
+            SendKeys.SendWait("c");
+
+            q = CameraInfo[2].proc.MainWindowHandle;
+            SetForegroundWindow(q);
+            SendKeys.SendWait("c");
+
+            q = CameraInfo[3].proc.MainWindowHandle;
+            SetForegroundWindow(q);
+            SendKeys.SendWait("c");
+            */
+
+        }
+
+        private void LedLevelScrollBar_Scroll(object sender, ScrollEventArgs e)
+        {
+            LedLevel = (byte)e.NewValue;
+
+            int res = 0;
+
+            res = FindClientBrdId((int)BOARD_TYPE.COMPR_CNTRL);
+            if (res == -1)
+            {
+                DialogResult result1 = MessageBox.Show("Compressor controller not connected, do you wish to proceed",
+                                "Warning",
+                                MessageBoxButtons.YesNo,
+                                MessageBoxIcon.Warning
+                               );
+
+                if (result1 == DialogResult.No)
+                    return;
+            }
+
+            if (!BuildSerialMessage((int)PACKET.CMD_SET_LED_LEVEL, res))
+            {
+                timer1.Enabled = false;
+                return;
+            }
+
+
+            Refresh();
+        }
+
+        private void LedLevelSelect_Click(object sender, EventArgs e)
+        {
+            LedLevel = (byte)LedLevelSelect.Value; // (byte)e.NewValue;
+            LedLevel =(byte)(100 - LedLevel);
+
+            int res = 0;
+
+            res = FindClientBrdId((int)BOARD_TYPE.COMPR_CNTRL);
+            if (res == -1)
+            {
+                DialogResult result1 = MessageBox.Show("Compressor controller not connected, do you wish to proceed",
+                                "Warning",
+                                MessageBoxButtons.YesNo,
+                                MessageBoxIcon.Warning
+                               );
+
+                if (result1 == DialogResult.No)
+                    return;
+            }
+
+            if (!BuildSerialMessage((int)PACKET.CMD_SET_LED_LEVEL, res))
+            {
+                timer1.Enabled = false;
+                return;
+            }
+
+
+            Refresh();
+        }
+
     }       
 }
