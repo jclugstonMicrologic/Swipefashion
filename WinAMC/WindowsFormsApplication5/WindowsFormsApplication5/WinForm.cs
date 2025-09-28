@@ -889,7 +889,7 @@ namespace WindowsFormsApplication5
             CameraInfo[camera].proc.StartInfo.RedirectStandardOutput = true;
             CameraInfo[camera].proc.StartInfo.RedirectStandardInput = true;
             CameraInfo[camera].proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-            CameraInfo[camera].proc.StartInfo.FileName = "c:\\WinAMC\\camera\\py.exe";
+            CameraInfo[camera].proc.StartInfo.FileName = "py.exe";// "c:\\WinAMC\\camera\\py.exe";
             CameraInfo[camera].proc.StartInfo.Arguments = cmdStr; // "C:\\WinAMC\\camera\\depthai_demo.py -v C:\\WinAMC\\camera\\vid.h264";// -s jpegout"; //"C:\\temp\\camerastuff\\depthai_demo.py";
 
             CameraInfo[camera].proc.OutputDataReceived += SortOutputHandler;
@@ -906,7 +906,7 @@ namespace WindowsFormsApplication5
             catch (Exception ex)
             {
                 //MessageBox.Show(ex.ToString(), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                MessageBox.Show("Camera app failed to start", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Camera app failed to start\nEnsure Python in installed and the PATH is set correctly", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return false;
             }
 
@@ -2366,8 +2366,6 @@ namespace WindowsFormsApplication5
 
         private void StartPreviewBtn_Click(object sender, EventArgs e)
         {
-            CaptureBtn.Enabled = true;
-
             if (CheckError()) return;
 
             NbrCameras = 0;
@@ -2414,6 +2412,8 @@ namespace WindowsFormsApplication5
             StartPreview = true;
 
             FileMonitorTimer.Enabled = true;
+
+            CaptureBtn.Enabled = true;
         }
 
         private void UploadFilesBtn_Click(object sender, EventArgs e)
