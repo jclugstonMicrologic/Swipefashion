@@ -38,3 +38,9 @@ mm/dd/22
 
 1.09	  Ensure Profile and Camera directories exist
 10/28/22  Change lighting control from scroll bar to text box (up/down select)
+
+1.10	  add some limit switch debounce
+12/27/22  if capture stops on its own(unknown reason) restart the process
+		  remove "there is no process running for camera x" message
+		  if main directory deleted or removed, handle exception better
+		  reverse lighting values

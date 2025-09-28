@@ -901,7 +901,7 @@ namespace WindowsFormsApplication5
                 CameraInfo[camera].proc.BeginOutputReadLine();
 
                 Pid[camera] = CameraInfo[camera].proc.Id;
-                return true;
+                return status;
             }
             catch (Exception ex)
             {
